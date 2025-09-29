@@ -29,11 +29,6 @@ function Player:new(x, y)
 
 	-- Load sprite and animations
 	self:loadAssets()
-
-	-- Particle effects
-	self.lastGroundY = y
-	self.walkTimer = 0
-	self.walkParticleDelay = 0.1
 end
 
 function Player:loadAssets()
@@ -51,8 +46,6 @@ function Player:loadAssets()
 end
 
 function Player:update(dt)
-	local wasOnGround = self.ground
-	local wasMoving = math.abs(self.vx) > 10
 	self:handleInput()
 	self:updateState()
 
@@ -61,15 +54,6 @@ function Player:update(dt)
 		self.coyoteTime = self.coyoteTimeMax
 	else
 		self.coyoteTime = math.max(0, self.coyoteTime - dt)
-	end
-
-	if self.ground and wasMoving then
-		-- Walking dust particles
-		self.walkTimer = self.walkTimer + dt
-		if self.walkTimer > self.walkParticleDelay then
-			PM:emit("walkDust", self.x + self.w / 2, self.y + self.h, self.facing > 0 and math.pi or 0)
-			self.walkTimer = 0
-		end
 	end
 
 	-- Apply movement
@@ -93,7 +77,6 @@ function Player:update(dt)
 		self.vy = -self.jumpPower
 		self.coyoteTime = 0
 		self.input.jumpPressed = false
-		PM:emit("jumpDust", self.x + self.w / 2, self.y + self.h, math.pi / 2)
 	end
 
 	Player.super.update(self, dt)
@@ -139,8 +122,6 @@ function Player:filter(item, other)
 		else
 			return nil
 		end
-	elseif other.type == "enemy" then
-		return "cross"
 	elseif other.type == "pickup" then
 		return nil
 	end
@@ -148,23 +129,13 @@ function Player:filter(item, other)
 end
 
 function Player:handleCollision(other, collision)
-	if other.type == "enemy" then
-		self:handleEnemyCollision(other, collision)
-	end
+  if other.canKill then
+    self:handleEnemyCollision(other, collision) -- any cross = dead
+  end
 end
 
 function Player:handleEnemyCollision(enemy, collision)
-	if collision.normal.y == -1 and self.vy > 0 then
-		-- Stomp enemy
-		self.vy = -300
-		enemy:takeDamage(1)
-	else
-		-- Take damage
-		self:takeDamage(1)
-		-- Knockback
-		-- local knockbackX = collision.normal.x * 100
-		-- self.vx = self.vx + knockbackX
-	end
+  self:takeDamage(1) -- basically die
 end
 
 function Player:takeDamage(amount)
@@ -175,24 +146,16 @@ function Player:takeDamage(amount)
 end
 
 function Player:die()
-	PM:emit("playerDeath", self.x + self.w / 2, self.y + self.h / 2)
+	if self.isDying then
+		return
+	end
+	self.isDying = true
 
-	-- Start death transition
-	ST:setCenter(self.x + self.w / 2, self.y + self.h / 2)
-	ST:startCircleOut(1.5, function()
-		GSM:setState("gameover")
-		ST:startCircleIn(1.0)
-	end)
+  GSM:setState("gameover")
 end
 
 function Player:draw()
-	-- Flash red when taking damage
-	if self.damageFlash and self.damageFlash > 0 then
-		love.graphics.setColor(1, 0.5, 0.5)
-	end
-
 	Player.super.draw(self)
-	love.graphics.setColor(1, 1, 1)
 end
 
 return Player

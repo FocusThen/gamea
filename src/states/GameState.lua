@@ -26,25 +26,22 @@ function GameState:enter()
 	if self.player then
 		self.camera:lookAt(self.player.x + self.player.w / 2, self.player.y + self.player.h / 2)
 	end
-	ST:startCircleIn(1.0)
 end
 
 function GameState:createTestLevel()
 	local Ground = require("src.entities.Ground")
-	local Enemy = require("src.entities.Enemy")
 	local Pickup = require("src.entities.Pickup")
 
 	-- Create ground
 	EM:addEntity(Ground(0, 500, 800, 100))
-	EM:addEntity(Ground(200, 350, 150, 20)) -- Platform
-
-	-- Create enemies
-	EM:addEntity(Enemy(300, 450))
-	EM:addEntity(Enemy(500, 450))
+	EM:addEntity(Ground(200, 440, 150, 20, "platform")) -- Platform
 
 	-- Create pickups
-	EM:addEntity(Pickup(250, 320))
-	EM:addEntity(Pickup(400, 470))
+	EM:addEntity(Pickup(200, 300))
+	EM:addEntity(Pickup(300, 470))
+	EM:addEntity(Pickup(350, 470))
+	EM:addEntity(Pickup(400, 440, "fake"))
+	EM:addEntity(Pickup(450, 470))
 end
 
 function GameState:update(dt)
@@ -70,9 +67,6 @@ function GameState:draw()
 	-- Draw all entities
 	EM:draw()
 
-  -- Draw particles
-	PM:draw()
-
 	self.camera:detach()
 
 	-- Draw UI (not affected by camera)
@@ -91,9 +85,7 @@ function GameState:keypressed(key)
 	elseif key == "p" then
 		GSM:setState("pause")
 	elseif key == "r" then
-		ST:startCircleOut(0.8, function()
-			self:enter()
-		end)
+		self:enter()
 	end
 end
 

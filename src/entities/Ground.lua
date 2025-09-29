@@ -9,7 +9,7 @@ function Ground:new(x, y, w, h, groundType)
 	self.vy = 0
 end
 
-function Ground:update(dt)
+function Ground:update(_)
 	-- Ground doesn't need to update physics
 	-- Override to prevent unnecessary calculations
 end
@@ -19,8 +19,6 @@ function Ground:draw()
 		love.graphics.setColor(0.4, 0.7, 0.4) -- Green
 	elseif self.type == "platform" then
 		love.graphics.setColor(0.6, 0.4, 0.2) -- Brown
-	elseif self.type == "wall" then
-		love.graphics.setColor(0.5, 0.5, 0.5) -- Gray
 	end
 
 	Ground.super.draw(self)

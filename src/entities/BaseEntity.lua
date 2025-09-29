@@ -13,6 +13,7 @@ function BaseEntity:new(x, y, w, h)
 	self.active = true
 	self.visible = true
 	self.destroyed = false
+  self.canKill = false
 
 	-- Physics properties
 	self.solid = true
@@ -96,21 +97,11 @@ function BaseEntity:updatePhysics(dt)
 	end
 end
 
-function BaseEntity:defaultFilter(item, other)
-	-- Safety check for nil other
-	if not other or not other.type then
-		return "slide"
-	end
-
-	if other.type == "pickup" then
-		return "cross"
-	elseif other.type == "trigger" then
-		return nil
-	end
+function BaseEntity:defaultFilter(_, _)
 	return "slide"
 end
 
-function BaseEntity:handleCollision(other, collision)
+function BaseEntity:handleCollision(_, _)
 	-- Override in child classes for specific collision handling
 end
 

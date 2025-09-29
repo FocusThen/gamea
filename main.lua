@@ -12,15 +12,6 @@ Camera = require("libs.hump.camera")
 local GameStateManager = require("src.core.GameStateManager")
 local EntityManager = require("src.core.EntityManager")
 local AssetManager = require("src.core.AssetManager")
-local ScreenTransition = require("src.effects.ScreenTransition")
-local ParticleManager = require("src.effects.ParticleManager")
-
-_G.GSM = nil -- Game State Manager
-_G.EM = nil -- Entity Manager
-_G.AM = nil -- Asset Manager
-_G.World = nil -- Bump physics world
-_G.ST = nil -- Screen Transition
-_G.PM = nil -- Particle Manager
 
 -- Game configuration
 _G.GameConfig = {
@@ -34,12 +25,7 @@ _G.GameConfig = {
 		gravity = 1200,
 	},
 	visuals = {
-		backgroundColor = { 0.2, 0.3, 0.4 }, -- RGB values (0-1) - Dark blue-gray
-		-- Other color presets you can use:
-		-- {0.1, 0.1, 0.15} - Almost black
-		-- {0.15, 0.2, 0.3} - Dark blue
-		-- {0.3, 0.2, 0.25} - Dark purple
-		-- {0.2, 0.25, 0.2} - Dark green
+		backgroundColor = { 0.2, 0.3, 0.4 },
 	},
 	debug = {
 		enabled = false,
@@ -62,23 +48,21 @@ function love.load()
 	GSM = GameStateManager()
 	EM = EntityManager()
 	AM = AssetManager()
-	ST = ScreenTransition()
-	PM = ParticleManager()
 
 	-- Load initial assets
 	AM:loadAssets()
 
 	-- Start with menu state (or game state for testing)
-	GSM:setState("game") -- Change to "menu" for menu system
+	GSM:setState("menu") -- Change to "menu" for menu system
 end
 
 function love.update(dt)
 	-- Update tween library
-	Flux.update(dt)
-	Timer.update(dt)
+	-- Flux.update(dt)
+	-- Timer.update(dt)
 
-	-- Update effects
-	PM:update(dt)
+	-- -- Update effects
+	-- PM:update(dt)
 
 	-- Update current game state
 	GSM:update(dt)
@@ -88,15 +72,10 @@ function love.update(dt)
 end
 
 function love.draw()
-	if GameConfig.visuals and GameConfig.visuals.backgroundColor then
-		love.graphics.clear(GameConfig.visuals.backgroundColor)
-	end
+	love.graphics.clear({ 0.2, 0.3, 0.4 })
 
 	-- Draw current game state
 	GSM:draw()
-
-	-- Draw screen transition (always on top)
-	ST:draw()
 
 	-- Draw debug info if enabled
 	if GameConfig.debug.enabled then
@@ -110,8 +89,6 @@ function love.keypressed(key)
 	-- Global debug toggle
 	if key == "f1" then
 		GameConfig.debug.enabled = not GameConfig.debug.enabled
-	elseif key == "f2" then
-		GameConfig.debug.showCollisions = not GameConfig.debug.showCollisions
 	end
 end
 
@@ -124,5 +101,4 @@ function drawDebugInfo()
 	love.graphics.print("FPS: " .. love.timer.getFPS(), 10, 10)
 	love.graphics.print("Entities: " .. EM:getEntityCount(), 10, 30)
 	love.graphics.print("State: " .. GSM.currentState, 10, 50)
-	love.graphics.print("F1: Toggle Debug, F2: Toggle Collisions", 10, love.graphics.getHeight() - 20)
 end

@@ -49,15 +49,11 @@ function Pickup:isCollidingWith(other)
 		and other.y < self.y + self.h
 end
 
-function Pickup:collect(player)
-	-- Handle different pickup types
+function Pickup:collect(player) -- player
 	if self.pickupType == "coin" then
-		-- Add score
-    PM:emit("coinPickup", self.x + self.w / 2, self.y + self.h / 2)
-	elseif self.pickupType == "health" then
-		player.health = math.min(player.maxHealth, player.health + self.value)
-	elseif self.pickupType == "powerup" then
-		-- Give player power
+		print("+1 coin")
+  elseif self.pickupType == "fake" then
+    player:die()
 	end
 
 	EM:removeEntity(self)
@@ -68,13 +64,7 @@ function Pickup:draw()
 	love.graphics.translate(self.x + self.w / 2, self.y + self.h / 2)
 	love.graphics.rotate(self.spinAngle)
 
-	if self.pickupType == "coin" then
-		love.graphics.setColor(1, 1, 0) -- Yellow
-	elseif self.pickupType == "health" then
-		love.graphics.setColor(1, 0, 0) -- Red
-	else
-		love.graphics.setColor(0, 1, 1) -- Cyan
-	end
+	love.graphics.setColor(1, 1, 0) -- Yellow
 
 	love.graphics.rectangle("fill", -self.w / 2, -self.h / 2, self.w, self.h)
 	love.graphics.setColor(1, 1, 1)
