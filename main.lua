@@ -12,25 +12,21 @@ Camera = require("libs.hump.camera")
 local GameStateManager = require("src.core.GameStateManager")
 local EntityManager = require("src.core.EntityManager")
 local AssetManager = require("src.core.AssetManager")
+local LevelManager = require("src.core.LevelManager")
+
 
 -- Game configuration
 _G.GameConfig = {
 	window = {
 		width = 1024,
 		height = 768,
-		title = "Game 1",
 	},
 	physics = {
-		cellSize = 32,
 		gravity = 1200,
-	},
-	visuals = {
-		backgroundColor = { 0.2, 0.3, 0.4 },
 	},
 	debug = {
 		enabled = false,
 		showCollisions = false,
-		showFPS = true,
 	},
 }
 
@@ -38,16 +34,15 @@ function love.load()
 	math.randomseed(os.time())
 
 	-- Setup window
-	love.window.setTitle(GameConfig.window.title)
 	love.graphics.setDefaultFilter("nearest", "nearest")
 
-	-- Initialize core systems
-	World = Bump.newWorld(GameConfig.physics.cellSize)
+  World = Bump.newWorld(32)
 
 	-- Initialize managers
 	GSM = GameStateManager()
 	EM = EntityManager()
 	AM = AssetManager()
+  LM = LevelManager()
 
 	-- Load initial assets
 	AM:loadAssets()
@@ -59,7 +54,7 @@ end
 function love.update(dt)
 	-- Update tween library
 	-- Flux.update(dt)
-	-- Timer.update(dt)
+  Timer.update(dt)
 
 	-- -- Update effects
 	-- PM:update(dt)

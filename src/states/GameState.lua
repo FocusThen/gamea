@@ -9,59 +9,50 @@ end
 function GameState:enter()
 	self.camera = Camera()
 
-	-- Clear any existing entities
-	EM:clear()
-
-	-- Load level/map if using STI
-	-- self.map = sti("assets/maps/level1.lua")
-
-	-- Create player
-	local Player = require("src.entities.Player")
-	self.player = Player(100, 100)
-	EM:addEntity(self.player)
-
-	-- Create some test entities
-	self:createTestLevel()
-
-	if self.player then
-		self.camera:lookAt(self.player.x + self.player.w / 2, self.player.y + self.player.h / 2)
+	-- Load level using LevelManager
+	if not LM:getCurrentLevelName() or LM:getCurrentLevelName() == "none" then
+		-- Load first level or test level
+		LM:loadLevel(LM.LEVELS.TEST, false) -- or LM.LEVELS.LEVEL_1
 	end
-end
 
-function GameState:createTestLevel()
-	local Ground = require("src.entities.Ground")
-	local Pickup = require("src.entities.Pickup")
-
-	-- Create ground
-	EM:addEntity(Ground(0, 500, 800, 100))
-	EM:addEntity(Ground(200, 440, 150, 20, "platform")) -- Platform
-
-	-- Create pickups
-	EM:addEntity(Pickup(200, 300))
-	EM:addEntity(Pickup(300, 470))
-	EM:addEntity(Pickup(350, 470))
-	EM:addEntity(Pickup(400, 440, "fake"))
-	EM:addEntity(Pickup(450, 470))
+	-- Camera will follow player (created by LevelManager)
+	if _G.player and self.camera then
+		self.camera:lookAt(_G.player.x + _G.player.w / 2, _G.player.y + _G.player.h / 2)
+	end
 end
 
 function GameState:update(dt)
-	-- Update camera to follow player
-	if self.player then
-		self.camera:lookAt(self.player.x + self.player.w / 2, self.player.y + self.player.h / 2)
+	-- Update camera to follow player smoothly
+	if _G.player and self.camera then
+		local targetX = _G.player.x + _G.player.w / 2
+		local targetY = _G.player.y + _G.player.h / 2
+
+		local currentX, currentY = self.camera:position()
+		local lerpSpeed = 5
+		local newX = currentX + (targetX - currentX) * lerpSpeed * dt
+		local newY = currentY + (targetY - currentY) * lerpSpeed * dt
+
+		self.camera:lookAt(newX, newY)
 	end
 
-	-- Update map if using STI
-	if self.map then
-		self.map:update(dt)
+	-- Update Tiled map
+	local map = LM:getCurrentMap()
+	if map then
+		map:update(dt)
 	end
 end
 
 function GameState:draw()
+	if not self.camera then
+		return
+	end
+
 	self.camera:attach()
 
-	-- Draw map if using STI
-	if self.map then
-		self.map:draw()
+	-- Draw Tiled map
+	local map = LM:getCurrentMap()
+	if map then
+		map:draw()
 	end
 
 	-- Draw all entities
@@ -75,8 +66,8 @@ end
 
 function GameState:drawUI()
 	love.graphics.setFont(AM:getFont("medium"))
-	love.graphics.print("Game State - Use WASD/Arrow Keys + Space", 10, 10)
-	love.graphics.print("ESC: Quit, P: Pause", 10, 30)
+	local levelText = "Level: " .. LM:getCurrentLevelIndex() .. "/" .. LM:getTotalLevels()
+	love.graphics.print(levelText, 10, 10)
 end
 
 function GameState:keypressed(key)
@@ -85,7 +76,17 @@ function GameState:keypressed(key)
 	elseif key == "p" then
 		GSM:setState("pause")
 	elseif key == "r" then
-		self:enter()
+		-- Restart current level with transition
+		LM:reloadCurrentLevel(true)
+	elseif key == "n" then
+		-- Next level (for testing)
+		LM:loadNextLevel(true)
+	elseif key == "b" then
+		-- Previous level (for testing)
+		LM:loadPreviousLevel(true)
+	elseif key == "1" then
+		-- Quick load test level
+		LM:loadLevel(LM.LEVELS.TEST, true)
 	end
 end
 

@@ -75,22 +75,34 @@ function EntityManager:update(dt)
 end
 
 function EntityManager:draw()
+	-- Sort entities by z-index before drawing
+	local sortedEntities = {}
 	for _, entity in ipairs(self.entities) do
+		table.insert(sortedEntities, entity)
+	end
+
+	table.sort(sortedEntities, function(a, b)
+		local zA = a.zIndex or 0
+		local zB = b.zIndex or 0
+		return zA < zB
+	end)
+
+	for _, entity in ipairs(sortedEntities) do
 		if entity.draw then
 			entity:draw()
 		end
 	end
 
 	-- Draw collision boxes if debug enabled
-	if GameConfig and GameConfig.debug.showCollisions then
-		love.graphics.setColor(1, 0, 0, 0.3)
-		for _, entity in ipairs(self.entities) do
-			if entity.x and entity.y and entity.w and entity.h then
-				love.graphics.rectangle("line", entity.x, entity.y, entity.w, entity.h)
-			end
-		end
-		love.graphics.setColor(1, 1, 1)
-	end
+	-- if GameConfig and GameConfig.debug.showCollisions then
+	-- 	love.graphics.setColor(1, 0, 0, 0.3)
+	-- 	for _, entity in ipairs(self.entities) do
+	-- 		if entity.x and entity.y and entity.w and entity.h then
+	-- 			love.graphics.rectangle("line", entity.x, entity.y, entity.w, entity.h)
+	-- 		end
+	-- 	end
+	-- 	love.graphics.setColor(1, 1, 1)
+	-- end
 end
 
 function EntityManager:clear()
