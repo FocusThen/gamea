@@ -7,6 +7,7 @@ function BaseEntity:new(x, y, w, h)
 	self.h = h or 32
 	self.vx = 0
 	self.vy = 0
+  self.zIndex = 0
 
 	-- Entity properties
 	self.type = "entity"

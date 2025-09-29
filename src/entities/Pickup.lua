@@ -6,6 +6,7 @@ function Pickup:new(x, y, pickupType, value)
 	self.type = "pickup"
 	self.pickupType = pickupType or "coin"
 	self.value = value or 10
+	self.zIndex = 3
 
 	-- Pickups are not solid
 	self.solid = false
@@ -20,6 +21,7 @@ function Pickup:new(x, y, pickupType, value)
 	-- Spin animation
 	self.spinSpeed = 3
 	self.spinAngle = 0
+
 end
 
 function Pickup:update(dt)
@@ -52,7 +54,7 @@ end
 function Pickup:collect(player) -- player
 	if self.pickupType == "coin" then
 		print("+1 coin")
-  elseif self.pickupType == "fake" then
+  elseif self.pickupType == "fake_coin" then
     player:die()
 	end
 

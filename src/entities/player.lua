@@ -4,6 +4,7 @@ local Player = BaseEntity:extend()
 function Player:new(x, y)
 	Player.super.new(self, x, y, 32, 32)
 	self.type = "player"
+	self.zIndex = 10
 
 	-- Player specific properties
 	self.health = 1
@@ -122,20 +123,21 @@ function Player:filter(item, other)
 		else
 			return nil
 		end
-	elseif other.type == "pickup" then
+	end
+	if not other.solid then
 		return nil
 	end
 	return "slide"
 end
 
 function Player:handleCollision(other, collision)
-  if other.canKill then
-    self:handleEnemyCollision(other, collision) -- any cross = dead
-  end
+	if other.canKill then
+		self:handleEnemyCollision(other, collision) -- any cross = dead
+	end
 end
 
 function Player:handleEnemyCollision(enemy, collision)
-  self:takeDamage(1) -- basically die
+	self:takeDamage(1) -- basically die
 end
 
 function Player:takeDamage(amount)
@@ -151,7 +153,7 @@ function Player:die()
 	end
 	self.isDying = true
 
-  GSM:setState("gameover")
+	GSM:setState("gameover")
 end
 
 function Player:draw()

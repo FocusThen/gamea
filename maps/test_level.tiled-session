@@ -1,0 +1,29 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "test_level.tmx",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "test_level.tmx": {
+            "scale": 0.7009,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 473.676701383935,
+                "y": 541.4467113710944
+            }
+        }
+    },
+    "last.exportedFilePath": "/Users/mtezcan/Workspace/Personal/luaboi/game1/maps",
+    "map.lastUsedExportFilter": "Lua files (*.lua)",
+    "map.lastUsedFormat": "tmx",
+    "openFiles": [
+        "test_level.tmx"
+    ],
+    "project": "test_level.tiled-project",
+    "recentFiles": [
+        "test_level.tmx"
+    ]
+}

@@ -7,6 +7,7 @@ function Ground:new(x, y, w, h, groundType)
 	self.gravity = false -- Static objects don't need gravity
 	self.vx = 0
 	self.vy = 0
+	self.zIndex = -10
 end
 
 function Ground:update(_)
