@@ -83,9 +83,9 @@ function LevelManager:parseMapLayers()
 	local spawnLayer = self.currentMap.layers["Spawn"]
 	if spawnLayer and spawnLayer.objects then
 		for _, obj in ipairs(spawnLayer.objects) do
-				self.playerSpawnX = obj.x
-				self.playerSpawnY = obj.y
-				break
+			self.playerSpawnX = obj.x
+			self.playerSpawnY = obj.y
+			break
 		end
 	end
 
