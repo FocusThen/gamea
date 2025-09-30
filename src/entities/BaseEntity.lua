@@ -7,14 +7,14 @@ function BaseEntity:new(x, y, w, h)
 	self.h = h or 32
 	self.vx = 0
 	self.vy = 0
-  self.zIndex = 0
+	self.zIndex = 0
 
 	-- Entity properties
 	self.type = "entity"
 	self.active = true
 	self.visible = true
 	self.destroyed = false
-  self.canKill = false
+	self.canKill = false
 
 	-- Physics properties
 	self.solid = true
@@ -151,6 +151,14 @@ function BaseEntity:distanceTo(other)
 	local x1, y1 = self:getCenter()
 	local x2, y2 = other:getCenter()
 	return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
+end
+
+--AABB collision check
+function BaseEntity:isCollidingWith(other)
+	return self.x < other.x + other.w
+		and other.x < self.x + self.w
+		and self.y < other.y + other.h
+		and other.y < self.y + self.h
 end
 
 return BaseEntity

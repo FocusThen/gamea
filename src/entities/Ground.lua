@@ -1,8 +1,9 @@
 local BaseEntity = require("src.entities.BaseEntity")
 local Ground = BaseEntity:extend()
 
-function Ground:new(x, y, w, h, groundType)
+function Ground:new(id, x, y, w, h, groundType)
 	Ground.super.new(self, x, y, w, h)
+	self.entity_id = id
 	self.type = groundType or "ground"
 	self.gravity = false -- Static objects don't need gravity
 	self.vx = 0

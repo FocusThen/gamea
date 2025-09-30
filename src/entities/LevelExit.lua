@@ -1,8 +1,9 @@
 local BaseEntity = require("src.entities.BaseEntity")
 local LevelExit = BaseEntity:extend()
 
-function LevelExit:new(x, y)
+function LevelExit:new(id, x, y)
 	LevelExit.super.new(self, x, y, 32, 48)
+  self.entity_id = id
 	self.type = "exit"
 	self.solid = false
 	self.gravity = false
@@ -42,7 +43,7 @@ function LevelExit:activate()
 
 	-- Load next level with transition
 	Timer.after(0.5, function()
-    print("hello ?")
+		print("hello ?")
 		LM:loadNextLevel(true)
 	end)
 end

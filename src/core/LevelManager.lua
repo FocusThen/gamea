@@ -95,8 +95,7 @@ function LevelManager:parseMapLayers()
 		local Ground = require("src.entities.Ground")
 
 		for _, obj in ipairs(collisionLayer.objects) do
-			local groundType = obj.type or "ground"
-			EM:addEntity(Ground(obj.x, obj.y, obj.width, obj.height, groundType))
+			EM:addEntity(Ground(obj.id, obj.x, obj.y, obj.width, obj.height))
 		end
 	end
 
@@ -112,14 +111,15 @@ end
 function LevelManager:createEntityFromTiledObject(obj)
 	local entityType = obj.type or obj.name
 
-	if entityType == "coin" then
+	if entityType == "coin" or entityType == "fake_coin" then
 		local Pickup = require("src.entities.Pickup")
-		local pickupType = obj.properties and obj.properties.pickupType or "coin"
-		local value = obj.properties and obj.properties.value or 10
-		EM:addEntity(Pickup(obj.x, obj.y, pickupType, value))
+		EM:addEntity(Pickup(obj.id, obj.x, obj.y, entityType))
 	elseif entityType == "exit" then
 		local LevelExit = require("src.entities.LevelExit")
-		EM:addEntity(LevelExit(obj.x, obj.y))
+		EM:addEntity(LevelExit(obj.id, obj.x, obj.y))
+	elseif entityType == "trigger" then
+		local Trigger = require("src.entities.Trigger")
+		EM:addEntity(Trigger(obj.id, obj.x, obj.y, obj.width, obj.height, obj.properties))
 	else
 		print("Unknown entity type in Tiled: " .. entityType)
 	end

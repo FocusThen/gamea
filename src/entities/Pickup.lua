@@ -1,11 +1,11 @@
 local BaseEntity = require("src.entities.BaseEntity")
 local Pickup = BaseEntity:extend()
 
-function Pickup:new(x, y, pickupType, value)
+function Pickup:new(id, x, y, pickupType)
 	Pickup.super.new(self, x, y, 16, 16)
+	self.entity_id = id
 	self.type = "pickup"
 	self.pickupType = pickupType or "coin"
-	self.value = value or 10
 	self.zIndex = 3
 
 	-- Pickups are not solid
@@ -21,7 +21,6 @@ function Pickup:new(x, y, pickupType, value)
 	-- Spin animation
 	self.spinSpeed = 3
 	self.spinAngle = 0
-
 end
 
 function Pickup:update(dt)
@@ -44,18 +43,11 @@ function Pickup:update(dt)
 	Pickup.super.update(self, dt)
 end
 
-function Pickup:isCollidingWith(other)
-	return self.x < other.x + other.w
-		and other.x < self.x + self.w
-		and self.y < other.y + other.h
-		and other.y < self.y + self.h
-end
-
 function Pickup:collect(player) -- player
 	if self.pickupType == "coin" then
 		print("+1 coin")
-  elseif self.pickupType == "fake_coin" then
-    player:die()
+	elseif self.pickupType == "fake_coin" then
+		player:die()
 	end
 
 	EM:removeEntity(self)

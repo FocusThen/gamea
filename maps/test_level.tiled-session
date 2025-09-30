@@ -23,6 +23,7 @@
         "test_level.tmx"
     ],
     "project": "test_level.tiled-project",
+    "property.type": "float",
     "recentFiles": [
         "test_level.tmx",
         "test_2.tmx"

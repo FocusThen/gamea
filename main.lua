@@ -53,7 +53,7 @@ end
 
 function love.update(dt)
 	-- Update tween library
-	-- Flux.update(dt)
+	Flux.update(dt)
   Timer.update(dt)
 
 	-- -- Update effects
