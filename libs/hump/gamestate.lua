@@ -74,7 +74,7 @@ function GS.current()
 	return stack[#stack]
 end
 
--- XXX: don't overwrite love.errorhandler by default:
+--      don't overwrite love.errorhandler by default:
 --      this callback is different than the other callbacks
 --      (see http://love2d.org/wiki/love.errorhandler)
 --      overwriting thi callback can result in random crashes (issue #95)

@@ -388,7 +388,6 @@ function Map:setTileData(layer)
 		for x = 1, layer.width do
 			local gid = layer.data[i]
 
-			-- NOTE: Empty tiles have a GID of 0
 			if gid > 0 then
 				map[y][x] = self.tiles[gid] or self:setFlippedGID(gid)
 			end
@@ -554,7 +553,6 @@ function Map:addNewLayerTile(layer, chunk, tile, x, y)
 		oy    = 0
 	}
 
-	-- NOTE: STI can run headless so it is not guaranteed that a batch exists.
 	if batch then
 		instance.batch = batch
 		instance.id = batch:add(tile.quad, tileX, tileY, tile.r, tile.sx, tile.sy)
@@ -595,7 +593,6 @@ function Map:set_batches(layer, chunk)
 
 		for y = startY, endY, incrementY do
 			for x = startX, endX, incrementX do
-				-- NOTE: Cannot short circuit this since it is valid for tile to be assigned nil
 				local tile
 				if chunk then
 					tile = chunk.data[y][x]
@@ -612,7 +609,6 @@ function Map:set_batches(layer, chunk)
 		if self.staggeraxis == "y" then
 			for y = 1, (chunk and chunk.height or layer.height) do
 				for x = 1, (chunk and chunk.width or layer.width) do
-					-- NOTE: Cannot short circuit this since it is valid for tile to be assigned nil
 					local tile
 					if chunk then
 						tile = chunk.data[y][x]
@@ -642,7 +638,6 @@ function Map:set_batches(layer, chunk)
 					for x = _x, (chunk and chunk.width or layer.width), 2 do
 						i = i + 1
 
-						-- NOTE: Cannot short circuit this since it is valid for tile to be assigned nil
 						local tile
 						if chunk then
 							tile = chunk.data[y][x]
@@ -897,15 +892,15 @@ function Map:draw(tx, ty, sx, sy)
 	-- Map is translated to correct position so the right section is drawn
 	lg.push()
 	lg.origin()
-	
+
 	--[[
 		This snippet comes from 'monolifed' on the Love2D forums,
-		however it was more or less exactly the same code I was already writing 
-		to implement the same parallax scrolling. I found his before 
+		however it was more or less exactly the same code I was already writing
+		to implement the same parallax scrolling. I found his before
 		testing and polishing mine
 		https://love2d.org/forums/viewtopic.php?p=238378#p238378
 
-		previous code commented below the new. 
+		previous code commented below the new.
 
 	]]
 
@@ -950,7 +945,7 @@ end
 function Map.drawLayer(_, layer)
 	local r,g,b,a = lg.getColor()
 	-- if the layer has a tintcolor set
-	if layer.tintcolor then 
+	if layer.tintcolor then
 		r, g, b, a = unpack(layer.tintcolor)
 		a = a or 255 -- alpha may not be specified
 		lg.setColor(r/255, g/255, b/255, a/255) -- Tiled uses 0-255
@@ -971,7 +966,6 @@ function Map:drawTileLayer(layer)
 
 	assert(layer.type == "tilelayer", "Invalid layer type: " .. layer.type .. ". Layer must be of type: tilelayer")
 
-	-- NOTE: This does not take into account any sort of draw range clipping and will always draw every chunk
 	if layer.chunks then
 		for _, chunk in ipairs(layer.chunks) do
 			for _, batch in pairs(chunk.batches) do
@@ -1078,12 +1072,12 @@ function Map:drawImageLayer(layer)
 		if layer.repeaty then
 			local x = imagewidth
 			local y = imageheight
-			while y < self.height * self.tileheight do 
+			while y < self.height * self.tileheight do
 				lg.draw(layer.image, x, y)
 				-- if we are *also* repeating on X
-				if layer.repeatx then 
+				if layer.repeatx then
 					x = x + imagewidth
-					while x < self.width * self.tilewidth do 
+					while x < self.width * self.tilewidth do
 						lg.draw(layer.image, x, y)
 						x = x + imagewidth
 					end
@@ -1093,7 +1087,7 @@ function Map:drawImageLayer(layer)
 		-- if we're repeating on X alone...
 		elseif layer.repeatx then
 			local x = imagewidth
-			while x < self.width * self.tilewidth do 
+			while x < self.width * self.tilewidth do
 				lg.draw(layer.image, x, layer.y)
 				x = x + imagewidth
 			end

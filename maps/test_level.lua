@@ -10,7 +10,7 @@ return {
   tilewidth = 32,
   tileheight = 32,
   nextlayerid = 8,
-  nextobjectid = 37,
+  nextobjectid = 39,
   properties = {},
   tilesets = {},
   layers = {
@@ -337,7 +337,7 @@ return {
           name = "trigger",
           type = "trigger",
           shape = "rectangle",
-          x = 224,
+          x = 384,
           y = 576,
           width = 32.6195,
           height = 33.1177,
@@ -349,6 +349,19 @@ return {
             ["targetId"] = { id = 36 },
             ["triggerType"] = "move"
           }
+        },
+        {
+          id = 37,
+          name = "kill_zone",
+          type = "kill_zone",
+          shape = "rectangle",
+          x = 353.439,
+          y = 626.455,
+          width = 255.026,
+          height = 11.6402,
+          rotation = 0,
+          visible = true,
+          properties = {}
         }
       }
     },
@@ -368,8 +381,8 @@ return {
       objects = {
         {
           id = 13,
-          name = "",
-          type = "",
+          name = "Player",
+          type = "Player",
           shape = "point",
           x = 96,
           y = 544,

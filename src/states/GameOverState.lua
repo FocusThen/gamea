@@ -18,6 +18,7 @@ end
 
 function GameOverState:keypressed(key)
 	if key == "r" then
+		LM:reloadCurrentLevel()
 		GSM:setState("game")
 	elseif key == "escape" then
 		GSM:setState("menu")

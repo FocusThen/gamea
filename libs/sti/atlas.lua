@@ -41,7 +41,6 @@ function module.Atlas( files, sort, ids, pow2 )
         return images
     end
 
-    --TODO: understand this func
     local function add(root, id, w, h)
         if root.left or root.right then
             if root.left then
