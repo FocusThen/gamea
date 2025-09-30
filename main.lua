@@ -91,6 +91,10 @@ function love.keyreleased(key)
 	GSM:keyreleased(key)
 end
 
+function love.resize(w, h)
+    GSM:resize(w, h)
+end
+
 function drawDebugInfo()
 	love.graphics.setColor(1, 1, 1)
 	love.graphics.print("FPS: " .. love.timer.getFPS(), 10, 10)

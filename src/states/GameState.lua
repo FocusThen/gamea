@@ -1,19 +1,23 @@
+local cam = require("src.utilities.cam")
 local GameState = Class:extend()
 
 function GameState:new()
 	self.camera = nil
 	self.map = nil
 	self.player = nil
+	self.cam = cam()
 end
 
 function GameState:enter()
-	self.camera = Camera()
+	self.camera = self.cam.cam
 
 	-- Load level using LevelManager
 	if not LM:getCurrentLevelName() or LM:getCurrentLevelName() == "none" then
 		-- Load first level or test level
 		LM:loadLevel(LM.LEVELS.TEST, false) -- or LM.LEVELS.LEVEL_1
 	end
+
+	self.cam:setupCameraForMap()
 
 	-- Camera will follow player (created by LevelManager)
 	if _G.player and self.camera then
@@ -22,19 +26,7 @@ function GameState:enter()
 end
 
 function GameState:update(dt)
-	-- Update camera to follow player smoothly
-	if _G.player and self.camera then
-		local targetX = _G.player.x + _G.player.w / 2
-		local targetY = _G.player.y + _G.player.h / 2
-
-		local currentX, currentY = self.camera:position()
-		local lerpSpeed = 5
-		local newX = currentX + (targetX - currentX) * lerpSpeed * dt
-		local newY = currentY + (targetY - currentY) * lerpSpeed * dt
-
-		self.camera:lookAt(newX, newY)
-	end
-
+	self.cam:update(dt)
 	-- Update Tiled map
 	local map = LM:getCurrentMap()
 	if map then
@@ -92,6 +84,10 @@ end
 
 function GameState:exit()
 	-- Cleanup when leaving state
+end
+
+function GameState:resize(w, h)
+	self.cam:setupCameraForMap()
 end
 
 return GameState

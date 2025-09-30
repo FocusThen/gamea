@@ -16,7 +16,6 @@ function GameOverState:draw()
 end
 
 
-
 function GameOverState:keypressed(key)
 	if key == "r" then
 		GSM:setState("game")

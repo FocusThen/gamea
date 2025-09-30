@@ -8,11 +8,11 @@
     ],
     "fileStates": {
         "test_level.tmx": {
-            "scale": 0.7009,
-            "selectedLayer": 2,
+            "scale": 0.9802,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 473.676701383935,
-                "y": 541.4467113710944
+                "x": 481.5343807386248,
+                "y": 518.7716792491328
             }
         }
     },
@@ -24,6 +24,7 @@
     ],
     "project": "test_level.tiled-project",
     "recentFiles": [
-        "test_level.tmx"
+        "test_level.tmx",
+        "test_2.tmx"
     ]
 }

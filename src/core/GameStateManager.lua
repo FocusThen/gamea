@@ -52,4 +52,10 @@ function GameStateManager:keyreleased(key)
 	end
 end
 
+function GameStateManager:resize(w, h)
+	if self.states[self.currentState] and self.states[self.currentState].resize then
+		self.states[self.currentState]:resize(w, h)
+	end
+end
+
 return GameStateManager
