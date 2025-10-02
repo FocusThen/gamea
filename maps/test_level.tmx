@@ -94,7 +94,6 @@
     <property name="triggerType" value="move"/>
    </properties>
   </object>
-  <object id="37" name="kill_zone" type="kill_zone" x="353.439" y="626.455" width="255.026" height="11.6402"/>
  </objectgroup>
  <objectgroup color="#ec8c35" id="6" name="Spawn">
   <object id="13" name="Player" type="Player" x="96" y="544">
