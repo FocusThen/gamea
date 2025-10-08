@@ -5,6 +5,7 @@ function Player:new(x, y)
 	Player.super.new(self, x, y, 32, 32)
 	self.type = "player"
 	self.zIndex = 10
+  self.alive = true
 
 	-- Player specific properties
 	self.health = 1
@@ -47,6 +48,10 @@ function Player:loadAssets()
 end
 
 function Player:update(dt)
+	if not self.alive then
+		return
+	end
+
 	self:handleInput()
 	self:updateState()
 
@@ -113,6 +118,23 @@ function Player:updateState()
 	end
 end
 
+-- function Player:dash()
+-- 	if not self.canDash then
+-- 		return
+-- 	end
+--
+-- 	self.vx = self.facing * 400
+-- 	self.canDash = false
+--
+-- 	-- Dash particles
+-- 	local direction = self.facing > 0 and math.pi or 0
+-- 	PM:emit("dashTrail", self.x + self.w / 2, self.y + self.h / 2, direction + math.pi)
+--
+-- 	Timer.after(1.0, function()
+-- 		self.canDash = true
+-- 	end)
+-- end
+
 function Player:filter(item, other)
 	if other.type == "ground" or other.type == "wall" then
 		return "slide"
@@ -148,16 +170,37 @@ function Player:takeDamage(amount)
 end
 
 function Player:die()
-	if self.isDying then
+	if not self.alive then
 		return
 	end
-	self.isDying = true
+	createExplosion(self.x + self.w / 2, self.y + self.h / 2)
+	self.alive = false
 
-	GSM:setState("gameover")
+  -- GSM:setState("gameover")
 end
 
 function Player:draw()
 	Player.super.draw(self)
+end
+
+function createExplosion(x, y)
+	-- Particle explosion
+	PM:emit("explosion", x, y)
+
+	-- Camera shake (add to GameState)
+	if GSM.states.game and GSM.states.game.camera then
+		local cam = GSM.states.game.camera
+
+		-- Simple shake
+		for i = 1, 10 do
+			Timer.after(i * 0.05, function()
+				local shakeX = (math.random() - 0.5) * 20
+				local shakeY = (math.random() - 0.5) * 20
+				local cx, cy = cam:position()
+				cam:lookAt(cx + shakeX, cy + shakeY)
+			end)
+		end
+	end
 end
 
 return Player

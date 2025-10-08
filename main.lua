@@ -13,7 +13,7 @@ local GameStateManager = require("src.core.GameStateManager")
 local EntityManager = require("src.core.EntityManager")
 local AssetManager = require("src.core.AssetManager")
 local LevelManager = require("src.core.LevelManager")
-
+local ParticleManager = require("src.core.ParticleManager")
 
 -- Game configuration
 _G.GameConfig = {
@@ -36,13 +36,14 @@ function love.load()
 	-- Setup window
 	love.graphics.setDefaultFilter("nearest", "nearest")
 
-  World = Bump.newWorld(32)
+	World = Bump.newWorld(32)
 
 	-- Initialize managers
 	GSM = GameStateManager()
 	EM = EntityManager()
 	AM = AssetManager()
-  LM = LevelManager()
+	LM = LevelManager()
+	PM = ParticleManager()
 
 	-- Load initial assets
 	AM:loadAssets()
@@ -54,10 +55,10 @@ end
 function love.update(dt)
 	-- Update tween library
 	Flux.update(dt)
-  Timer.update(dt)
+	Timer.update(dt)
 
 	-- -- Update effects
-	-- PM:update(dt)
+	PM:update(dt)
 
 	-- Update current game state
 	GSM:update(dt)
@@ -92,7 +93,7 @@ function love.keyreleased(key)
 end
 
 function love.resize(w, h)
-    GSM:resize(w, h)
+	GSM:resize(w, h)
 end
 
 function drawDebugInfo()

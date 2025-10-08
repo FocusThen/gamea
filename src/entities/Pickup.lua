@@ -46,6 +46,7 @@ end
 function Pickup:collect(player) -- player
 	if self.pickupType == "coin" then
 		print("+1 coin")
+    PM:emit("coinPickup", self.x + self.w/2, self.y + self.h/2)
 	elseif self.pickupType == "fake_coin" then
 		player:die()
 	end
