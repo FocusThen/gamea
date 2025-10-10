@@ -1,206 +1,196 @@
-local BaseEntity = require("src.entities.BaseEntity")
-local Player = BaseEntity:extend()
+local Entity = require("src.entities.entity")
+local Player = Entity:extend()
 
 function Player:new(x, y)
-	Player.super.new(self, x, y, 32, 32)
-	self.type = "player"
-	self.zIndex = 10
-  self.alive = true
+	Player.super.new(self)
+	self.x = x
+	self.y = y
+	self.w = 32
+	self.h = 32
+	self.kind = Entity_Kinds.PLAYER
 
-	-- Player specific properties
-	self.health = 1
-	self.maxHealth = 1
-	self.speed = 200
-	self.jumpPower = 500
+	--- Entity properties
+	self.speed = 100
+	self.xVel = 0
+	self.yVel = 0
+	self.jumpTimer = nil
+	self.jumpVel = CONFIG.playerJumpInitialVelocity
+	self.jumpTimeToApex = CONFIG.playerJumpTimeToApex
+	self.onGround = false
+	self.gravityScale = 1
 
-	-- Movement state
-	self.state = "idle" -- idle, walking, jumping, falling
-	self.facing = 1 -- 1 = right, -1 = left
-
-	-- Input handling
-	self.input = {
-		left = false,
-		right = false,
-		jump = false,
-		jumpPressed = false,
-	}
-
-	-- Coyote time for better jumping
-	self.coyoteTime = 0
-	self.coyoteTimeMax = 0.1
-
-	-- Load sprite and animations
-	self:loadAssets()
-end
-
-function Player:loadAssets()
-	self.sprite = AM:getTexture("player")
-
-	-- Setup animations if available
-	if AM:getAnimation("playerIdle") then
-		self.animations = {
-			idle = AM:getAnimation("playerIdle"),
-			walk = AM:getAnimation("playerWalk"),
-			jump = AM:getAnimation("playerJump"),
-		}
-		self.animation = self.animations.idle
-	end
+	--- Entity Physics
+	World:add(self, self.x, self.y, self.w, self.h)
+	self:initControls()
 end
 
 function Player:update(dt)
-	if not self.alive then
-		return
+	self.controls:update()
+
+	local horiz = self.controls:get("right") - self.controls:get("left")
+	local jumpPressed = self.controls:pressed("jump")
+	local jumpReleased = self.controls:released("jump")
+
+	-- if jumpPressed and self:isTouchingOpenDoor() then
+	-- Game:advanceLevel()
+	if self.onGround and jumpPressed then
+		self:jump()
 	end
 
-	self:handleInput()
-	self:updateState()
-
-	-- Update coyote time
-	if self.onGround then
-		self.coyoteTime = self.coyoteTimeMax
-	else
-		self.coyoteTime = math.max(0, self.coyoteTime - dt)
-	end
-
-	-- Apply movement
-	if self.input.left then
-		self.vx = -self.speed
-		self.facing = -1
-		self.flipX = true
-	elseif self.input.right then
-		self.vx = self.speed
-		self.facing = 1
-		self.flipX = false
-	else
-		self.vx = self.vx * 0.8 -- Friction
-		if math.abs(self.vx) < 10 then
-			self.vx = 0
+	if jumpReleased then
+		local cutoff = -3
+		if self.yVel < cutoff then
+			self.yVel = cutoff
 		end
 	end
 
-	-- Jumping
-	if self.input.jumpPressed and (self.onGround or self.coyoteTime > 0) then
-		self.vy = -self.jumpPower
-		self.coyoteTime = 0
-		self.input.jumpPressed = false
+	self.xVel = (horiz * dt * self.speed)
+
+	self:applyGravity(dt)
+
+	if not self._remove then
+		self.onGround = false
+		self:moveColliding(self.xVel, self.yVel)
 	end
 
-	Player.super.update(self, dt)
-end
+	-- if self:allowedToMove() then
+	-- update animations
+	-- end
 
-function Player:handleInput()
-	self.input.left = love.keyboard.isDown("left", "a")
-	self.input.right = love.keyboard.isDown("right", "d")
-	self.input.jump = love.keyboard.isDown("space", "up", "w")
-
-	-- Handle jump press (for coyote time)
-	if self.input.jump and not self.wasJumpPressed then
-		self.input.jumpPressed = true
-	end
-	self.wasJumpPressed = self.input.jump
-end
-
-function Player:updateState()
-	if not self.onGround then
-		self.state = self.vy < 0 and "jumping" or "falling"
-	elseif math.abs(self.vx) > 10 then
-		self.state = "walking"
-	else
-		self.state = "idle"
-	end
-
-	-- Update animation based on state
-	if self.animations then
-		local newAnim = self.animations[self.state] or self.animations.idle
-		if self.animation ~= newAnim then
-			self.animation = newAnim:clone()
-		end
-	end
-end
-
--- function Player:dash()
--- 	if not self.canDash then
--- 		return
--- 	end
---
--- 	self.vx = self.facing * 400
--- 	self.canDash = false
---
--- 	-- Dash particles
--- 	local direction = self.facing > 0 and math.pi or 0
--- 	PM:emit("dashTrail", self.x + self.w / 2, self.y + self.h / 2, direction + math.pi)
---
--- 	Timer.after(1.0, function()
--- 		self.canDash = true
--- 	end)
--- end
-
-function Player:filter(item, other)
-	if other.type == "ground" or other.type == "wall" then
-		return "slide"
-	elseif other.type == "platform" then
-		-- One-way platforms
-		if self.vy > 0 then
-			return "slide"
-		else
-			return nil
-		end
-	end
-	if not other.solid then
-		return nil
-	end
-	return "slide"
-end
-
-function Player:handleCollision(other, collision)
-	if other.canKill then
-		self:handleEnemyCollision(other, collision) -- any cross = dead
-	end
-end
-
-function Player:handleEnemyCollision(enemy, collision)
-	self:takeDamage(1) -- basically die
-end
-
-function Player:takeDamage(amount)
-	self.health = math.max(0, self.health - amount)
-	if self.health <= 0 then
-		self:die()
-	end
-end
-
-function Player:die()
-	if not self.alive then
-		return
-	end
-	createExplosion(self.x + self.w / 2, self.y + self.h / 2)
-	self.alive = false
-
-  -- GSM:setState("gameover")
+	--  self.currentAnim = self.anims[self.state .. self.direction]
+	-- self.currentAnim:update(dt)
 end
 
 function Player:draw()
-	Player.super.draw(self)
+	lg.setColor(CONFIG.COLORS.WHITE)
+	-- local ox = self.offsetX
+	-- local oy = self.offsetY
+	-- local drawX = (self.x - ox) * CONFIG.scale
+	-- local drawY = (self.y - oy) * CONFIG.scale
+	-- local r = 0
+	-- local sx = CONFIG.scale
+	-- local sy = CONFIG.scale
+	-- self.currentAnim:draw(self.image, drawX, drawY, r, sx, sy)
+
+	lg.rectangle("fill", self.x, self.y, self.w, self.h)
 end
 
-function createExplosion(x, y)
-	-- Particle explosion
-	PM:emit("explosion", x, y)
+function Player:jump()
+	self.yVel = -self.jumpVel
+	self.onGround = false
+	-- Game:playSFX("jump")
+end
 
-	-- Camera shake (add to GameState)
-	if GSM.states.game and GSM.states.game.camera then
-		local cam = GSM.states.game.camera
+function Player:filter(item, other)
+	if other.kind == Entity_Kinds.COLLECTIBLE then
+		return "cross"
+	elseif other.kind == Entity_Kinds.DOOR then
+		return "cross"
+	elseif other.kind == Entity_Kinds.NONE then
+		return nil
+	else
+		return "slide" -- ground
+	end
+end
 
-		-- Simple shake
-		for i = 1, 10 do
-			Timer.after(i * 0.05, function()
-				local shakeX = (math.random() - 0.5) * 20
-				local shakeY = (math.random() - 0.5) * 20
-				local cx, cy = cam:position()
-				cam:lookAt(cx + shakeX, cy + shakeY)
-			end)
+function Player:removeFromBumpWorld()
+	World:remove(self)
+end
+
+function Player:onCollision(cols, len)
+	for i = 1, len do
+		local col = cols[i]
+
+		if col.other.canKill then
+			self:kill()
+		elseif col.other.ground then
+			if col.normal.y == -1 or col.normal.y == 1 then
+				self.yVel = 0
+			end
+
+			if col.normal.y == -1 then
+				self.onGround = true
+				-- if self.state == "jump" then
+				-- 	self:addLandingDust()
+				-- end
+			end
+		elseif col.other.kind == Entity_Kinds.COLLECTIBLE then
+			self:collectItem(col.other)
 		end
 	end
 end
+
+function Player:initControls()
+	local options = {}
+
+	options.controls = {
+		left = { "key:left", "key:a", "axis:leftx-", "button:dpleft" },
+		right = { "key:right", "key:d", "axis:leftx+", "button:dpright" },
+		up = { "key:up", "key:w", "axis:lefty-", "button:dpup" },
+		down = { "key:down", "key:s", "axis:lefty+", "button:dpdown" },
+		jump = {
+			"key:x",
+			"key:space",
+			"button:a",
+			"button:x",
+			"button:dpup",
+			"button:rightshoulder",
+			"axis:lefty-",
+			"axis:triggerright+",
+			"key:up",
+			"key:w",
+		},
+		cancel = { "key:escape", "button:b" },
+	}
+	options.joystick = love.joystick.getJoysticks()[1]
+	self.controls = baton.new(options)
+end
+
+function Player:collectItem(item)
+	item:collect()
+end
+
+function Player:isTouchingOpenDoor()
+	local x, y = self.x, self.y
+	local w, h = self.width, self.height
+	local _, len = self.world:queryRect(x, y, w, h, function(item)
+		return item.isDoor and item.isOpen
+	end)
+	if len > 0 then
+		return true
+	else
+		return false
+	end
+end
+
+function Player:getMidpoint()
+	local x, y = self.x, self.y
+	local width, height = self.width, self.height
+	return x + (width / 2), y + (height / 2)
+end
+
+function Player:kill()
+	if self.state == "kill" then
+		return
+	else
+		self.state = "kill"
+		-- self.currentAnim = self.anims.killRight -- thats triggers after kill animation function
+		-- Game:incrementDeathTotals()
+		-- Game:playSFX("hit")
+		-- Timer.after(0.4, function()
+		-- 	Game:playSFX("death")
+		-- 	Game:playSFX("death_poof")
+		-- end)
+	end
+end
+
+-- function Player:afterKillAnimation()
+-- 	local delay = CONFIG.respawnDelay
+-- 	Timer.after(delay, function()
+-- 		Game:respawnPlayer(self.respawnX, self.respawnY)
+-- 	end)
+-- 	self:removeFromBumpWorld()
+-- 	self._remove = true
+-- end
 
 return Player
