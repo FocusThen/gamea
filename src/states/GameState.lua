@@ -49,6 +49,7 @@ function GameState:draw()
 
 	-- Draw all entities
 	EM:draw()
+  PM:draw()
 
 	self.camera:detach()
 

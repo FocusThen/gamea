@@ -176,7 +176,7 @@ function Player:die()
 	createExplosion(self.x + self.w / 2, self.y + self.h / 2)
 	self.alive = false
 
-  -- GSM:setState("gameover")
+  GSM:setState("gameover")
 end
 
 function Player:draw()

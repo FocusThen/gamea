@@ -16,7 +16,7 @@ TODO:
 - [ ] tiled change layer names
 - [ ] spikes
 - [ ] particle effects
-- [ ] basic level transition system
+- [ ] basic level transition system - actually i have but i need to add enter and exit animations
 
 END GAME TODO:
 
