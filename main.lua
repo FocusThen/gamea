@@ -1,104 +1,84 @@
---libs
-Class = require("libs.classic.classic")
-Bump = require("libs.bump.bump")
-Anim8 = require("libs.anim8.anim8")
-Flux = require("libs.flux.flux")
-Sti = require("libs.sti")
-Vector = require("libs.hump.vector")
-Timer = require("libs.hump.timer")
-Camera = require("libs.hump.camera")
+-- Libraries
+Object = require("lib.classic.classic")
+bump = require("lib.bump.bump")
+sti = require("lib.sti")
+anim8 = require("lib.anim8.anim8")
+flux = require("lib.flux.flux")
 
--- Load core systems
-local GameStateManager = require("src.core.GameStateManager")
-local EntityManager = require("src.core.EntityManager")
-local AssetManager = require("src.core.AssetManager")
-local LevelManager = require("src.core.LevelManager")
-local ParticleManager = require("src.core.ParticleManager")
+--- Load all files
+require("src.utils")
+require("src.resources")
+require("src.loadMap")
+---
 
--- Game configuration
-_G.GameConfig = {
-	window = {
-		width = 1024,
-		height = 768,
-	},
-	physics = {
-		gravity = 1200,
-	},
-	debug = {
-		enabled = false,
-		showCollisions = false,
-	},
-}
+stateMachine = require("src.states.stateMachine")
+sceneEffects = require("src.sceneEffects")
+
+local canvas
+local screen_scale = 3
 
 function love.load()
-	math.randomseed(os.time())
+	canvas = love.graphics.newCanvas(208, 224)
+	canvas:setFilter("nearest", "nearest")
+	--- World
+	World = bump.newWorld(16)
 
-	-- Setup window
-	love.graphics.setDefaultFilter("nearest", "nearest")
+	stateMachine = stateMachine()
+	sceneEffects = sceneEffects(canvas)
 
-	World = Bump.newWorld(32)
-
-	-- Initialize managers
-	GSM = GameStateManager()
-	EM = EntityManager()
-	AM = AssetManager()
-	LM = LevelManager()
-	PM = ParticleManager()
-
-	-- Load initial assets
-	AM:loadAssets()
-
-	-- Start with menu state (or game state for testing)
-	GSM:setState("menu") -- Change to "menu" for menu system
+	stateMachine:setState("title") --- Title screen
 end
 
 function love.update(dt)
-	-- Update tween library
-	Flux.update(dt)
-	Timer.update(dt)
-
-	-- -- Update effects
-	PM:update(dt)
-
-	-- Update current game state
-	GSM:update(dt)
-
-	-- Update entity manager
-	EM:update(dt)
+	flux.update(dt)
+	stateMachine:update(dt)
 end
 
 function love.draw()
-	love.graphics.clear({ 0.2, 0.3, 0.4 })
+	love.graphics.setCanvas(canvas)
+	love.graphics.clear()
+	love.graphics.setBlendMode("alpha")
+	love.graphics.setColor(1, 1, 1, 1)
 
-	-- Draw current game state
-	GSM:draw()
+	---
+	stateMachine:draw()
+	---
+	sceneEffects:draw()
+	---
 
-	-- Draw debug info if enabled
-	if GameConfig.debug.enabled then
-		drawDebugInfo()
-	end
+	love.graphics.setCanvas()
+	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.setBlendMode("alpha", "premultiplied")
+	love.graphics.draw(
+		canvas,
+		math.floor(love.graphics.getWidth() / 2 - canvas:getWidth() * screen_scale / 2),
+		math.floor(love.graphics.getHeight() / 2 - canvas:getHeight() * screen_scale / 2),
+		0,
+		screen_scale,
+		screen_scale
+	)
 end
 
-function love.keypressed(key)
-	GSM:keypressed(key)
-
-	-- Global debug toggle
-	if key == "f1" then
-		GameConfig.debug.enabled = not GameConfig.debug.enabled
+function love.keypressed(k)
+	-- Allow ctrl+r for reset, and ctrl+q for quit
+	if love.keyboard.isDown("lctrl", "rctrl") then
+		if k == "r" then
+			love.event.quit("restart")
+		elseif k == "q" then
+			love.event.quit()
+		end
 	end
+
+	stateMachine:keypressed(k)
 end
 
-function love.keyreleased(key)
-	GSM:keyreleased(key)
+function love.keyreleased(k)
+	stateMachine:keyreleased(k)
 end
 
 function love.resize(w, h)
-	GSM:resize(w, h)
-end
-
-function drawDebugInfo()
-	love.graphics.setColor(1, 1, 1)
-	love.graphics.print("FPS: " .. love.timer.getFPS(), 10, 10)
-	love.graphics.print("Entities: " .. EM:getEntityCount(), 10, 30)
-	love.graphics.print("State: " .. GSM.currentState, 10, 50)
+	local sW = w / canvas:getWidth()
+	local sH = h / canvas:getHeight()
+	screen_scale = sW <= sH and sW or sH
+	screen_scale = math.floor(screen_scale)
 end

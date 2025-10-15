@@ -98,7 +98,7 @@ return {
       type = "objectgroup",
       draworder = "topdown",
       id = 3,
-      name = "Collision",
+      name = "Platforms",
       class = "",
       visible = true,
       opacity = 1,
@@ -349,19 +349,6 @@ return {
             ["targetId"] = { id = 36 },
             ["triggerType"] = "move"
           }
-        },
-        {
-          id = 37,
-          name = "kill_zone",
-          type = "kill_zone",
-          shape = "rectangle",
-          x = 353.439,
-          y = 626.455,
-          width = 255.026,
-          height = 11.6402,
-          rotation = 0,
-          visible = true,
-          properties = {}
         }
       }
     },
