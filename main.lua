@@ -1,6 +1,7 @@
 -- Libraries
 Object = require("lib.classic.classic")
 bump = require("lib.bump.bump")
+baton = require("lib.baton.baton")
 sti = require("lib.sti")
 anim8 = require("lib.anim8.anim8")
 flux = require("lib.flux.flux")
