@@ -16,6 +16,8 @@ function gameScene:new()
 		["escape"] = "pause",
 	}
 	particles = particles()
+
+	self.map = loadLevel("level_1")
 end
 
 function gameScene:update(dt)
@@ -24,6 +26,7 @@ end
 
 function gameScene:draw()
 	--- game draw codes
+	self.map.tiled:draw()
 
 	---
 	particles:draw()
