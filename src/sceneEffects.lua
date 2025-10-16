@@ -9,7 +9,8 @@ function sceneEffects:new(canvas)
 	self.wipeImage2 = sprites.wipeImage2
 	self.wipeImage2:setFilter("nearest", "nearest")
 	self.wipeType = false
-	self.wipeTween = {}
+	self.wipeTween = nil
+	self.fadeTween = nil
 
 	self.fadeEffectDuration = 3
 	self.fadeAlpha = { alpha = 0 }
@@ -32,6 +33,18 @@ function sceneEffects:setWipeOut()
 	end)
 end
 
+function sceneEffects:transitionToWithWipe(cb)
+	if not self.wipeTween then
+		self:setWipeOut()
+		self.wipeTween:oncomplete(function()
+			if cb then
+				cb()
+			end
+			self:setWipeIn()
+		end)
+	end
+end
+
 function sceneEffects:setFadeIn()
 	self.fadeAlpha = { alpha = 1 }
 	self.fadeTween = flux.to(self.fadeAlpha, self.fadeEffectDuration, { alpha = 0 }):oncomplete(function()
@@ -46,17 +59,29 @@ function sceneEffects:setFadeOut()
 	end)
 end
 
+function sceneEffects:transitionToWithFade(cb)
+	if not self.fadeTween then
+		self:setFadeOut()
+		self.fadeTween:oncomplete(function()
+			if cb then
+				cb()
+			end
+			self:setFadeIn()
+		end)
+	end
+end
+
 function sceneEffects:draw()
 	if self.wipeTween then
 		local image = self.wipeType and self.wipeImage2 or self.wipeImage1
 		love.graphics.draw(image, self.wipePos.x, self.wipePos.y)
 	end
 
-	--if fadeTween then
-	love.graphics.setColor(20 / 255, 24 / 255, 46 / 255, self.fadeAlpha.alpha)
-	love.graphics.rectangle("fill", 0, 0, self.canvas:getWidth(), self.canvas:getHeight())
-	love.graphics.setColor(1, 1, 1, 1)
-	--end
+	if self.fadeTween then
+		love.graphics.setColor(20 / 255, 24 / 255, 46 / 255, self.fadeAlpha.alpha)
+		love.graphics.rectangle("fill", 0, 0, self.canvas:getWidth(), self.canvas:getHeight())
+		love.graphics.setColor(1, 1, 1, 1)
+	end
 end
 
 return sceneEffects

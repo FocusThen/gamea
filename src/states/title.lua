@@ -16,16 +16,13 @@ function titleScene:new()
 end
 
 function titleScene:update(dt)
-
 	--------- input ---------
 	self.bindings:update()
 	if self.bindings:pressed("quit") then
 		love.event.quit()
 	elseif self.bindings:pressed("continue") then
-		sceneEffects:setWipeOut()
-		sceneEffects.wipeTween:oncomplete(function()
+		sceneEffects:transitionToWithWipe(function()
 			stateMachine:setState("game")
-			sceneEffects:setWipeIn()
 		end)
 	end
 end
@@ -35,10 +32,7 @@ function titleScene:draw()
 end
 
 function titleScene:enter()
-	sceneEffects:setWipeOut()
-	sceneEffects.wipeTween:oncomplete(function()
-		sceneEffects:setWipeIn()
-	end)
+	sceneEffects:setFadeIn()
 end
 
 return titleScene
