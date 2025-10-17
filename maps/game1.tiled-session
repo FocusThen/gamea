@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/test_level.tmx",
+    "activeFile": "test_level.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -50,11 +50,11 @@
             "expandedObjectLayers": [
                 4
             ],
-            "scale": 1.0582,
+            "scale": 3.349,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 317.5203175203175,
-                "y": 347.2878472878473
+                "x": 109.58495073156166,
+                "y": 118.39355031352643
             }
         }
     },
@@ -68,15 +68,15 @@
     "openFiles": [
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/1.tmx",
         "level_1.tmx",
-        "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/test_level.tmx"
+        "test_level.tmx"
     ],
     "project": "game1.tiled-project",
     "recentFiles": [
-        "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/test_level.tmx",
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/1.tmx",
         "level_1.tmx",
-        "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/test_level2.tmx",
-        "test_level.tmx"
+        "test_level.tmx",
+        "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/test_level.tmx",
+        "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/test_level2.tmx"
     ],
     "resizeMap.removeObjects": true
 }
