@@ -37,17 +37,21 @@ function loadLevel(path)
 	if tiled.layers["Spawns"] then
 		for i, obj in pairs(tiled.layers["Spawns"].objects) do
 			if obj.name == "player" then
-				-- local playerProp = tiled:getObjectProperties("spawn", "player")
+				-- local playerProp = tiled:getObjectProperties("Spawns", "player")
 				simple.player = {} -- create player
 			elseif obj.name == "coin" then
-				local coinProp = tiled:getObjectProperties("spawn", "coin")
+				-- local coinProp = tiled:getObjectProperties("Spawns", "coin")
 				simple.coins[#simple.coins + 1] = {} -- create coin
 			elseif obj.name == "door" then
-				local doorProp = tiled:getObjectProperties("spawn", "door")
+				-- local doorProp = tiled:getObjectProperties("Spawns", "door")
 				simple.door = {} -- create door
 			end
 		end
 	end
+
+
+  --- TODO: remove layers from tiled
+  -- if tiled.layers["Spawns"] ~= nil then tiled:removeLayer("Spawns") end
 
 	return {
 		tiled = tiled,

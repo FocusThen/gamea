@@ -27,7 +27,8 @@ function love.load()
 	stateMachine = stateMachine()
 	sceneEffects = sceneEffects(canvas)
 
-	stateMachine:setState("title") --- Title screen
+  --- Demo purpose
+	stateMachine:setState("game") --- Title screen
 end
 
 function love.update(dt)

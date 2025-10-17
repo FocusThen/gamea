@@ -17,7 +17,7 @@ function gameScene:new()
 	}
 	particles = particles()
 
-	self.map = loadLevel("level_1")
+	self.map = loadLevel("test_level")
 end
 
 function gameScene:update(dt)
