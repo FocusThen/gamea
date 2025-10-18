@@ -12,9 +12,10 @@ function stateMachine:loadStates()
 	-- Load different game states
 	self.states.title = require("src.states.title")()
 	self.states.game = require("src.states.game")()
+	self.states.levelSelect = require("src.states.levelSelect")()
 end
 
-function stateMachine:setState(stateName)
+function stateMachine:setState(stateName, enterparams)
 	if self.states[self.currentState] and self.states[self.currentState].exit then
 		self.states[self.currentState]:exit()
 	end
@@ -22,7 +23,7 @@ function stateMachine:setState(stateName)
 	self.currentState = stateName
 
 	if self.states[self.currentState] and self.states[self.currentState].enter then
-		self.states[self.currentState]:enter()
+		self.states[self.currentState]:enter(enterparams)
 	end
 end
 

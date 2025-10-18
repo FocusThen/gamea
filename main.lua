@@ -15,20 +15,28 @@ require("src.loadMap")
 stateMachine = require("src.states.stateMachine")
 sceneEffects = require("src.sceneEffects")
 
-local canvas
-local screen_scale = 3
+_G.screen_scale = 3
+_G.gameSettings = {
+	masterVol = 1,
+	musicVol = 0.7,
+	sfxVol = 0.5,
+}
+_G.savedGame = {
+	settings = _G.gameSettings,
+	levelReached = 1,
+} -- TODO: savegame
 
 function love.load()
-	canvas = love.graphics.newCanvas(208, 224)
-	canvas:setFilter("nearest", "nearest")
+	worldCanvas = love.graphics.newCanvas(208, 224)
+	worldCanvas:setFilter("nearest", "nearest")
 	--- World
 	World = bump.newWorld(16)
 
 	stateMachine = stateMachine()
-	sceneEffects = sceneEffects(canvas)
+	sceneEffects = sceneEffects(worldCanvas)
 
-  --- Demo purpose
-	stateMachine:setState("game") --- Title screen
+	--- Demo purpose
+	stateMachine:setState("levelSelect") --- Title screen
 end
 
 function love.update(dt)
@@ -37,24 +45,26 @@ function love.update(dt)
 end
 
 function love.draw()
-	love.graphics.setCanvas(canvas)
+	love.graphics.setCanvas(worldCanvas)
 	love.graphics.clear()
 	love.graphics.setBlendMode("alpha")
 	love.graphics.setColor(1, 1, 1, 1)
-
+	---
 	---
 	stateMachine:draw()
 	---
+	---
+	love.graphics.setColor(1, 1, 1, 1)
 	sceneEffects:draw()
 	---
-
+	---
 	love.graphics.setCanvas()
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.setBlendMode("alpha", "premultiplied")
 	love.graphics.draw(
-		canvas,
-		math.floor(love.graphics.getWidth() / 2 - canvas:getWidth() * screen_scale / 2),
-		math.floor(love.graphics.getHeight() / 2 - canvas:getHeight() * screen_scale / 2),
+		worldCanvas,
+		math.floor(love.graphics.getWidth() / 2 - worldCanvas:getWidth() * screen_scale / 2),
+		math.floor(love.graphics.getHeight() / 2 - worldCanvas:getHeight() * screen_scale / 2),
 		0,
 		screen_scale,
 		screen_scale
@@ -79,8 +89,9 @@ function love.keyreleased(k)
 end
 
 function love.resize(w, h)
-	local sW = w / canvas:getWidth()
-	local sH = h / canvas:getHeight()
+	local sW = w / worldCanvas:getWidth()
+	local sH = h / worldCanvas:getHeight()
 	screen_scale = sW <= sH and sW or sH
 	screen_scale = math.floor(screen_scale)
 end
+

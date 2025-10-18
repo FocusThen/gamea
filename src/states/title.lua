@@ -22,7 +22,7 @@ function titleScene:update(dt)
 		love.event.quit()
 	elseif self.bindings:pressed("continue") then
 		sceneEffects:transitionToWithWipe(function()
-			stateMachine:setState("game")
+			stateMachine:setState("levelSelect")
 		end)
 	end
 end

@@ -7,7 +7,8 @@ sprites = {
 
 sprites.ui = {}
 sprites.ui.title = love.graphics.newImage("assets/sprites/title.png")
-
+sprites.ui.levelSelect = love.graphics.newImage("assets/sprites/levelSelectBG.png")
+sprites.ui.levelIcon = love.graphics.newImage("assets/sprites/levelIcon.png")
 
 sprites.particles = {}
 sprites.particles.jump = love.graphics.newImage("assets/sprites/jumpsmoke.png")
@@ -17,7 +18,7 @@ sprites.particles.walking = love.graphics.newImage("assets/sprites/walkeffect.pn
 sprites.particles.boxlanding = love.graphics.newImage("assets/sprites/boxlandingsmoke.png")
 
 fonts = {}
-fonts.default = love.graphics.newFont("assets/fonts/vt323/VT323-Regular.ttf", 20)
+fonts.default = love.graphics.newFont("assets/fonts/vt323/VT323-Regular.ttf", 16)
 
 sounds = {}
 sounds.coin = { sound = love.audio.newSource("assets/sounds/coin.wav", "static"), volume = 1 }
@@ -36,3 +37,13 @@ music = {}
 music.game = love.audio.newSource("assets/music/game.wav", "stream")
 music.game:setLooping(true)
 music.gameIntro = love.audio.newSource("assets/music/gameIntro.wav", "stream")
+
+function playSound(sfx)
+	if sfx.sound:isPlaying() then
+		sfx.sound:stop()
+	end
+
+	sfx.sound:setVolume(sfx.volume * gameSettings.sfxVol * gameSettings.masterVol)
+
+	sfx.sound:play()
+end
