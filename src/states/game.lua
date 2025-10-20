@@ -62,8 +62,8 @@ function gameScene:draw()
 					obj:draw()
 				end
 			end
-			-- elseif key == "door" then
-			-- 	value:draw()
+		elseif key == "door" then
+			value:draw()
 		elseif key == "player" then
 			value:draw()
 		end

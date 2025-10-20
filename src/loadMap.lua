@@ -1,5 +1,6 @@
 local player = require("src.objects.player")
 local coin = require("src.objects.coin")
+local door = require("src.objects.door")
 
 function loadLevel(path)
 	-- destroy all objects
@@ -7,6 +8,12 @@ function loadLevel(path)
 	for i = 1, len do
 		local item = items[i]
 		World:remove(item)
+	end
+	---
+	---
+	local number = tonumber(string.match(path, "%d+"))
+	if number and savedGame.levelReached < number then
+		savedGame.levelReached = number
 	end
 	---
 
@@ -52,10 +59,10 @@ function loadLevel(path)
 				simple.player = player(obj.x, obj.y)
 			elseif obj.name == "coin" then
 				-- local coinProp = tiled:getObjectProperties("Spawns", "coin")
-				table.insert(simple.coins, coin(obj.x, obj.y))
+				table.insert(simple.coins, coin(obj.x - 4, obj.y - 4))
 			elseif obj.name == "door" then
 				-- local doorProp = tiled:getObjectProperties("Spawns", "door")
-				simple.door = {} -- create door
+				simple.door = door(obj.x - 8, obj.y - 16, path)
 			end
 		end
 	end

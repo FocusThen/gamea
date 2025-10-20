@@ -165,11 +165,11 @@ function player:update(dt)
 				tileHit = true
 			end
 		elseif col.other.type == "pickup" then
-			col.other.onPickup()
+			col.other:onPickup()
 			col.other.delete = true
 			World:remove(col.other)
 		elseif col.other.type == "door" or col.other.type == "spike" then
-			col.other.interact()
+			col.other:interact()
 		elseif col.other.type == "platform" then
 			if col.normal.y == 1 and self.yVel < -10 then
 				local slip = false

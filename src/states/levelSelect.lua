@@ -1,5 +1,7 @@
 local levelSelectScene = Object:extend()
 
+_G.numOfLevels = 2
+
 function levelSelectScene:new()
 	self.bindings = baton.new({
 		controls = {
@@ -19,7 +21,6 @@ function levelSelectScene:new()
 	})
 
 	self.selected = 1
-	self.numOfLevels = 2
 end
 
 function levelSelectScene:update(dt)
@@ -49,8 +50,8 @@ function levelSelectScene:update(dt)
 		playSound(sounds.select)
 	end
 
-	if self.selected > self.numOfLevels then
-		self.selected = self.numOfLevels
+	if self.selected > numOfLevels then
+		self.selected = numOfLevels
 	end
 	if self.selected > savedGame.levelReached then
 		self.selected = savedGame.levelReached
@@ -86,7 +87,7 @@ function levelSelectScene:draw()
 		worldCanvas:getHeight() - 16
 	)
 
-	for i = 1, self.numOfLevels do
+	for i = 1, numOfLevels do
 		local x = 16 + (i - 1) % 6 * 32
 		local y = 32 + math.floor((i - 1) / 6) * 32
 

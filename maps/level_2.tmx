@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="13" tileheight="14" infinite="0" nextlayerid="4" nextobjectid="8">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="13" tileheight="14" infinite="0" nextlayerid="4" nextobjectid="29">
  <editorsettings>
   <export target="level_2.lua" format="lua"/>
  </editorsettings>
@@ -27,10 +27,38 @@
   <object id="6" name="player" type="player" x="31.9214" y="191.529">
    <point/>
   </object>
+  <object id="9" name="door" type="door" x="169" y="140">
+   <point/>
+  </object>
+  <object id="13" name="coin" type="coin" x="78" y="168">
+   <point/>
+  </object>
+  <object id="14" name="coin" type="coin" x="117" y="154">
+   <point/>
+  </object>
+  <object id="25" name="coin" type="coin" x="91" y="42">
+   <point/>
+  </object>
+  <object id="26" name="coin" type="coin" x="104" y="42">
+   <point/>
+  </object>
+  <object id="27" name="coin" type="coin" x="123.696" y="41.1447">
+   <point/>
+  </object>
+  <object id="28" name="coin" type="coin" x="136.8" y="41.1447">
+   <point/>
+  </object>
  </objectgroup>
  <objectgroup id="3" name="Platforms">
   <object id="1" x="0" y="210" width="208" height="14"/>
   <object id="4" x="0" y="0" width="13" height="210"/>
   <object id="5" x="195" y="0" width="13" height="210"/>
+  <object id="10" x="65" y="182" width="26" height="14"/>
+  <object id="11" x="104" y="168" width="26" height="14"/>
+  <object id="12" x="143" y="154" width="52" height="14"/>
+  <object id="16" x="39" y="14" width="13" height="14"/>
+  <object id="20" x="39" y="42" width="26" height="14"/>
+  <object id="21" x="39" y="70" width="39" height="14"/>
+  <object id="24" x="91" y="42" width="52" height="14"/>
  </objectgroup>
 </map>
