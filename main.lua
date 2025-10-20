@@ -14,6 +14,7 @@ require("src.loadMap")
 
 stateMachine = require("src.states.stateMachine")
 sceneEffects = require("src.sceneEffects")
+particleEffects = require("src.particles")
 
 _G.screen_scale = 3
 _G.gameSettings = {
@@ -34,6 +35,7 @@ function love.load()
 
 	stateMachine = stateMachine()
 	sceneEffects = sceneEffects(worldCanvas)
+  particleEffects = particleEffects()
 
 	--- Demo purpose
 	stateMachine:setState("levelSelect") --- Title screen

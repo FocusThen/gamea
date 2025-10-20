@@ -1,10 +1,8 @@
-local particles = require("src.particles")
-
 local gameScene = Object:extend()
 
 function gameScene:enter(enterparams)
-	-- self.map = enterparams.map
-	-- self.player = self.map.simple.player
+	self.map = enterparams.map
+	self.player = self.map.simple.player
 end
 
 function gameScene:new()
@@ -15,13 +13,12 @@ function gameScene:new()
 		},
 		joystick = love.joystick.getJoysticks()[1],
 	})
-	particles = particles()
 end
 
 function gameScene:update(dt)
-	-- self.player:update(dt)
+	self.player:update(dt)
 
-	particles:update(dt)
+	particleEffects:update(dt)
 	--------- input ---------
 	self.bindings:update()
 	-- if self.bindings:pressed("pause") then
@@ -31,10 +28,10 @@ end
 
 function gameScene:draw()
 	--- game draw codes
-	-- self.map.tiled:draw()
+	self.map.drawWorld()
 
 	---
-	particles:draw()
+	particleEffects:draw()
 	---
 end
 

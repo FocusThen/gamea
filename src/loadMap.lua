@@ -1,3 +1,5 @@
+local player = require("src.objects.player")
+
 function loadLevel(path)
 	local slide, cross = bump.responses.slide, bump.responses.cross
 	local oneWay = function(wrld, col, x, y, w, h, goalX, goalY, filter)
@@ -13,11 +15,11 @@ function loadLevel(path)
 
 	local tiled = sti("maps/" .. path .. ".lua")
 	local simple = {
-    platforms = {},
-    coins = {},
-    door = {},
-    player = {},
-  }
+		platforms = {},
+		coins = {},
+		door = {},
+		player = {},
+	}
 
 	if tiled.layers["Platforms"] then
 		for i, obj in pairs(tiled.layers["Platforms"].objects) do
@@ -38,10 +40,10 @@ function loadLevel(path)
 		for i, obj in pairs(tiled.layers["Spawns"].objects) do
 			if obj.name == "player" then
 				-- local playerProp = tiled:getObjectProperties("Spawns", "player")
-				simple.player = {} -- create player
+				simple.player = player(obj.x, obj.y)
 			elseif obj.name == "coin" then
 				-- local coinProp = tiled:getObjectProperties("Spawns", "coin")
-				simple.coins[#simple.coins + 1] = {} -- create coin
+				table.insert(simple.coins, {}) -- create coin
 			elseif obj.name == "door" then
 				-- local doorProp = tiled:getObjectProperties("Spawns", "door")
 				simple.door = {} -- create door
@@ -49,12 +51,31 @@ function loadLevel(path)
 		end
 	end
 
+	local function drawWorld()
+		if tiled.layers["Bg"] then
+			tiled:drawLayer(tiled.layers["Bg"])
+		end
 
-  --- TODO: remove layers from tiled
-  -- if tiled.layers["Spawns"] ~= nil then tiled:removeLayer("Spawns") end
+		for key, value in pairs(simple) do
+			if key == "platform" then
+				for _, obj in ipairs(value) do
+					obj:draw()
+				end
+			-- elseif key == "coins" then
+			-- 	for _, obj in ipairs(value) do
+			-- 		obj:draw()
+			-- 	end
+			-- elseif key == "door" then
+			-- 	value:draw()
+			elseif key == "player" then
+				value:draw()
+			end
+		end
+	end
 
 	return {
 		tiled = tiled,
 		simple = simple,
+		drawWorld = drawWorld,
 	}
 end
