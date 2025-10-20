@@ -2,6 +2,14 @@ local player = require("src.objects.player")
 local coin = require("src.objects.coin")
 
 function loadLevel(path)
+	-- destroy all objects
+	local items, len = World:getItems()
+	for i = 1, len do
+		local item = items[i]
+		World:remove(item)
+	end
+	---
+
 	local slide, cross = bump.responses.slide, bump.responses.cross
 	local oneWay = function(wrld, col, x, y, w, h, goalX, goalY, filter)
 		if col.normal.y < 0 and not col.overlaps then
@@ -55,5 +63,6 @@ function loadLevel(path)
 	return {
 		tiled = tiled,
 		simple = simple,
+		path = path,
 	}
 end

@@ -35,9 +35,12 @@ function gameScene:update(dt)
 
 	--------- input ---------
 	self.bindings:update()
-	-- if self.bindings:pressed("pause") then
-	-- love.event.quit()
-	-- end
+	if self.bindings:pressed("reset") then
+		sceneEffects:transitionToWithWipe(function()
+			self.map = loadLevel(self.map.path)
+			self.player = self.map.simple.player
+		end)
+	end
 end
 
 function gameScene:draw()
