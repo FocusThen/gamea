@@ -52,50 +52,8 @@ function loadLevel(path)
 		end
 	end
 
-	local function drawWorld()
-		if tiled.layers["Bg"] then
-			tiled:drawLayer(tiled.layers["Bg"])
-		end
-
-		for key, value in pairs(simple) do
-			if key == "platform" then
-				if #value > 0 then
-					for _, obj in ipairs(value) do
-						obj:draw()
-					end
-				end
-			elseif key == "coins" then
-				if #value > 0 then
-					for _, obj in ipairs(value) do
-						obj:draw()
-					end
-				end
-			-- elseif key == "door" then
-			-- 	value:draw()
-			elseif key == "player" then
-				value:draw()
-			end
-		end
-	end
-
-	local function updateWorld(dt)
-		if #simple.coins > 0 then
-			for _, obj in ipairs(simple.coins) do
-				obj:update(dt)
-			end
-		end
-
-		for i = #simple.coins, 1, -1 do
-			if simple.coins[i].delete then
-				table.remove(simple.coins, i)
-			end
-		end
-	end
-
 	return {
 		tiled = tiled,
 		simple = simple,
-		drawWorld = drawWorld,
-		updateWorld = updateWorld,
 	}
 end
