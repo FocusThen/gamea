@@ -5,6 +5,7 @@ baton = require("lib.baton.baton")
 sti = require("lib.sti")
 anim8 = require("lib.anim8.anim8")
 flux = require("lib.flux.flux")
+lume = require("lib.lume.lume")
 
 --- Load all files
 require("src.utils")
@@ -44,6 +45,11 @@ end
 function love.update(dt)
 	flux.update(dt)
 	stateMachine:update(dt)
+
+	--
+	if isDev then
+		require("lib.lurker.lurker").update()
+	end
 end
 
 function love.draw()

@@ -40,6 +40,10 @@ function gameScene:update(dt)
 			self.map = loadLevel(self.map.path)
 			self.player = self.map.simple.player
 		end)
+	elseif self.bindings:pressed("pause") then
+		sceneEffects:transitionToWithWipe(function()
+			stateMachine:setState("levelSelect")
+		end)
 	end
 end
 
