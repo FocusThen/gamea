@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="13" tileheight="14" infinite="0" nextlayerid="4" nextobjectid="8">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="13" tileheight="14" infinite="0" nextlayerid="4" nextobjectid="9">
+ <editorsettings>
+  <export target="level_1.lua" format="lua"/>
+ </editorsettings>
  <layer id="1" name="Bg" width="16" height="16">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -27,6 +30,9 @@
  </objectgroup>
  <objectgroup id="3" name="Spawns">
   <object id="7" name="player" type="player" x="32.8804" y="191.576">
+   <point/>
+  </object>
+  <object id="8" name="coin" type="coin" x="96.7391" y="191.304">
    <point/>
   </object>
  </objectgroup>

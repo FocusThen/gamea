@@ -17,8 +17,22 @@ end
 
 function gameScene:update(dt)
 	self.player:update(dt)
-
 	particleEffects:update(dt)
+
+	--- Coins
+	if #self.map.simple.coins > 0 then
+		for _, obj in ipairs(self.map.simple.coins) do
+			obj:update(dt)
+		end
+	end
+
+	for i = #self.map.simple.coins, 1, -1 do
+		if self.map.simple.coins[i].delete then
+			table.remove(self.map.simple.coins, i)
+		end
+	end
+	---
+
 	--------- input ---------
 	self.bindings:update()
 	-- if self.bindings:pressed("pause") then
@@ -28,7 +42,29 @@ end
 
 function gameScene:draw()
 	--- game draw codes
-	self.map.drawWorld()
+	if self.map.tiled.layers["Bg"] then
+		self.map.tiled:drawLayer(self.map.tiled.layers["Bg"])
+	end
+
+	for key, value in pairs(self.map.simple) do
+		if key == "platform" then
+			if #value > 0 then
+				for _, obj in ipairs(value) do
+					obj:draw()
+				end
+			end
+		elseif key == "coins" then
+			if #value > 0 then
+				for _, obj in ipairs(value) do
+					obj:draw()
+				end
+			end
+			-- elseif key == "door" then
+			-- 	value:draw()
+		elseif key == "player" then
+			value:draw()
+		end
+	end
 
 	---
 	particleEffects:draw()

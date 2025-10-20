@@ -1,4 +1,5 @@
 local player = require("src.objects.player")
+local coin = require("src.objects.coin")
 
 function loadLevel(path)
 	local slide, cross = bump.responses.slide, bump.responses.cross
@@ -43,7 +44,7 @@ function loadLevel(path)
 				simple.player = player(obj.x, obj.y)
 			elseif obj.name == "coin" then
 				-- local coinProp = tiled:getObjectProperties("Spawns", "coin")
-				table.insert(simple.coins, {}) -- create coin
+				table.insert(simple.coins, coin(obj.x, obj.y))
 			elseif obj.name == "door" then
 				-- local doorProp = tiled:getObjectProperties("Spawns", "door")
 				simple.door = {} -- create door
@@ -58,13 +59,17 @@ function loadLevel(path)
 
 		for key, value in pairs(simple) do
 			if key == "platform" then
-				for _, obj in ipairs(value) do
-					obj:draw()
+				if #value > 0 then
+					for _, obj in ipairs(value) do
+						obj:draw()
+					end
 				end
-			-- elseif key == "coins" then
-			-- 	for _, obj in ipairs(value) do
-			-- 		obj:draw()
-			-- 	end
+			elseif key == "coins" then
+				if #value > 0 then
+					for _, obj in ipairs(value) do
+						obj:draw()
+					end
+				end
 			-- elseif key == "door" then
 			-- 	value:draw()
 			elseif key == "player" then
@@ -73,9 +78,24 @@ function loadLevel(path)
 		end
 	end
 
+	local function updateWorld(dt)
+		if #simple.coins > 0 then
+			for _, obj in ipairs(simple.coins) do
+				obj:update(dt)
+			end
+		end
+
+		for i = #simple.coins, 1, -1 do
+			if simple.coins[i].delete then
+				table.remove(simple.coins, i)
+			end
+		end
+	end
+
 	return {
 		tiled = tiled,
 		simple = simple,
 		drawWorld = drawWorld,
+		updateWorld = updateWorld,
 	}
 end

@@ -35,7 +35,7 @@ function love.load()
 
 	stateMachine = stateMachine()
 	sceneEffects = sceneEffects(worldCanvas)
-  particleEffects = particleEffects()
+	particleEffects = particleEffects()
 
 	--- Demo purpose
 	stateMachine:setState("levelSelect") --- Title screen
@@ -60,6 +60,18 @@ function love.draw()
 	sceneEffects:draw()
 	---
 	---
+	if DEBUG and isDev then
+		love.graphics.setColor(1, 0, 0, 0.5)
+		local items, len = World:getItems()
+		for i = 1, len do
+			local item = items[i]
+			local x, y, w, h = World:getRect(item)
+			love.graphics.rectangle("line", x, y, w, h)
+		end
+
+		love.graphics.setColor(1, 1, 1, 1)
+	end
+	---
 	love.graphics.setCanvas()
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.setBlendMode("alpha", "premultiplied")
@@ -75,11 +87,13 @@ end
 
 function love.keypressed(k)
 	-- Allow ctrl+r for reset, and ctrl+q for quit
-	if love.keyboard.isDown("lctrl", "rctrl") then
+	if love.keyboard.isDown("lctrl", "rctrl") and isDev then
 		if k == "r" then
 			love.event.quit("restart")
 		elseif k == "q" then
 			love.event.quit()
+		elseif k == "d" then
+			DEBUG = not DEBUG
 		end
 	end
 
@@ -96,4 +110,3 @@ function love.resize(w, h)
 	screen_scale = sW <= sH and sW or sH
 	screen_scale = math.floor(screen_scale)
 end
-
