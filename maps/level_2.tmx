@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="13" tileheight="14" infinite="0" nextlayerid="4" nextobjectid="8">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="13" tileheight="14" infinite="0" nextlayerid="4" nextobjectid="7">
+ <editorsettings>
+  <export target="level_2.lua" format="lua"/>
+ </editorsettings>
  <layer id="1" name="Bg" width="16" height="16">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -20,14 +23,14 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="2" name="Platforms">
-  <object id="2" x="0" y="0" width="13" height="210"/>
-  <object id="4" x="0" y="210" width="208" height="14"/>
-  <object id="5" x="195" y="0" width="13" height="210"/>
- </objectgroup>
- <objectgroup id="3" name="Spawns">
-  <object id="7" name="player" type="player" x="32.8804" y="191.576">
+ <objectgroup id="2" name="Spawns">
+  <object id="6" name="player" type="player" x="31.9214" y="191.529">
    <point/>
   </object>
+ </objectgroup>
+ <objectgroup id="3" name="Platforms">
+  <object id="1" x="0" y="210" width="208" height="14"/>
+  <object id="4" x="0" y="0" width="13" height="210"/>
+  <object id="5" x="195" y="0" width="13" height="210"/>
  </objectgroup>
 </map>
