@@ -18,10 +18,15 @@ sceneEffects = require("src.sceneEffects")
 particleEffects = require("src.particles")
 
 _G.screen_scale = 3
+_G.offsetX = 0
+_G.offsetY = 0
+
 _G.gameSettings = {
 	masterVol = 1,
 	musicVol = 0.7,
 	sfxVol = 0.5,
+	gameWidth = 208, -- 320
+	gameHeight = 224, -- 192
 }
 _G.savedGame = {
 	settings = _G.gameSettings,
@@ -29,7 +34,7 @@ _G.savedGame = {
 } -- TODO: savegame
 
 function love.load()
-	worldCanvas = love.graphics.newCanvas(208, 224)
+	worldCanvas = love.graphics.newCanvas(gameSettings.gameWidth, gameSettings.gameHeight)
 	worldCanvas:setFilter("nearest", "nearest")
 	--- World
 	World = bump.newWorld(16)
@@ -37,6 +42,8 @@ function love.load()
 	stateMachine = stateMachine()
 	sceneEffects = sceneEffects(worldCanvas)
 	particleEffects = particleEffects()
+
+	updateScale()
 
 	--- Demo purpose
 	stateMachine:setState("levelSelect") --- Title screen
@@ -81,14 +88,7 @@ function love.draw()
 	love.graphics.setCanvas()
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.setBlendMode("alpha", "premultiplied")
-	love.graphics.draw(
-		worldCanvas,
-		math.floor(love.graphics.getWidth() / 2 - worldCanvas:getWidth() * screen_scale / 2),
-		math.floor(love.graphics.getHeight() / 2 - worldCanvas:getHeight() * screen_scale / 2),
-		0,
-		screen_scale,
-		screen_scale
-	)
+	love.graphics.draw(worldCanvas, offsetX, offsetY, 0, screen_scale, screen_scale)
 end
 
 function love.keypressed(k)
@@ -111,8 +111,24 @@ function love.keyreleased(k)
 end
 
 function love.resize(w, h)
-	local sW = w / worldCanvas:getWidth()
-	local sH = h / worldCanvas:getHeight()
-	screen_scale = sW <= sH and sW or sH
-	screen_scale = math.floor(screen_scale)
+	updateScale()
 end
+
+function updateScale()
+	local w, h = love.graphics.getDimensions()
+	local sW = w / gameSettings.gameWidth
+	local sH = h / gameSettings.gameHeight
+	screen_scale = math.min(sW, sH)
+	screen_scale = math.floor(screen_scale)
+
+	-- Calculate centering offset
+	_G.offsetX = math.floor((w - (gameSettings.gameWidth * screen_scale)) / 2)
+	_G.offsetY = math.floor((h - (gameSettings.gameHeight * screen_scale)) / 2)
+end
+
+-- Use this for mouse/touch input
+-- function screenToGame(x, y)
+-- 	local gameX = (x - offsetX) / screen_scale
+-- 	local gameY = (y - offsetY) / screen_scale
+-- 	return gameX, gameY
+-- end

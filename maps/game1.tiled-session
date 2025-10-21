@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "level_2.tmx",
+    "activeFile": "level_1.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -15,8 +15,8 @@
             "scale": 4.34,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 106.22119815668204,
-                "y": 89.28571428571429
+                "x": 103.91705069124426,
+                "y": 86.52073732718895
             }
         },
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/1.tmx#tileset": {
@@ -42,15 +42,11 @@
             }
         },
         "level_1.tmx": {
-            "expandedObjectLayers": [
-                3,
-                2
-            ],
-            "scale": 5.0451,
-            "selectedLayer": 2,
+            "scale": 3.7279017857142853,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 98.70963905571743,
-                "y": 168.77762581514736
+                "x": 104.07999520986766,
+                "y": 111.99329381474163
             }
         },
         "level_2.tmx": {
@@ -61,7 +57,7 @@
             "scale": 3.8158,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 94.86870381047224,
+                "x": 95.1307720530426,
                 "y": 76.39289270926147
             }
         },
@@ -75,15 +71,14 @@
         }
     },
     "last.exportedFilePath": "/Users/mtezcan/Workspace/Personal/luaboi/game1/maps",
-    "map.height": 16,
+    "map.height": 14,
     "map.lastUsedExportFilter": "Lua files (*.lua)",
     "map.lastUsedFormat": "tmx",
-    "map.tileHeight": 14,
-    "map.tileWidth": 13,
-    "map.width": 16,
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 13,
     "openFiles": [
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/1.tmx",
-        "level_2.tmx",
         "level_1.tmx"
     ],
     "project": "game1.tiled-project",

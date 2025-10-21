@@ -59,10 +59,10 @@ function loadLevel(path)
 				simple.player = player(obj.x, obj.y)
 			elseif obj.name == "coin" then
 				-- local coinProp = tiled:getObjectProperties("Spawns", "coin")
-				table.insert(simple.coins, coin(obj.x - 4, obj.y - 4))
+				table.insert(simple.coins, coin(obj.x, obj.y))
 			elseif obj.name == "door" then
 				-- local doorProp = tiled:getObjectProperties("Spawns", "door")
-				simple.door = door(obj.x - 8, obj.y - 16, path)
+				simple.door = door(obj.x, obj.y, path)
 			end
 		end
 	end
