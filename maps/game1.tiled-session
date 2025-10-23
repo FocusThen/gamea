@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "level_1.tmx",
+    "activeFile": "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/level_2.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -12,15 +12,23 @@
             "expandedObjectLayers": [
                 6
             ],
-            "scale": 4.34,
-            "selectedLayer": 1,
+            "scale": 7.9789,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 103.91705069124426,
-                "y": 86.52073732718895
+                "x": 103.96169898106253,
+                "y": 87.29273458747446
             }
         },
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/1.tmx#tileset": {
             "scaleInDock": 2.8581
+        },
+        "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/level_2.tmx": {
+            "scale": 3.3676,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 109.12816248960685,
+                "y": 142.38626915310607
+            }
         },
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/test_level.tmx": {
             "scale": 3.7279017857142853,
@@ -42,11 +50,14 @@
             }
         },
         "level_1.tmx": {
-            "scale": 3.7279017857142853,
-            "selectedLayer": 0,
+            "expandedObjectLayers": [
+                3
+            ],
+            "scale": 2.8296,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 104.07999520986766,
-                "y": 111.99329381474163
+                "x": 104.07831495617754,
+                "y": 111.85326547921967
             }
         },
         "level_2.tmx": {
@@ -79,12 +90,15 @@
     "map.width": 13,
     "openFiles": [
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/1.tmx",
-        "level_1.tmx"
+        "level_1.tmx",
+        "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/level_2.tmx"
     ],
     "project": "game1.tiled-project",
+    "property.type": "bool",
     "recentFiles": [
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/1.tmx",
         "level_1.tmx",
+        "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/level_2.tmx",
         "level_2.tmx",
         "test_level.tmx",
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/test_level.tmx",

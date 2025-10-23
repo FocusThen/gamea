@@ -53,7 +53,7 @@ function levelSelectScene:update(dt)
 	if self.selected > numOfLevels then
 		self.selected = numOfLevels
 	end
-	if self.selected > savedGame.levelReached then
+	if self.selected > savedGame.levelReached and not isDev then
 		self.selected = savedGame.levelReached
 	end
 	if self.selected < 1 then

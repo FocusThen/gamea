@@ -19,6 +19,14 @@ function gameScene:update(dt)
 	self.player:update(dt)
 	particleEffects:update(dt)
 
+	--- Boxes
+	if #self.map.simple.boxes > 0 then
+		for _, obj in ipairs(self.map.simple.boxes) do
+			obj:update(dt)
+		end
+	end
+	---
+
 	--- Coins
 	if #self.map.simple.coins > 0 then
 		for _, obj in ipairs(self.map.simple.coins) do
@@ -61,6 +69,12 @@ function gameScene:draw()
 				end
 			end
 		elseif key == "coins" then
+			if #value > 0 then
+				for _, obj in ipairs(value) do
+					obj:draw()
+				end
+			end
+		elseif key == "boxes" then
 			if #value > 0 then
 				for _, obj in ipairs(value) do
 					obj:draw()

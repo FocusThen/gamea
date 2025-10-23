@@ -1,6 +1,6 @@
 local player = Object:extend()
 
-function player:new(x, y)
+function player:new(x, y, props)
 	self.x = x
 	self.y = y
 	self.xVel = 0
@@ -34,8 +34,13 @@ function player:new(x, y)
 	self.gravity = 800
 	self.friction = 4000
 
+	self.abilities = {
+		doubleJump = false or props.doubleJump,
+		dash = false or props.dash,
+	}
+
 	self.filter = function(item, other)
-		if other.type == "pickup" or other.type == "spike" or other.type == "blockTile" or other.type == "door" then
+		if other.type == "pickup" or other.type == "spike" or other.type == "door" then
 			return "cross"
 		elseif other.type == "oneWay" then
 			return "oneWay"
@@ -124,6 +129,12 @@ function player:update(dt)
 			self.jumpEffectQueued = false
 		end
 	end
+
+	-- Prevent velocity accumulation when grounded
+	if self:checkGrounded() and self.yVel > 0 then
+		self.yVel = 0
+	end
+
 	--actually move in the world
 	local actualX, actualY, cols, len = World:move(self, self.x, self.y, self.filter)
 	local springHit = false
@@ -169,8 +180,9 @@ function player:update(dt)
 			col.other.delete = true
 			World:remove(col.other)
 		elseif col.other.type == "door" or col.other.type == "spike" then
-			col.other:interact()
+			col.other:interact(self)
 		elseif col.other.type == "platform" then
+			tileHit = true -- check this ?
 			if col.normal.y == 1 and self.yVel < -10 then
 				local slip = false
 				for j = 1, 10 do
@@ -244,13 +256,11 @@ function player:update(dt)
 			else
 				self.yVel = 0
 			end
-		elseif col.other.type == "tile" then
-			tileHit = true
 		elseif col.other.type == "oneWay" then
 			tileHit = self.y ~= actualY
 		end
 
-		if (self.y ~= actualY or self:checkGrounded()) and not springHit then
+		if self.y ~= actualY and not springHit then
 			if self.yVel > 100 then
 				playSound(sounds.ground)
 				if self.input:down("left") and not self.input:down("right") then
@@ -311,23 +321,22 @@ function player:update(dt)
 	if self.input:pressed("jump") then
 		if self:checkGrounded() or self.coyote > 0 then
 			self:doJump()
-
 			playSound(sounds.jump)
-		elseif self.airJump then
+		elseif self.airJump and self.abilities.doubleJump then
 			self:doJump()
 			self.airJump = false
 			playSound(sounds.jump)
 		else
 			self.jumpWhenAble = 0.1
 		end
-	elseif self.input:pressed("dash") then
+	elseif self.input:pressed("dash") and self.abilities.dash then
 		if self.dashUp then
 			local mod = self.facing and 1 or -1
 			self.xVel = self.dash * mod
 			self.yVel = 0
 			self.dashUp = false
 			self.lastBounce = nil
-			playSound(self.sfx.throw)
+			-- playSound(sounds.throw)
 
 			local ex = self.facing and self.x - 16 or self.x + self.width
 
@@ -366,7 +375,7 @@ end
 
 function player:checkGrounded()
 	local actualX, actualY, cols, len = World:check(self, self.x, self.y + 1, self.filter)
-	return actualY == self.y
+	return actualY == math.floor(self.y)
 end
 
 function player:kill()

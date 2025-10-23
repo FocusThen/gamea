@@ -28,7 +28,7 @@
   <object id="6" name="coin" type="coin" x="96" y="192">
    <point/>
   </object>
-  <object id="7" name="door" type="door" x="176" y="192">
+  <object id="7" name="door" type="door" x="176" y="208">
    <point/>
   </object>
  </objectgroup>
