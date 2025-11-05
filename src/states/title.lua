@@ -28,7 +28,7 @@ function titleScene:update(dt)
 end
 
 function titleScene:draw()
-	love.graphics.draw(sprites.ui.title, 0, 0)
+	-- love.graphics.draw(sprites.ui.title, 0, 0)
 end
 
 function titleScene:enter()

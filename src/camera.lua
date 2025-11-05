@@ -7,7 +7,7 @@ function camera:new()
 	self.y = 0
 	self.targetX = 0
 	self.targetY = 0
-	
+
 	-- Shake state
 	self.shakeIntensity = 0
 	self.shakeDuration = 0
@@ -34,7 +34,7 @@ function camera:update(dt)
 		local shakeAmount = (self.shakeTimer / self.shakeDuration) * self.shakeIntensity
 		self.shakeX = (math.random() - 0.5) * shakeAmount * 2
 		self.shakeY = (math.random() - 0.5) * shakeAmount * 2
-		
+
 		if self.shakeTimer <= 0 then
 			self.shakeTimer = 0
 			self.shakeIntensity = 0
@@ -45,7 +45,7 @@ function camera:update(dt)
 		self.shakeX = 0
 		self.shakeY = 0
 	end
-	
+
 	-- Smoothly follow target (can be enhanced with easing)
 	self.x = self.targetX
 	self.y = self.targetY

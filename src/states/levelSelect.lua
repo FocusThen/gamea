@@ -63,7 +63,7 @@ end
 
 function levelSelectScene:draw()
 	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.draw(sprites.ui.levelSelect, 0, 0)
+	-- love.graphics.draw(sprites.ui.levelSelect, 0, 0)
 
 	love.graphics.setColor(43 / 255, 43 / 255, 69 / 255, 1)
 	love.graphics.print(
