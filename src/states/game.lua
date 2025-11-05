@@ -1,10 +1,25 @@
 local gameScene = Object:extend()
+local Camera = require("src.camera")
+local Constants = require("src.constants")
 
 function gameScene:enter(enterparams)
 	self.map = enterparams.map
 	self.player = self.map.entities.player
 	self.deathTimer = 0
 	self.restarting = false
+	
+	-- Initialize camera
+	if not self.camera then
+		self.camera = Camera()
+	end
+	self.camera:setTarget(0, 0) -- Fixed camera for now
+	
+	-- Store game state reference in triggers for cutscenes
+	if self.map.entities.triggers then
+		for _, trig in ipairs(self.map.entities.triggers) do
+			trig.gameState = self
+		end
+	end
 end
 
 function gameScene:new()
@@ -17,6 +32,7 @@ function gameScene:new()
 	})
 	self.deathTimer = 0
 	self.restarting = false
+	self.camera = Camera()
 end
 
 function gameScene:update(dt)
@@ -52,8 +68,21 @@ function gameScene:update(dt)
 		end
 	end
 
+	-- Update saws
+	if self.map.entities.saws and #self.map.entities.saws > 0 then
+		for _, obj in ipairs(self.map.entities.saws) do
+			if obj.update then
+				obj:update(dt)
+			end
+		end
+	end
+
 	-- Check if player is dead and restart level after delay
 	if self.player and self.player.dead and not self.restarting then
+		if self.deathTimer == 0 then
+			-- Trigger camera shake on death
+			self.camera:shake(Constants.CAMERA.DEATH_SHAKE_INTENSITY, Constants.CAMERA.DEATH_SHAKE_DURATION)
+		end
 		self.deathTimer = self.deathTimer + dt
 		if self.deathTimer >= 1.0 then -- 1 second delay
 			self.restarting = true
@@ -64,6 +93,11 @@ function gameScene:update(dt)
 				self.restarting = false
 			end)
 		end
+	end
+	
+	-- Update camera
+	if self.camera then
+		self.camera:update(dt)
 	end
 
 	--------- input ---------
@@ -109,6 +143,11 @@ function gameScene:draw()
 		return
 	end
 
+	-- Apply camera shake
+	if self.camera then
+		self.camera:apply()
+	end
+
 	-- Draw background layer
 	if self.map.tiled and self.map.tiled.layers and self.map.tiled.layers["Bg"] then
 		self.map.tiled:drawLayer(self.map.tiled.layers["Bg"])
@@ -119,6 +158,8 @@ function gameScene:draw()
 	self:drawObjects(self.map.entities.coins)
 	self:drawObjects(self.map.entities.boxes)
 	self:drawObjects(self.map.entities.triggers)
+	self:drawObjects(self.map.entities.saws)
+	self:drawObjects(self.map.entities.teleporters)
 
 	-- Draw single objects (check if they're actual objects, not empty tables)
 	if self.map.entities.door and type(self.map.entities.door) == "table" and self.map.entities.door.draw then
@@ -130,6 +171,11 @@ function gameScene:draw()
 
 	-- Draw particle effects
 	particleEffects:draw()
+	
+	-- Unapply camera shake
+	if self.camera then
+		self.camera:unapply()
+	end
 end
 
 return gameScene

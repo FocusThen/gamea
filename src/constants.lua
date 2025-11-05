@@ -42,6 +42,69 @@ Constants.DOOR = {
 	HEIGHT = 16,
 }
 
+-- Saw Constants
+Constants.SAW = {
+	WIDTH = 16,
+	HEIGHT = 16,
+	DEFAULT_SPEED = 50,
+	DEFAULT_DISTANCE = 100,
+}
+
+-- Teleporter Constants
+Constants.TELEPORTER = {
+	WIDTH = 16,
+	HEIGHT = 16,
+	COOLDOWN = 0.5,
+	TRANSITION_DURATION = 0.3,
+}
+
+-- Trigger Constants
+Constants.TRIGGER = {
+	ACTION_TYPES = {
+		MOVE = "move",
+		WAIT = "wait",
+		ACTIVATE = "activate",
+		SEQUENCE = "sequence",
+		CUTSCENE = "cutscene",
+		TIMER = "timer",
+	},
+	DEFAULT_DELAY = 0,
+	DEFAULT_DURATION = 0.5,
+}
+
+-- Shader Constants
+Constants.SHADERS = {
+	CRT_INTENSITY = 1.0,
+	BLOOM_INTENSITY = 1.0,
+	SCANLINE_FREQUENCY = 600.0,
+	CHROMA_OFFSET = 0.002,
+}
+
+-- Menu Constants
+Constants.MENU = {
+	BUTTON_SPACING = 20,
+	MENU_Y_OFFSET = 56,
+	SETTINGS_Y_OFFSET = 48,
+	SETTINGS_ROW_SPACING = 24,
+	SETTINGS_BAR_LEFT_RATIO = 1 / 6,
+	SETTINGS_BAR_WIDTH_RATIO = 1 / 2,
+	SETTINGS_BAR_WIDTH_EXTRA = 46,
+	SETTINGS_CONTROLS_RIGHT_OFFSET = 40,
+	SETTINGS_BUTTON_WIDTH = 12,
+	SETTINGS_BUTTON_HEIGHT = 16,
+	SETTINGS_BUTTON_PADDING = 2,
+	BACK_BUTTON_Y_OFFSET = 32,
+	SHADER_Y_OFFSET_AFTER_VOLUME = 3, -- Number of volume rows before shader toggle
+}
+
+-- Camera Constants
+Constants.CAMERA = {
+	SHAKE_INTENSITY = 5,
+	SHAKE_DURATION = 0.3,
+	DEATH_SHAKE_INTENSITY = 10,
+	DEATH_SHAKE_DURATION = 0.5,
+}
+
 -- Game Settings
 Constants.GAME = {
 	WIDTH = 320,

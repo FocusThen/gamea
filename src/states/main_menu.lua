@@ -1,7 +1,7 @@
-local pauseScene = Object:extend()
+local mainMenuScene = Object:extend()
 local Constants = require("src.constants")
 
-function pauseScene:new()
+function mainMenuScene:new()
 	self.bindings = baton.new({
 		controls = {
 			up = { "key:up", "key:w", "axis:lefty-", "button:dpup" },
@@ -9,122 +9,181 @@ function pauseScene:new()
 			left = { "key:left", "key:a", "axis:leftx-", "button:dpleft" },
 			right = { "key:right", "key:d", "axis:leftx+", "button:dpright" },
 			select = { "key:space", "key:return", "key:z", "button:a" },
-			back = { "key:escape", "button:b" },
+			quit = { "key:escape", "button:b" },
 		},
 		joystick = love.joystick.getJoysticks()[1],
 	})
 	
-	-- Menu screens
-	self.screens = {
-		menu = {
-			buttons = {
-				{ name = "Resume", action = function() self:resume() end },
-				{ name = "Settings", action = function() self.currentScreen = "settings"; playSound(sounds.select) end },
-				{ name = "Level Select", action = function() self:goToLevelSelect() end },
-				{ name = "Main Menu", action = function() self:goToMainMenu() end },
-			},
-			selected = 1,
-		},
-		settings = {
-			buttons = {
-				{ name = "Master Vol +", action = function() self:adjustVolume("master", 1) end },
-				{ name = "Master Vol -", action = function() self:adjustVolume("master", -1) end },
-				{ name = "Music Vol +", action = function() self:adjustVolume("music", 1) end },
-				{ name = "Music Vol -", action = function() self:adjustVolume("music", -1) end },
-			{ name = "SFX Vol +", action = function() self:adjustVolume("sfx", 1) end },
-			{ name = "SFX Vol -", action = function() self:adjustVolume("sfx", -1) end },
-			{ name = "CRT Shader", action = function() shaderSystem:toggle("crt"); playSound(sounds.select) end },
-			{ name = "Back", action = function() self.currentScreen = "menu"; self:saveGame(); playSound(sounds.select) end },
-			},
-			selected = 1,
-		},
-	}
-	
-	self.currentScreen = "menu"
-	self.gameStateRef = nil -- Will hold reference to game state for drawing
-	self.ignoreInput = true -- Ignore input on first frame to prevent flashing
+	-- Save check will be done in enter()
+	self.hasSave = false
 end
 
-function pauseScene:enter(enterparams)
-	-- Store reference to game state so we can draw it behind the pause menu
-	self.gameStateRef = enterparams.gameState
-	self.currentScreen = "menu"
-	self.screens.menu.selected = 1
-	self.screens.settings.selected = 1
-	self.ignoreInput = true -- Ignore input on first frame
-end
-
-function pauseScene:update(dt)
-	self.bindings:update()
+function mainMenuScene:buildMenu()
+	local buttons = {}
 	
-	-- Ignore input on first frame to prevent the escape key from immediately resuming
-	if self.ignoreInput then
-		self.ignoreInput = false
-		return
+	-- Add Continue option if save exists
+	if self.hasSave then
+		table.insert(buttons, {
+			name = "Continue",
+			action = function()
+				playSound(sounds.select)
+				sceneEffects:transitionToWithWipe(function()
+					saveSystem:loadGame()
+					local levelPath = "level_" .. savedGame.levelReached
+					stateMachine:setState("game", { map = loadLevel(levelPath) })
+				end)
+			end
+		})
 	end
 	
-	local currentScreen = self.screens[self.currentScreen]
-	
-	if self.currentScreen == "settings" then
-		-- Settings screen: 6 volume controls (arranged in pairs) + 1 shader toggle + 1 back button
-		local maxSelection = #currentScreen.buttons
-		if self.bindings:pressed("up") then
-			currentScreen.selected = currentScreen.selected - 1
-			if currentScreen.selected < 1 then
-				currentScreen.selected = maxSelection
-			end
+	-- Always show New Game
+	table.insert(buttons, {
+		name = "New Game",
+		action = function()
 			playSound(sounds.select)
-		elseif self.bindings:pressed("down") then
-			currentScreen.selected = currentScreen.selected + 1
-			if currentScreen.selected > maxSelection then
-				currentScreen.selected = 1
-			end
-			playSound(sounds.select)
-		elseif self.bindings:pressed("left") then
-			-- Only volume controls have left/right
-			if currentScreen.selected <= 6 and currentScreen.selected % 2 == 0 then
-				currentScreen.selected = currentScreen.selected - 1 -- Move to plus button
-				playSound(sounds.select)
-			end
-		elseif self.bindings:pressed("right") then
-			-- Only volume controls have left/right
-			if currentScreen.selected <= 6 and currentScreen.selected % 2 == 1 then
-				currentScreen.selected = currentScreen.selected + 1 -- Move to minus button
-				playSound(sounds.select)
-			end
+			sceneEffects:transitionToWithWipe(function()
+				-- Reset save
+				savedGame.levelReached = 1
+				saveSystem:deleteSave()
+				stateMachine:setState("levelSelect")
+			end)
 		end
+	})
+	
+	-- Settings
+	table.insert(buttons, {
+		name = "Settings",
+		action = function()
+			playSound(sounds.select)
+			self.currentScreen = "settings"
+			self.screens.settings.selected = 1
+		end
+	})
+	
+	-- Quit
+	table.insert(buttons, {
+		name = "Quit",
+		action = function()
+			playSound(sounds.select)
+			love.event.quit()
+		end
+	})
+	
+	-- Settings menu (similar to pause menu settings)
+	if not self.screens then
+		self.screens = {
+			menu = {
+				buttons = buttons,
+				selected = 1,
+			},
+			settings = {
+				buttons = {
+					{ name = "Master Vol +", action = function() self:adjustVolume("master", 1) end },
+					{ name = "Master Vol -", action = function() self:adjustVolume("master", -1) end },
+					{ name = "Music Vol +", action = function() self:adjustVolume("music", 1) end },
+					{ name = "Music Vol -", action = function() self:adjustVolume("music", -1) end },
+					{ name = "SFX Vol +", action = function() self:adjustVolume("sfx", 1) end },
+					{ name = "SFX Vol -", action = function() self:adjustVolume("sfx", -1) end },
+					{ name = "CRT Shader", action = function() shaderSystem:toggle("crt"); playSound(sounds.select) end },
+					{ name = "Back", action = function() self.currentScreen = "menu"; self:saveSettings(); playSound(sounds.select) end },
+				},
+				selected = 1,
+			},
+		}
 	else
-		-- Menu screen: simple up/down navigation
+		self.screens.menu.buttons = buttons
+	end
+	
+	self.currentScreen = "menu"
+end
+
+function mainMenuScene:enter()
+	-- Check if save exists (now saveSystem is initialized)
+	if saveSystem then
+		self.hasSave = saveSystem:hasSave()
+	else
+		self.hasSave = false
+	end
+	self:buildMenu()
+	self.currentScreen = "menu"
+	sceneEffects:setFadeIn()
+end
+
+function mainMenuScene:update(dt)
+	self.bindings:update()
+	
+	if self.currentScreen == "menu" then
+		local screen = self.screens.menu
 		if self.bindings:pressed("up") then
-			currentScreen.selected = currentScreen.selected - 1
+			screen.selected = screen.selected - 1
+			if screen.selected < 1 then
+				screen.selected = #screen.buttons
+			end
 			playSound(sounds.select)
 		elseif self.bindings:pressed("down") then
-			currentScreen.selected = currentScreen.selected + 1
+			screen.selected = screen.selected + 1
+			if screen.selected > #screen.buttons then
+				screen.selected = 1
+			end
 			playSound(sounds.select)
 		end
 		
-		-- Clamp selection for menu
-		if currentScreen.selected > #currentScreen.buttons then
-			currentScreen.selected = 1
+		if self.bindings:pressed("select") then
+			local button = screen.buttons[screen.selected]
+			if button and button.action and not button.disabled then
+				button.action()
+			end
 		end
-		if currentScreen.selected < 1 then
-			currentScreen.selected = #currentScreen.buttons
+		
+		if self.bindings:pressed("quit") then
+			love.event.quit()
 		end
-	end
-	
-	if self.bindings:pressed("select") then
-		currentScreen.buttons[currentScreen.selected].action()
-	elseif self.bindings:pressed("back") then
-		if self.currentScreen == "menu" then
-			self:resume()
-		else
+	elseif self.currentScreen == "settings" then
+		local screen = self.screens.settings
+		local maxSelection = #screen.buttons
+		
+		if self.bindings:pressed("up") then
+			screen.selected = screen.selected - 1
+			if screen.selected < 1 then
+				screen.selected = maxSelection
+			end
+			playSound(sounds.select)
+		elseif self.bindings:pressed("down") then
+			screen.selected = screen.selected + 1
+			if screen.selected > maxSelection then
+				screen.selected = 1
+			end
+			playSound(sounds.select)
+		elseif self.bindings:pressed("left") then
+			-- Navigate between volume controls (paired +/- buttons)
+			if screen.selected <= 6 and screen.selected % 2 == 0 then
+				screen.selected = screen.selected - 1
+				playSound(sounds.select)
+			end
+		elseif self.bindings:pressed("right") then
+			-- Navigate between volume controls (paired +/- buttons)
+			if screen.selected <= 6 and screen.selected % 2 == 1 then
+				screen.selected = screen.selected + 1
+				playSound(sounds.select)
+			end
+		end
+		
+		if self.bindings:pressed("select") then
+			local button = screen.buttons[screen.selected]
+			if button and button.action then
+				button.action()
+			end
+		end
+		
+		if self.bindings:pressed("quit") then
 			self.currentScreen = "menu"
+			self:saveSettings()
 			playSound(sounds.select)
 		end
 	end
 end
 
-function pauseScene:adjustVolume(type, direction)
+function mainMenuScene:adjustVolume(type, direction)
 	local volKey = type == "master" and "masterVol" or (type == "music" and "musicVol" or "sfxVol")
 	local currentVol = gameSettings[volKey]
 	
@@ -133,64 +192,35 @@ function pauseScene:adjustVolume(type, direction)
 			gameSettings[volKey] = math.min(1, math.floor(currentVol * 10 + 1) / 10)
 			playSound(sounds.select)
 		else
-			playSound(sounds.select) -- Use select sound as error feedback
+			playSound(sounds.select)
 		end
 	else
 		if currentVol > 0 then
 			gameSettings[volKey] = math.max(0, math.floor(currentVol * 10 - 1) / 10)
 			playSound(sounds.select)
 		else
-			playSound(sounds.select) -- Use select sound as error feedback
+			playSound(sounds.select)
 		end
 	end
 end
 
-function pauseScene:resume()
-	playSound(sounds.select)
-	-- Instant resume, no transition
-	stateMachine:setState("game", { map = self.gameStateRef.map })
-end
-
-function pauseScene:goToLevelSelect()
-	playSound(sounds.select)
-	-- Use transition for going to level select
-	sceneEffects:transitionToWithWipe(function()
-		stateMachine:setState("levelSelect")
-	end)
-end
-
-function pauseScene:goToMainMenu()
-	playSound(sounds.select)
-	-- Save game before going to main menu
-	self:saveGame()
-	-- Use transition for going to main menu
-	sceneEffects:transitionToWithWipe(function()
-		stateMachine:setState("main_menu")
-	end)
-end
-
-function pauseScene:saveGame()
-	-- Save game progress and settings
+function mainMenuScene:saveSettings()
 	savedGame.settings = gameSettings
 	saveSystem:saveGame()
 end
 
-function pauseScene:keypressed(key)
-	-- Input is handled in update, but we need this for state machine compatibility
-end
-
-function pauseScene:draw()
-	-- Draw the game state behind the pause menu
-	if self.gameStateRef and self.gameStateRef.draw then
-		self.gameStateRef:draw()
+function mainMenuScene:draw()
+	-- Draw background
+	if sprites.ui.title then
+		love.graphics.draw(sprites.ui.title, 0, 0)
+	else
+		-- Fallback background
+		love.graphics.setColor(20 / 255, 24 / 255, 46 / 255, 1)
+		love.graphics.rectangle("fill", 0, 0, gameSettings.gameWidth, gameSettings.gameHeight)
+		love.graphics.setColor(1, 1, 1, 1)
 	end
 	
-	-- Draw dark overlay
-	love.graphics.setColor(20 / 255, 24 / 255, 46 / 255, 0.4)
-	love.graphics.rectangle("fill", 0, 0, gameSettings.gameWidth, gameSettings.gameHeight)
-	love.graphics.setColor(1, 1, 1, 1)
-	
-	-- Draw pause menu
+	-- Draw menu
 	if self.currentScreen == "menu" then
 		self:drawMenuScreen()
 	elseif self.currentScreen == "settings" then
@@ -198,7 +228,7 @@ function pauseScene:draw()
 	end
 end
 
-function pauseScene:drawMenuScreen()
+function mainMenuScene:drawMenuScreen()
 	local screen = self.screens.menu
 	local yOffset = Constants.MENU.MENU_Y_OFFSET
 	local buttonSpacing = Constants.MENU.BUTTON_SPACING
@@ -220,22 +250,31 @@ function pauseScene:drawMenuScreen()
 		
 		-- Draw button text
 		love.graphics.setColor(1, 1, 1, 1)
+		if button.disabled then
+			love.graphics.setColor(0.5, 0.5, 0.5, 1) -- Grey out disabled buttons
+		end
 		local text = button.name
 		local textWidth = fonts.default:getWidth(text)
 		love.graphics.print(text, fonts.default, 
 			gameSettings.gameWidth / 2 - textWidth / 2, 
 			y
 		)
+		love.graphics.setColor(1, 1, 1, 1)
 	end
 end
 
-function pauseScene:drawSettingsScreen()
+function mainMenuScene:drawSettingsScreen()
 	local screen = self.screens.settings
 	local yOffset = Constants.MENU.SETTINGS_Y_OFFSET
 	local rowSpacing = Constants.MENU.SETTINGS_ROW_SPACING
 	local barLeft = math.floor(gameSettings.gameWidth * Constants.MENU.SETTINGS_BAR_LEFT_RATIO)
 	local barWidth = math.floor(gameSettings.gameWidth * Constants.MENU.SETTINGS_BAR_WIDTH_RATIO) + Constants.MENU.SETTINGS_BAR_WIDTH_EXTRA
-	local controlsRight = math.floor(gameSettings.gameWidth * 2 / 3)
+	
+	-- Draw title
+	love.graphics.setColor(43 / 255, 43 / 255, 69 / 255, 1)
+	local titleWidth = fonts.default:getWidth("Settings")
+	love.graphics.print("Settings", fonts.default, gameSettings.gameWidth / 2 - titleWidth / 2, 8)
+	love.graphics.setColor(1, 1, 1, 1)
 	
 	-- Draw volume bars with controls
 	for i = 1, 3 do
@@ -291,7 +330,6 @@ function pauseScene:drawSettingsScreen()
 	
 	-- Draw shader toggle
 	local shaderYOffset = Constants.MENU.SETTINGS_Y_OFFSET + (Constants.MENU.SETTINGS_ROW_SPACING * Constants.MENU.SHADER_Y_OFFSET_AFTER_VOLUME)
-	local shaderSpacing = Constants.MENU.SETTINGS_ROW_SPACING
 	local crtButtonIndex = 7
 	local backButtonIndex = 8
 	
@@ -315,7 +353,7 @@ function pauseScene:drawSettingsScreen()
 		crtY
 	)
 	
-	-- Draw back button at bottom center
+	-- Back button
 	local backY = gameSettings.gameHeight - Constants.MENU.BACK_BUTTON_Y_OFFSET
 	if screen.selected == backButtonIndex then
 		love.graphics.setColor(0, 1, 1, 1)
@@ -335,5 +373,9 @@ function pauseScene:drawSettingsScreen()
 	)
 end
 
-return pauseScene
+function mainMenuScene:keypressed(key)
+	-- Input is handled in update
+end
+
+return mainMenuScene
 

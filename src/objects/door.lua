@@ -26,8 +26,12 @@ function door:interact(player)
 
 	sceneEffects:transitionToWithWipe(function()
 		if number == numOfLevels then
-			stateMachine:setState("levelSelect") -- TODO: thanks you for playing screen
+			-- Save game and go to ending
+			saveSystem:saveGame()
+			stateMachine:setState("ending")
 		else
+			-- Auto-save on level completion
+			saveSystem:saveGame()
 			stateMachine:setState("game", { map = loadLevel(nextLevel) })
 		end
 	end)

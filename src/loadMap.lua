@@ -3,6 +3,8 @@ local coin = require("src.objects.coin")
 local door = require("src.objects.door")
 local box = require("src.objects.box")
 local trigger = require("src.objects.trigger")
+local saw = require("src.objects.saw")
+local teleporter = require("src.objects.teleporter")
 
 function loadLevel(path)
 	-- destroy all objects
@@ -39,6 +41,8 @@ function loadLevel(path)
 		door = {},
 		player = {},
 		triggers = {},
+		saws = {},
+		teleporters = {},
 	}
 	-- Entity lookup by ID for triggers
 	local entitiesById = {}
@@ -73,6 +77,14 @@ function loadLevel(path)
 					end,
 				}
 				World:add(spike, spike.x, spike.y, spike.width, spike.height)
+			elseif obj.name == "saw" then
+				local sawProp = tiled:getObjectProperties("Dangers", obj.id)
+				if sawProp == nil or sawProp == {} then
+					sawProp = obj.properties or {}
+				end
+				local sawObj = saw(obj.x, obj.y, sawProp)
+				sawObj._id = obj.id
+				table.insert(entities.saws, sawObj)
 			end
 		end
 	end
@@ -99,18 +111,30 @@ function loadLevel(path)
 				entities.door._id = obj.id
 				entitiesById[obj.id] = entities.door
 			elseif obj.name == "trigger" then
-				local triggerProp = tiled:getObjectProperties("Spawns", "trigger")
-				if triggerProp == nil or triggerProp == {} then
-					triggerProp = obj.properties or {}
-				end
+				-- Use obj.properties directly for multiple triggers
+				local triggerProp = obj.properties or {}
 				-- Handle targetId from Tiled (can be object reference {id = X})
 				if triggerProp.targetId and type(triggerProp.targetId) == "table" and triggerProp.targetId.id then
 					triggerProp.targetId = triggerProp.targetId.id
 				end
 				local triggerObj = trigger(obj.x, obj.y, triggerProp)
 				triggerObj._id = obj.id
+				triggerObj.map = { entitiesById = entitiesById } -- Store reference for sequences
 				table.insert(entities.triggers, triggerObj)
 				entitiesById[obj.id] = triggerObj
+			elseif obj.name == "teleporter" then
+				local teleporterProp = tiled:getObjectProperties("Spawns", obj.id)
+				if teleporterProp == nil or teleporterProp == {} then
+					teleporterProp = obj.properties or {}
+				end
+				-- Handle targetId from Tiled (can be object reference {id = X})
+				if teleporterProp.targetId and type(teleporterProp.targetId) == "table" and teleporterProp.targetId.id then
+					teleporterProp.targetId = teleporterProp.targetId.id
+				end
+				local teleporterObj = teleporter(obj.x, obj.y, teleporterProp)
+				teleporterObj._id = obj.id
+				table.insert(entities.teleporters, teleporterObj)
+				entitiesById[obj.id] = teleporterObj
 			end
 		end
 	end
@@ -125,6 +149,20 @@ function loadLevel(path)
 			end
 			if entitiesById[targetId] then
 				trig.target = entitiesById[targetId]
+			end
+		end
+	end
+
+	-- Link teleporters to targets by ID
+	for _, tel in ipairs(entities.teleporters) do
+		if tel.targetId then
+			local targetId = tel.targetId
+			-- Handle both number and table format from Tiled
+			if type(targetId) == "table" and targetId.id then
+				targetId = targetId.id
+			end
+			if entitiesById[targetId] then
+				tel.targetTeleporter = entitiesById[targetId]
 			end
 		end
 	end

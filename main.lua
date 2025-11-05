@@ -19,6 +19,8 @@ require("src.loadMap")
 stateMachine = require("src.states.stateMachine")
 sceneEffects = require("src.sceneEffects")
 particleEffects = require("src.particles")
+shaderSystem = require("src.shaders")
+saveSystem = require("src.saveSystem")
 
 -- Display state
 _G.screen_scale = 3
@@ -51,11 +53,16 @@ function love.load()
 	stateMachine = stateMachine()
 	sceneEffects = sceneEffects(worldCanvas)
 	particleEffects = particleEffects()
+	shaderSystem = shaderSystem()
+	saveSystem = saveSystem()
+	
+	-- Load saved game if exists
+	saveSystem:loadGame()
 
 	updateScale()
 
-	-- Start at level select screen
-	stateMachine:setState("levelSelect")
+	-- Start at intro screen
+	stateMachine:setState("intro")
 end
 
 function love.update(dt)
@@ -96,8 +103,13 @@ function love.draw()
 	---
 	love.graphics.setCanvas()
 	love.graphics.setColor(1, 1, 1, 1)
+	
+	-- Apply shaders to canvas
+	local processedCanvas = shaderSystem:apply(worldCanvas, gameSettings.gameWidth, gameSettings.gameHeight)
+	
+	-- Draw with shaders applied
 	love.graphics.setBlendMode("alpha", "premultiplied")
-	love.graphics.draw(worldCanvas, offsetX, offsetY, 0, screen_scale, screen_scale)
+	shaderSystem:draw(processedCanvas, offsetX, offsetY, screen_scale, screen_scale)
 end
 
 function love.keypressed(k)

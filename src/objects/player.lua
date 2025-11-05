@@ -34,7 +34,7 @@ function player:new(x, y, props)
 	}
 
 	self.filter = function(item, other)
-		if other.type == "pickup" or other.type == "spike" or other.type == "door" or other.type == "trigger" then
+		if other.type == "pickup" or other.type == "spike" or other.type == "door" or other.type == "trigger" or other.type == "saw" or other.type == "teleporter" then
 			return "cross"
 		elseif other.type == "oneWay" then
 			return "oneWay"
@@ -161,7 +161,7 @@ function player:update(dt)
 			col.other:onPickup()
 			col.other.delete = true
 			World:remove(col.other)
-		elseif col.other.type == "door" or col.other.type == "spike" then
+		elseif col.other.type == "door" or col.other.type == "spike" or col.other.type == "saw" or col.other.type == "teleporter" then
 			col.other:interact(self)
 		elseif col.other.type == "platform" then
 			tileHit = true
@@ -312,6 +312,7 @@ function player:kill()
 	if not self.dead then
 		self.dead = true
 		playSound(sounds.dead)
+		-- Camera shake is handled in game state
 	end
 end
 

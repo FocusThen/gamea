@@ -10,10 +10,13 @@ end
 
 function stateMachine:loadStates()
 	-- Load different game states
-	self.states.title = require("src.states.title")()
+	self.states.intro = require("src.states.intro")()
+	self.states.main_menu = require("src.states.main_menu")()
+	self.states.title = require("src.states.title")() -- Keep for backward compatibility
 	self.states.game = require("src.states.game")()
 	self.states.levelSelect = require("src.states.levelSelect")()
 	self.states.pause = require("src.states.pause")()
+	self.states.ending = require("src.states.ending")()
 end
 
 function stateMachine:setState(stateName, enterparams)

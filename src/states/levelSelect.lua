@@ -28,7 +28,7 @@ function levelSelectScene:update(dt)
 
 	if self.bindings:pressed("back") then
 		sceneEffects:transitionToWithWipe(function()
-			stateMachine:setState("title")
+			stateMachine:setState("main_menu")
 		end)
 	elseif self.bindings:pressed("select") then
 		sceneEffects:transitionToWithWipe(function()
