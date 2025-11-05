@@ -161,7 +161,7 @@ function player:update(dt)
 			col.other:onPickup()
 			col.other.delete = true
 			World:remove(col.other)
-		elseif col.other.type == "door" or col.other.type == "spike" or col.other.type == "saw" or col.other.type == "teleporter" then
+		elseif col.other.type == "door" or col.other.type == "spike" or col.other.type == "saw" or col.other.type == "teleporter" or col.other.type == "deadlyObject" then
 			col.other:interact(self)
 		elseif col.other.type == "platform" then
 			tileHit = true

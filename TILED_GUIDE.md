@@ -9,19 +9,21 @@ The game expects the following layers in your Tiled map:
 ### Required Layers
 
 1. **Platforms** (Object Layer)
+
    - Contains collision platforms for the game world
    - Objects in this layer are collision-only (not drawn)
 
 2. **Spawns** (Object Layer)
+
    - Contains all spawnable game objects (player, coins, boxes, doors, triggers, teleporters)
 
 3. **Dangers** (Object Layer)
-   - Contains dangerous objects (spikes, saws)
+   - Contains dangerous objects (spikes, saws, deadlyObjects)
 
 ### Optional Layers
 
 - **Bg** (Tile Layer)
-   - Background tiles that are drawn behind all game objects
+  - Background tiles that are drawn behind all game objects
 
 ## Object Types
 
@@ -30,10 +32,12 @@ The game expects the following layers in your Tiled map:
 **Layer:** Spawns  
 **Name:** `player`  
 **Properties:**
+
 - `doubleJump` (boolean, optional): Whether player has double jump ability
 - `dash` (boolean, optional): Whether player has dash ability
 
 **Example:**
+
 - Create a rectangle object in the "Spawns" layer
 - Set the name to `player`
 - Add custom properties as needed
@@ -45,6 +49,7 @@ The game expects the following layers in your Tiled map:
 **Properties:** None required
 
 **Notes:**
+
 - Coins are automatically collected when player touches them
 - They are removed from the world after collection
 
@@ -55,6 +60,7 @@ The game expects the following layers in your Tiled map:
 **Properties:** None required
 
 **Notes:**
+
 - Boxes can be pushed by the player
 - They are affected by gravity and physics
 
@@ -65,6 +71,7 @@ The game expects the following layers in your Tiled map:
 **Properties:** None required
 
 **Notes:**
+
 - When player touches a door, they advance to the next level
 - If it's the last level, player goes to the ending screen
 
@@ -73,6 +80,7 @@ The game expects the following layers in your Tiled map:
 **Layer:** Spawns  
 **Name:** `trigger`  
 **Properties:**
+
 - `action` (string, optional): Action type - "move", "wait", "activate", "sequence", "cutscene", "timer" (default: "move")
 - `targetId` (number or object reference): ID of the target object to affect
 - `moveX` (number, optional): X distance to move target (pixels)
@@ -84,6 +92,7 @@ The game expects the following layers in your Tiled map:
 - `timerDelay` (number, optional): For timer-based triggers, delay before activation (seconds)
 
 **Action Types:**
+
 - `move`: Move target object smoothly (requires targetId, moveX, moveY)
 - `wait`: Wait for a duration (used in sequences)
 - `activate`: Activate another trigger/object
@@ -92,6 +101,7 @@ The game expects the following layers in your Tiled map:
 - `timer`: Automatically activate after timerDelay seconds
 
 **Example:**
+
 - Create a rectangle object in "Spawns" layer
 - Set name to `trigger`
 - Set `targetId` to the ID of another object (e.g., a coin)
@@ -103,6 +113,7 @@ The game expects the following layers in your Tiled map:
 **Layer:** Spawns  
 **Name:** `teleporter`  
 **Properties:**
+
 - `targetId` (number or object reference): ID of destination teleporter
 - `targetX` (number, optional): Alternative - X coordinate destination
 - `targetY` (number, optional): Alternative - Y coordinate destination
@@ -110,6 +121,7 @@ The game expects the following layers in your Tiled map:
 - `transitionDuration` (number, optional): Fade transition duration (seconds, default: 0.3)
 
 **Notes:**
+
 - Teleporters work in pairs - link them using `targetId`
 - Player teleports to the center of the target teleporter
 - Has a cooldown to prevent rapid teleportation
@@ -121,19 +133,42 @@ The game expects the following layers in your Tiled map:
 **Properties:** None required
 
 **Notes:**
+
 - Kills player on contact
 - No special properties needed
+
+### Deadly Object
+
+**Layer:** Dangers  
+**Name:** `deadlyObject`  
+**Properties:** None required
+
+**Notes:**
+
+- Kills player on contact (same behavior as spikes)
+- **Invisible by default** - perfect for trick traps
+- Can be placed over coins to create "fake coins" that kill the player
+- Can be placed anywhere as an invisible hazard
+- Useful for creating tricky platforming challenges where players need to identify safe vs unsafe areas
+
+**Example Usage:**
+
+- Place a `deadlyObject` directly over a coin to create a fake coin trap
+- Place multiple `deadlyObject` rectangles in a pattern to create an invisible hazard zone
+- Combine with visible coins to create a mix of safe and dangerous pickups
 
 ### Saw
 
 **Layer:** Dangers  
 **Name:** `saw`  
 **Properties:**
+
 - `direction` (string, optional): "horizontal" or "vertical" (default: "horizontal")
 - `distance` (number, optional): Movement distance in pixels (default: 100)
 - `speed` (number, optional): Movement speed in pixels per second (default: 50)
 
 **Notes:**
+
 - Saws move back and forth continuously
 - Kills player on contact
 - Direction determines if saw moves left/right or up/down
@@ -141,6 +176,7 @@ The game expects the following layers in your Tiled map:
 ## Object IDs
 
 **Important:** All objects that can be referenced by other objects (triggers, teleporters) must have unique IDs. In Tiled:
+
 1. Select an object
 2. In the Properties panel, the object ID is shown at the top
 3. Use this ID in `targetId` properties
@@ -148,6 +184,7 @@ The game expects the following layers in your Tiled map:
 ## Object References in Tiled
 
 When setting `targetId` in Tiled:
+
 - You can use the object reference type and select the target object
 - Tiled will save it as `{id = X}` format
 - The game automatically converts this to the numeric ID
@@ -159,6 +196,7 @@ When setting `targetId` in Tiled:
 **Properties:** None
 
 **Notes:**
+
 - Platforms are collision-only (not drawn)
 - They block player and box movement
 - Use rectangles for platforms
@@ -189,4 +227,3 @@ When setting `targetId` in Tiled:
 - **Object not appearing**: Verify layer name and object name are correct
 - **Movement not working**: Ensure `moveX` or `moveY` is set, and `targetId` is correct
 - **Teleporter not working**: Verify both teleporters have correct `targetId` references
-

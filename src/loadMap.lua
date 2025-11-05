@@ -43,6 +43,7 @@ function loadLevel(path)
 		triggers = {},
 		saws = {},
 		teleporters = {},
+		deadlyObjects = {},
 	}
 	-- Entity lookup by ID for triggers
 	local entitiesById = {}
@@ -77,14 +78,26 @@ function loadLevel(path)
 					end,
 				}
 				World:add(spike, spike.x, spike.y, spike.width, spike.height)
+				entitiesById[obj.id] = spike
 			elseif obj.name == "saw" then
-				local sawProp = tiled:getObjectProperties("Dangers", obj.id)
-				if sawProp == nil or sawProp == {} then
-					sawProp = obj.properties or {}
-				end
+				local sawProp = obj.properties or {}
 				local sawObj = saw(obj.x, obj.y, sawProp)
 				sawObj._id = obj.id
 				table.insert(entities.saws, sawObj)
+				entitiesById[obj.id] = sawObj
+			elseif obj.name == "deadlyObject" then
+				local deadlyObject = {
+					x = obj.x,
+					y = obj.y,
+					width = obj.width,
+					height = obj.height,
+					type = "deadlyObject",
+					interact = function(self, player)
+						player:kill()
+					end,
+				}
+				World:add(deadlyObject, deadlyObject.x, deadlyObject.y, deadlyObject.width, deadlyObject.height)
+				entitiesById[obj.id] = deadlyObject
 			end
 		end
 	end
@@ -123,10 +136,7 @@ function loadLevel(path)
 				table.insert(entities.triggers, triggerObj)
 				entitiesById[obj.id] = triggerObj
 			elseif obj.name == "teleporter" then
-				local teleporterProp = tiled:getObjectProperties("Spawns", obj.id)
-				if teleporterProp == nil or teleporterProp == {} then
-					teleporterProp = obj.properties or {}
-				end
+				local teleporterProp = obj.properties or {}
 				-- Handle targetId from Tiled (can be object reference {id = X})
 				if teleporterProp.targetId and type(teleporterProp.targetId) == "table" and teleporterProp.targetId.id then
 					teleporterProp.targetId = teleporterProp.targetId.id
