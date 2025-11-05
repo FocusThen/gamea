@@ -68,8 +68,8 @@ function loadLevel(path)
 					width = obj.width,
 					height = obj.height,
 					type = "spike",
-					interact = function(p)
-						p:kill()
+					interact = function(self, player)
+						player:kill()
 					end,
 				}
 				World:add(spike, spike.x, spike.y, spike.width, spike.height)

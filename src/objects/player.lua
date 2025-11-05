@@ -129,7 +129,7 @@ function player:update(dt)
 			col.other:interact(self)
 		end
 	end
-	
+
 	for i, col in ipairs(cols) do
 		if col.other.type == "box" then
 			if col.normal.x ~= 0 then

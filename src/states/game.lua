@@ -3,6 +3,8 @@ local gameScene = Object:extend()
 function gameScene:enter(enterparams)
 	self.map = enterparams.map
 	self.player = self.map.entities.player
+	self.deathTimer = 0
+	self.restarting = false
 end
 
 function gameScene:new()
@@ -13,6 +15,8 @@ function gameScene:new()
 		},
 		joystick = love.joystick.getJoysticks()[1],
 	})
+	self.deathTimer = 0
+	self.restarting = false
 end
 
 function gameScene:update(dt)
@@ -48,12 +52,28 @@ function gameScene:update(dt)
 		end
 	end
 
+	-- Check if player is dead and restart level after delay
+	if self.player and self.player.dead and not self.restarting then
+		self.deathTimer = self.deathTimer + dt
+		if self.deathTimer >= 1.0 then -- 1 second delay
+			self.restarting = true
+			sceneEffects:transitionToWithWipe(function()
+				self.map = loadLevel(self.map.path)
+				self.player = self.map.entities.player
+				self.deathTimer = 0
+				self.restarting = false
+			end)
+		end
+	end
+
 	--------- input ---------
 	self.bindings:update()
 	if self.bindings:pressed("reset") then
 		sceneEffects:transitionToWithWipe(function()
 			self.map = loadLevel(self.map.path)
 			self.player = self.map.entities.player
+			self.deathTimer = 0
+			self.restarting = false
 		end)
 	elseif self.bindings:pressed("pause") then
 		-- Instant pause, no transition

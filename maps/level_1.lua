@@ -9,8 +9,8 @@ return {
   height = 12,
   tilewidth = 16,
   tileheight = 16,
-  nextlayerid = 4,
-  nextobjectid = 10,
+  nextlayerid = 6,
+  nextobjectid = 14,
   properties = {},
   tilesets = {},
   layers = {
@@ -111,10 +111,10 @@ return {
           rotation = 0,
           visible = true,
           properties = {
-            ["moveX"] = 0,
-            ["moveY"] = -10,
+            ["moveX"] = 200,
+            ["moveY"] = 0,
             ["once"] = true,
-            ["targetId"] = { id = 7 }
+            ["targetId"] = { id = 10 }
           }
         }
       }
@@ -140,7 +140,7 @@ return {
           shape = "rectangle",
           x = 0,
           y = 176,
-          width = 320,
+          width = 128,
           height = 16,
           rotation = 0,
           visible = true,
@@ -181,6 +181,61 @@ return {
           y = 0,
           width = 288,
           height = 16,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 10,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 128,
+          y = 176,
+          width = 48,
+          height = 16,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 12,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 176,
+          y = 176,
+          width = 144,
+          height = 16,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        }
+      }
+    },
+    {
+      type = "objectgroup",
+      draworder = "topdown",
+      id = 5,
+      name = "Dangers",
+      class = "",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      parallaxx = 1,
+      parallaxy = 1,
+      properties = {},
+      objects = {
+        {
+          id = 13,
+          name = "spike",
+          type = "spike",
+          shape = "rectangle",
+          x = 192,
+          y = 171.466,
+          width = 47.7316,
+          height = 4.53423,
           rotation = 0,
           visible = true,
           properties = {}
