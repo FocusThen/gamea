@@ -1,1 +1,6 @@
 .DS_Store
+
+# Build artifacts
+build/
+releases/
+*.love
