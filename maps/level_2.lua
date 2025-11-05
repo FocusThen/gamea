@@ -10,7 +10,7 @@ return {
   tilewidth = 16,
   tileheight = 16,
   nextlayerid = 6,
-  nextobjectid = 14,
+  nextobjectid = 17,
   properties = {
     ["BgColor"] = "#fff5e24c",
     ["MapColor"] = "#ff916429"
@@ -88,6 +88,29 @@ return {
           rotation = 0,
           visible = true,
           properties = {}
+        },
+        {
+          id = 16,
+          name = "trigger",
+          type = "trigger",
+          shape = "rectangle",
+          x = 224,
+          y = 112,
+          width = 16,
+          height = 16,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["action"] = "move",
+            ["delay"] = 0,
+            ["duration"] = 0,
+            ["moveX"] = 100,
+            ["moveY"] = 0,
+            ["once"] = true,
+            ["speed"] = 50,
+            ["targetId"] = { id = 14 },
+            ["timerDelay"] = 0
+          }
         }
       }
     },
@@ -151,7 +174,33 @@ return {
           shape = "rectangle",
           x = 16,
           y = 128,
-          width = 288,
+          width = 224,
+          height = 64,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 14,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 240,
+          y = 128,
+          width = 32,
+          height = 64,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 15,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 272,
+          y = 128,
+          width = 32,
           height = 64,
           rotation = 0,
           visible = true,

@@ -52,6 +52,12 @@ function loadLevel(path)
 		for i, obj in pairs(tiled.layers["Platforms"].objects) do
 			entities.platforms[i] =
 				{ _id = obj.id, type = "platform", x = obj.x, y = obj.y, width = obj.width, height = obj.height }
+			-- Add draw method for platforms (walls)
+			entities.platforms[i].draw = function(self)
+				love.graphics.setColor(1, 1, 1, 1) -- Base white color, will be tinted by MapColor shader
+				love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+				love.graphics.setColor(1, 1, 1, 1)
+			end
 			entitiesById[obj.id] = entities.platforms[i]
 			World:add(
 				entities.platforms[i],
@@ -77,7 +83,14 @@ function loadLevel(path)
 						player:kill()
 					end,
 				}
+				-- Add draw method for spikes (placeholder until sprites are added)
+				spike.draw = function(self)
+					love.graphics.setColor(1, 0, 0, 1) -- Base red color, will be tinted by MapColor shader
+					love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+					love.graphics.setColor(1, 1, 1, 1)
+				end
 				World:add(spike, spike.x, spike.y, spike.width, spike.height)
+				table.insert(entities.deadlyObjects, spike)
 				entitiesById[obj.id] = spike
 			elseif obj.name == "saw" then
 				local sawProp = obj.properties or {}
@@ -177,9 +190,69 @@ function loadLevel(path)
 		end
 	end
 
+	-- Extract map color properties from Tiled
+	local bgColor = nil
+	local mapColor = nil
+	
+	if tiled.properties then
+		-- Parse BgColor (format: "#rrggbbaa" or "#rrggbb")
+		if tiled.properties.BgColor then
+			local hex = tiled.properties.BgColor
+			-- Handle 8-digit hex with alpha
+			local r, g, b, a = hex:match("#(%x%x)(%x%x)(%x%x)(%x%x)")
+			if r then
+				bgColor = {
+					r = tonumber(r, 16) / 255,
+					g = tonumber(g, 16) / 255,
+					b = tonumber(b, 16) / 255,
+					a = tonumber(a, 16) / 255,
+				}
+			else
+				-- Fallback to 6-digit hex (no alpha, assume 1.0)
+				r, g, b = hex:match("#(%x%x)(%x%x)(%x%x)")
+				if r then
+					bgColor = {
+						r = tonumber(r, 16) / 255,
+						g = tonumber(g, 16) / 255,
+						b = tonumber(b, 16) / 255,
+						a = 1.0,
+					}
+				end
+			end
+		end
+		
+		-- Parse MapColor (format: "#rrggbbaa" or "#rrggbb")
+		if tiled.properties.MapColor then
+			local hex = tiled.properties.MapColor
+			-- Handle 8-digit hex with alpha
+			local r, g, b, a = hex:match("#(%x%x)(%x%x)(%x%x)(%x%x)")
+			if r then
+				mapColor = {
+					r = tonumber(r, 16) / 255,
+					g = tonumber(g, 16) / 255,
+					b = tonumber(b, 16) / 255,
+					a = tonumber(a, 16) / 255,
+				}
+			else
+				-- Fallback to 6-digit hex (no alpha, assume 1.0)
+				r, g, b = hex:match("#(%x%x)(%x%x)(%x%x)")
+				if r then
+					mapColor = {
+						r = tonumber(r, 16) / 255,
+						g = tonumber(g, 16) / 255,
+						b = tonumber(b, 16) / 255,
+						a = 1.0,
+					}
+				end
+			end
+		end
+	end
+
 	return {
 		tiled = tiled,
 		entities = entities,
 		path = path,
+		bgColor = bgColor,
+		mapColor = mapColor,
 	}
 end

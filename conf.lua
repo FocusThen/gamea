@@ -1,5 +1,5 @@
 DEBUG = false
-isDev = true
+isDev = false
 
 function love.conf(t)
 	t.version = "11.5"

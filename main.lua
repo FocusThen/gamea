@@ -62,7 +62,11 @@ function love.load()
 	updateScale()
 
 	-- Start at intro screen
-	stateMachine:setState("intro")
+	if isDev then
+		stateMachine:setState("levelSelect")
+	else
+		stateMachine:setState("intro")
+	end
 end
 
 function love.update(dt)

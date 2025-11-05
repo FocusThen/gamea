@@ -148,6 +148,13 @@ function gameScene:draw()
 		self.camera:apply()
 	end
 
+	-- Clear canvas with background color if specified
+	if self.map.bgColor then
+		love.graphics.clear(self.map.bgColor.r, self.map.bgColor.g, self.map.bgColor.b, self.map.bgColor.a)
+	else
+		love.graphics.clear()
+	end
+
 	-- Draw background layer
 	if self.map.tiled and self.map.tiled.layers and self.map.tiled.layers["Bg"] then
 		self.map.tiled:drawLayer(self.map.tiled.layers["Bg"])
@@ -158,8 +165,27 @@ function gameScene:draw()
 	self:drawObjects(self.map.entities.coins)
 	self:drawObjects(self.map.entities.boxes)
 	self:drawObjects(self.map.entities.triggers)
-	self:drawObjects(self.map.entities.saws)
 	self:drawObjects(self.map.entities.teleporters)
+
+	-- Apply MapColor shader to platforms, saws, and spikes
+	local mapColorApplied = false
+	if self.map.mapColor then
+		mapColorApplied = shaderSystem:applyColorTint(self.map.mapColor)
+	end
+
+	-- Draw platforms (walls) with MapColor shader if available
+	self:drawObjects(self.map.entities.platforms)
+	
+	-- Draw saws with MapColor shader if available
+	self:drawObjects(self.map.entities.saws)
+	
+	-- Draw spikes (deadlyObjects) with MapColor shader if available
+	self:drawObjects(self.map.entities.deadlyObjects)
+
+	-- Remove MapColor shader after drawing affected objects
+	if mapColorApplied then
+		shaderSystem:removeColorTint()
+	end
 
 	-- Draw single objects (check if they're actual objects, not empty tables)
 	if self.map.entities.door and type(self.map.entities.door) == "table" and self.map.entities.door.draw then

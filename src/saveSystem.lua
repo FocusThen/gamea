@@ -1,7 +1,5 @@
 local saveSystem = Object:extend()
 
-local Constants = require("src.constants")
-
 function saveSystem:new()
 	self.saveFilePath = "savegame.dat"
 end

@@ -299,8 +299,8 @@ function player:update(dt)
 end
 
 function player:draw()
-	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.rectangle("line", math.floor(self.x), math.floor(self.y), self.width, self.height)
+	love.graphics.setColor(0, 0, 0, 1)
+	love.graphics.rectangle("fill", math.floor(self.x), math.floor(self.y), self.width, self.height)
 end
 
 function player:checkGrounded()
