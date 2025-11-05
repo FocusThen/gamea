@@ -110,6 +110,7 @@ function loadLevel(path)
 					end,
 				}
 				World:add(deadlyObject, deadlyObject.x, deadlyObject.y, deadlyObject.width, deadlyObject.height)
+				table.insert(entities.deadlyObjects, deadlyObject)
 				entitiesById[obj.id] = deadlyObject
 			end
 		end
@@ -189,6 +190,28 @@ function loadLevel(path)
 			end
 		end
 	end
+
+	-- Create kill zones around map boundaries
+	local mapWidth = tiled.width * tiled.tilewidth
+	local mapHeight = tiled.height * tiled.tileheight
+	local killZoneSize = 1000 -- Large enough to catch any player going out of bounds
+	
+	-- Bottom kill zone
+	local bottomKillZone = {
+		x = 0,
+		y = mapHeight,
+		width = mapWidth,
+		height = killZoneSize,
+		type = "deadlyObject",
+		interact = function(self, player)
+			player:kill()
+		end,
+		draw = function(self)
+			-- Invisible kill zone
+		end,
+	}
+	World:add(bottomKillZone, bottomKillZone.x, bottomKillZone.y, bottomKillZone.width, bottomKillZone.height)
+	table.insert(entities.deadlyObjects, bottomKillZone)
 
 	-- Extract map color properties from Tiled
 	local bgColor = nil
