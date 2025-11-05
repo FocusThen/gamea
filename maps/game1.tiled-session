@@ -3,20 +3,48 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/level_2.tmx",
+    "activeFile": "/Users/mtezcan/Workspace/Personal/luaboi/Sheepolution/Geldzaken/assets/maps/lvl1.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        "/Users/mtezcan/Workspace/Personal/luaboi/Sheepolution/Geldzaken/assets/maps/lvl1.tmx": {
+            "scale": 2.7283,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 219.00084301579741,
+                "y": 158.15709416119927
+            }
+        },
+        "/Users/mtezcan/Workspace/Personal/luaboi/Sheepolution/Geldzaken/assets/maps/tile.json": {
+            "scaleInDock": 13.2066
+        },
+        "/Users/mtezcan/Workspace/Personal/luaboi/Sheepolution/Geldzaken/assets/maps/tiles_lvl1.json": {
+            "scaleInDock": 1
+        },
+        "/Users/mtezcan/Workspace/Personal/luaboi/Sheepolution/Geldzaken/assets/maps/tiles_lvl3.json": {
+            "scaleInDock": 1
+        },
+        "/Users/mtezcan/Workspace/Personal/luaboi/Sheepolution/PTW/map.tmx": {
+            "scale": 1.019,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 393.0323846908735,
+                "y": 308.6359175662414
+            }
+        },
+        "/Users/mtezcan/Workspace/Personal/luaboi/Sheepolution/PTW/map.tmx#image": {
+            "scaleInDock": 3.0758
+        },
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/1.tmx": {
             "expandedObjectLayers": [
                 6
             ],
-            "scale": 7.9789,
+            "scale": 3.9305,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 103.96169898106253,
-                "y": 87.29273458747446
+                "x": 102.40427426536064,
+                "y": 105.45732095153288
             }
         },
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/1.tmx#tileset": {
@@ -26,7 +54,7 @@
             "scale": 3.3676,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 109.12816248960685,
+                "x": 114.17626796531655,
                 "y": 142.38626915310607
             }
         },
@@ -50,13 +78,10 @@
             }
         },
         "level_1.tmx": {
-            "expandedObjectLayers": [
-                3
-            ],
             "scale": 2.8296,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 104.07831495617754,
+                "x": 114.68052021487136,
                 "y": 111.85326547921967
             }
         },
@@ -72,6 +97,18 @@
                 "y": 76.39289270926147
             }
         },
+        "level_3.tmx": {
+            "expandedObjectLayers": [
+                3,
+                2
+            ],
+            "scale": 3.1201562499999995,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 31.889428614352255,
+                "y": 160.0881366117482
+            }
+        },
         "test_level.tmx": {
             "scale": 3.349,
             "selectedLayer": 2,
@@ -82,23 +119,26 @@
         }
     },
     "last.exportedFilePath": "/Users/mtezcan/Workspace/Personal/luaboi/game1/maps",
-    "map.height": 14,
+    "map.height": 12,
     "map.lastUsedExportFilter": "Lua files (*.lua)",
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
-    "map.width": 13,
+    "map.width": 20,
     "openFiles": [
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/1.tmx",
         "level_1.tmx",
-        "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/level_2.tmx"
+        "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/level_2.tmx",
+        "/Users/mtezcan/Workspace/Personal/luaboi/Sheepolution/Geldzaken/assets/maps/lvl1.tmx"
     ],
     "project": "game1.tiled-project",
     "property.type": "bool",
     "recentFiles": [
-        "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/1.tmx",
-        "level_1.tmx",
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/level_2.tmx",
+        "level_1.tmx",
+        "/Users/mtezcan/Workspace/Personal/luaboi/Sheepolution/Geldzaken/assets/maps/lvl1.tmx",
+        "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/1.tmx",
+        "/Users/mtezcan/Workspace/Personal/luaboi/Sheepolution/PTW/map.tmx",
         "level_2.tmx",
         "test_level.tmx",
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/test_level.tmx",

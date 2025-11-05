@@ -1,36 +1,37 @@
 local sceneEffects = Object:extend()
 
+local Constants = require("src.constants")
+
 function sceneEffects:new(canvas)
 	self.canvas = canvas
-	self.wipeEffectDuration = 1
-	self.wipePos = { x = 0, y = 0 }
-	self.wipeImage1 = sprites.wipeImage1
-	self.wipeImage1:setFilter("nearest", "nearest")
-	self.wipeImage2 = sprites.wipeImage2
-	self.wipeImage2:setFilter("nearest", "nearest")
-	self.wipeType = false
+	self.wipeEffectDuration = Constants.EFFECTS.WIPE_DURATION
+	self.wipeProgress = { value = 0 } -- 0 to 1, where 0 = fully visible, 1 = fully wiped (wrapped in table for flux)
+	self.wipeType = false -- false = wipe out, true = wipe in
 	self.wipeTween = nil
 	self.fadeTween = nil
 
-	self.fadeEffectDuration = 3
+	self.fadeEffectDuration = Constants.EFFECTS.FADE_DURATION
 	self.fadeAlpha = { alpha = 0 }
 end
 
 function sceneEffects:setWipeIn()
-	self.wipePos.x = -100
+	self.wipeProgress.value = 1 -- Start fully wiped (covered)
 	self.wipeType = true
-	self.wipeTween = flux.to(self.wipePos, self.wipeEffectDuration, { x = self.canvas:getWidth() })
+	self.wipeTween = flux.to(self.wipeProgress, self.wipeEffectDuration, { value = 0 })
 		:oncomplete(function()
 			self.wipeTween = nil
+			self.wipeProgress.value = 0
 		end)
 end
 
 function sceneEffects:setWipeOut()
-	self.wipePos.x = 0 - self.wipeImage1:getWidth()
+	self.wipeProgress.value = 0 -- Start fully visible
 	self.wipeType = false
-	self.wipeTween = flux.to(self.wipePos, self.wipeEffectDuration, { x = 0 }):oncomplete(function()
-		self.wipeTween = nil
-	end)
+	self.wipeTween = flux.to(self.wipeProgress, self.wipeEffectDuration, { value = 1 })
+		:oncomplete(function()
+			self.wipeTween = nil
+			self.wipeProgress.value = 1
+		end)
 end
 
 function sceneEffects:transitionToWithWipe(cb)
@@ -71,10 +72,37 @@ function sceneEffects:transitionToWithFade(cb)
 	end
 end
 
+function sceneEffects:drawWipePattern()
+	local canvasWidth = self.canvas:getWidth()
+	local canvasHeight = self.canvas:getHeight()
+	
+	-- Calculate the wipe edge position (pixel-perfect, rounded to nearest pixel)
+	local wipeEdge = math.floor(canvasWidth * self.wipeProgress.value + 0.5)
+	
+	-- Simple smooth horizontal wipe - pixel perfect for any resolution
+	-- Just draw a rectangle covering the appropriate portion of the screen
+	if self.wipeType then
+		-- Wipe in: reveal from left to right (draw from right edge moving left)
+		-- At progress 1, screen is fully covered. At progress 0, screen is revealed.
+		local coverWidth = canvasWidth * self.wipeProgress.value
+		if coverWidth > 0 then
+			love.graphics.rectangle("fill", canvasWidth - coverWidth, 0, coverWidth, canvasHeight)
+		end
+	else
+		-- Wipe out: cover from left to right (draw from left edge moving right)
+		-- At progress 0, screen is visible. At progress 1, screen is fully covered.
+		if wipeEdge > 0 then
+			love.graphics.rectangle("fill", 0, 0, wipeEdge, canvasHeight)
+		end
+	end
+end
+
 function sceneEffects:draw()
 	if self.wipeTween then
-		local image = self.wipeType and self.wipeImage2 or self.wipeImage1
-		love.graphics.draw(image, self.wipePos.x, self.wipePos.y)
+		-- Set color for wipe pattern (dark blue/purple to match fade color)
+		love.graphics.setColor(20 / 255, 24 / 255, 46 / 255, 1)
+		self:drawWipePattern()
+		love.graphics.setColor(1, 1, 1, 1)
 	end
 
 	if self.fadeTween then

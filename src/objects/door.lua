@@ -1,10 +1,12 @@
 local door = Object:extend()
 
+local Constants = require("src.constants")
+
 function door:new(x, y, currentLevel)
 	self.x = x
 	self.y = y
-	self.width = 16
-	self.height = 16
+	self.width = Constants.DOOR.WIDTH
+	self.height = Constants.DOOR.HEIGHT
 	self.type = "door"
 	self.currentLevel = currentLevel
 
@@ -17,7 +19,8 @@ function door:draw()
 	love.graphics.setColor(1, 1, 1, 1)
 end
 
-function door:interact()
+function door:interact(player)
+	-- Player parameter is accepted but not currently used
 	local number = tonumber(string.match(self.currentLevel, "%d+"))
 	local nextLevel = "level_" .. (number + 1)
 

@@ -2,6 +2,7 @@ local player = require("src.objects.player")
 local coin = require("src.objects.coin")
 local door = require("src.objects.door")
 local box = require("src.objects.box")
+local trigger = require("src.objects.trigger")
 
 function loadLevel(path)
 	-- destroy all objects
@@ -31,24 +32,28 @@ function loadLevel(path)
 	World:addResponse("oneWay", oneWay)
 
 	local tiled = sti("maps/" .. path .. ".lua")
-	local simple = {
+	local entities = {
 		platforms = {},
 		coins = {},
 		boxes = {},
 		door = {},
 		player = {},
+		triggers = {},
 	}
+	-- Entity lookup by ID for triggers
+	local entitiesById = {}
 
 	if tiled.layers["Platforms"] then
 		for i, obj in pairs(tiled.layers["Platforms"].objects) do
-			simple.platforms[i] =
+			entities.platforms[i] =
 				{ _id = obj.id, type = "platform", x = obj.x, y = obj.y, width = obj.width, height = obj.height }
+			entitiesById[obj.id] = entities.platforms[i]
 			World:add(
-				simple.platforms[i],
-				simple.platforms[i].x,
-				simple.platforms[i].y,
-				simple.platforms[i].width,
-				simple.platforms[i].height
+				entities.platforms[i],
+				entities.platforms[i].x,
+				entities.platforms[i].y,
+				entities.platforms[i].width,
+				entities.platforms[i].height
 			)
 		end
 	end
@@ -72,28 +77,61 @@ function loadLevel(path)
 		end
 	end
 
-	-- TODO: in future, refactor
+	-- Load spawn objects and store by ID
 	if tiled.layers["Spawns"] then
 		for i, obj in pairs(tiled.layers["Spawns"].objects) do
 			if obj.name == "player" then
 				local playerProp = tiled:getObjectProperties("Spawns", "player")
-				simple.player = player(obj.x, obj.y, playerProp)
+				entities.player = player(obj.x, obj.y, playerProp)
+				entitiesById[obj.id] = entities.player
 			elseif obj.name == "coin" then
-				-- local coinProp = tiled:getObjectProperties("Spawns", "coin")
-				table.insert(simple.coins, coin(obj.x, obj.y))
+				local coinObj = coin(obj.x, obj.y)
+				coinObj._id = obj.id
+				table.insert(entities.coins, coinObj)
+				entitiesById[obj.id] = coinObj
 			elseif obj.name == "box" then
-				-- local coinProp = tiled:getObjectProperties("Spawns", "coin")
-				table.insert(simple.boxes, box(obj.x, obj.y))
+				local boxObj = box(obj.x, obj.y)
+				boxObj._id = obj.id
+				table.insert(entities.boxes, boxObj)
+				entitiesById[obj.id] = boxObj
 			elseif obj.name == "door" then
-				-- local doorProp = tiled:getObjectProperties("Spawns", "door")
-				simple.door = door(obj.x, obj.y, path)
+				entities.door = door(obj.x, obj.y, path)
+				entities.door._id = obj.id
+				entitiesById[obj.id] = entities.door
+			elseif obj.name == "trigger" then
+				local triggerProp = tiled:getObjectProperties("Spawns", "trigger")
+				if triggerProp == nil or triggerProp == {} then
+					triggerProp = obj.properties or {}
+				end
+				-- Handle targetId from Tiled (can be object reference {id = X})
+				if triggerProp.targetId and type(triggerProp.targetId) == "table" and triggerProp.targetId.id then
+					triggerProp.targetId = triggerProp.targetId.id
+				end
+				local triggerObj = trigger(obj.x, obj.y, triggerProp)
+				triggerObj._id = obj.id
+				table.insert(entities.triggers, triggerObj)
+				entitiesById[obj.id] = triggerObj
+			end
+		end
+	end
+
+	-- Link triggers to targets by ID
+	for _, trig in ipairs(entities.triggers) do
+		if trig.targetId then
+			local targetId = trig.targetId
+			-- Handle both number and table format from Tiled
+			if type(targetId) == "table" and targetId.id then
+				targetId = targetId.id
+			end
+			if entitiesById[targetId] then
+				trig.target = entitiesById[targetId]
 			end
 		end
 	end
 
 	return {
 		tiled = tiled,
-		simple = simple,
+		entities = entities,
 		path = path,
 	}
 end

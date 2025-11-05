@@ -13,6 +13,7 @@ function stateMachine:loadStates()
 	self.states.title = require("src.states.title")()
 	self.states.game = require("src.states.game")()
 	self.states.levelSelect = require("src.states.levelSelect")()
+	self.states.pause = require("src.states.pause")()
 end
 
 function stateMachine:setState(stateName, enterparams)

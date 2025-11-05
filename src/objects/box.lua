@@ -1,16 +1,17 @@
+local Constants = require("src.constants")
 local box = Object:extend()
 
 function box:new(x, y)
 	self.x = x
 	self.y = y
-	self.width = 16
-	self.height = 16
+	self.width = Constants.BOX.WIDTH
+	self.height = Constants.BOX.HEIGHT
 	self.xVel = 0
 	self.yVel = 0
 	self.type = "box"
 	self.delete = false
-	self.gravity = 800
-	self.friction = 665
+	self.gravity = Constants.BOX.GRAVITY
+	self.friction = Constants.BOX.FRICTION
 	self.lastBounce = nil
 	self.filter = function(item, other)
 		if other.type == "pickup" or other.type == "spike" or other.type == "door" then
@@ -33,12 +34,12 @@ function box:update(dt)
 	if self.xVel ~= 0 then
 		self.x = self.x + self.xVel * dt
 		local mod = self.xVel > 0 and 1 or -1
-		local frictionAmount = self:checkGrounded() and self.friction or self.friction / 20
+		local frictionAmount = self:checkGrounded() and self.friction or Constants.BOX.FRICTION_AIR
 
-		if math.abs(self.xVel) > 22 then
+		if math.abs(self.xVel) > Constants.VELOCITY.BOX_X_VEL_THRESHOLD then
 			self.xVel = self.xVel - frictionAmount * mod * dt
 		else
-			self.xVel = self.xVel - (self.friction / 20) * mod * dt
+			self.xVel = self.xVel - Constants.BOX.FRICTION_AIR * mod * dt
 		end
 
 		-- Stop if we crossed zero
@@ -64,7 +65,7 @@ function box:update(dt)
 	for i, col in ipairs(cols) do
 		if col.other.type == "spring" then
 			-- If we're going fast enough to bounce
-			if self.yVel > 50 then
+			if self.yVel > Constants.VELOCITY.BOX_SPRING_BOUNCE_MIN then
 				-- See if we were just bouncing
 				if self.lastBounce == nil then
 					-- If we weren't make our yVel an approximate reflection of our current yVel at impact
@@ -100,7 +101,7 @@ function box:update(dt)
 
 	-- Reset velocity if we hit something
 	if self.y ~= actualY and not springHit then
-		if self.yVel > 100 then
+		if self.yVel > Constants.VELOCITY.LANDING_SOUND_THRESHOLD then
 			playSound(sounds.ground2)
 			particleEffects:createEffect("boxLanding", self.x + self.width / 2 - 14, actualY + self.height - 4)
 		end
@@ -110,7 +111,7 @@ function box:update(dt)
 	end
 
 	if self.x ~= actualX then
-		if math.abs(self.xVel) > 10 then
+		if math.abs(self.xVel) > Constants.VELOCITY.BOX_X_VEL_MIN then
 			playSound(sounds.ground2)
 		end
 		self.xVel = 0

@@ -1,10 +1,11 @@
+local Constants = require("src.constants")
 local coin = Object:extend()
 
 function coin:new(x, y)
 	self.x = x
 	self.y = y
-	self.width = 8
-	self.height = 8
+	self.width = Constants.COIN.WIDTH
+	self.height = Constants.COIN.HEIGHT
 	self.type = "pickup"
 	self.pickType = "coin"
 	self.delete = false

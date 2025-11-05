@@ -7,6 +7,9 @@ anim8 = require("lib.anim8.anim8")
 flux = require("lib.flux.flux")
 lume = require("lib.lume.lume")
 
+-- Constants
+local Constants = require("src.constants")
+
 --- Load all files
 require("src.utils")
 require("src.resources")
@@ -17,17 +20,21 @@ stateMachine = require("src.states.stateMachine")
 sceneEffects = require("src.sceneEffects")
 particleEffects = require("src.particles")
 
+-- Display state
 _G.screen_scale = 3
 _G.offsetX = 0
 _G.offsetY = 0
 
+-- Game settings
 _G.gameSettings = {
-	masterVol = 1,
-	musicVol = 0.7,
-	sfxVol = 0.5,
-	gameWidth = 208, -- 320
-	gameHeight = 224, -- 192
+	masterVol = Constants.GAME.DEFAULT_MASTER_VOL,
+	musicVol = Constants.GAME.DEFAULT_MUSIC_VOL,
+	sfxVol = Constants.GAME.DEFAULT_SFX_VOL,
+	gameWidth = Constants.GAME.WIDTH,
+	gameHeight = Constants.GAME.HEIGHT,
 }
+
+-- Saved game state
 _G.savedGame = {
 	settings = _G.gameSettings,
 	levelReached = 1,
@@ -36,17 +43,19 @@ _G.savedGame = {
 function love.load()
 	worldCanvas = love.graphics.newCanvas(gameSettings.gameWidth, gameSettings.gameHeight)
 	worldCanvas:setFilter("nearest", "nearest")
-	--- World
-	World = bump.newWorld(16)
+	
+	-- Initialize physics world
+	World = bump.newWorld(Constants.PHYSICS.CELL_SIZE)
 
+	-- Initialize game systems
 	stateMachine = stateMachine()
 	sceneEffects = sceneEffects(worldCanvas)
 	particleEffects = particleEffects()
 
 	updateScale()
 
-	--- Demo purpose
-	stateMachine:setState("levelSelect") --- Title screen
+	-- Start at level select screen
+	stateMachine:setState("levelSelect")
 end
 
 function love.update(dt)
