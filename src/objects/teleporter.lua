@@ -1,4 +1,4 @@
-local Constants = require("src.constants")
+local Constants = require("src.core.constants")
 local teleporter = Object:extend()
 
 function teleporter:new(x, y, props)

@@ -1,6 +1,6 @@
 local door = Object:extend()
 
-local Constants = require("src.constants")
+local Constants = require("src.core.constants")
 
 function door:new(x, y, currentLevel)
 	self.x = x

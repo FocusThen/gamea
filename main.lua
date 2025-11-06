@@ -8,19 +8,19 @@ flux = require("lib.flux.flux")
 lume = require("lib.lume.lume")
 
 -- Constants
-local Constants = require("src.constants")
+local Constants = require("src.core.constants")
 
 --- Load all files
-require("src.utils")
-require("src.resources")
-require("src.loadMap")
+require("src.core.utils")
+require("src.game.resources")
+require("src.game.loadMap")
 ---
 
 stateMachine = require("src.states.stateMachine")
-sceneEffects = require("src.sceneEffects")
-particleEffects = require("src.particles")
-shaderSystem = require("src.shaders")
-saveSystem = require("src.saveSystem")
+sceneEffects = require("src.systems.sceneEffects")
+particleEffects = require("src.systems.particles")
+shaderSystem = require("src.systems.shaders")
+saveSystem = require("src.systems.saveSystem")
 
 -- Display state
 _G.screen_scale = 3

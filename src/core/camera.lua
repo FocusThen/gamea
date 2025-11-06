@@ -1,6 +1,6 @@
 local camera = Object:extend()
 
-local Constants = require("src.constants")
+local Constants = require("src.core.constants")
 
 function camera:new()
 	self.x = 0

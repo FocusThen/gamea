@@ -1,4 +1,4 @@
-local Constants = require("src.constants")
+local Constants = require("src.core.constants")
 local player = Object:extend()
 
 function player:new(x, y, props)

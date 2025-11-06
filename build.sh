@@ -9,7 +9,6 @@ set -e  # Exit on error
 GAME_NAME="game1"
 VERSION="1.0.0"
 AUTHOR="M. Mucahit Tezcan - FocusThen"
-BUILD_DIR="build"
 RELEASE_DIR="releases"
 # macOS identifier (reverse domain format, e.g., com.yourname.gamename)
 MACOS_UTI="com.focusthen.game1"
@@ -24,26 +23,23 @@ echo -e "${GREEN}Building ${GAME_NAME} v${VERSION}${NC}"
 
 # Clean previous builds
 echo -e "${YELLOW}Cleaning previous builds...${NC}"
-rm -rf "${BUILD_DIR}"
 rm -rf "${RELEASE_DIR}"
-mkdir -p "${BUILD_DIR}"
 mkdir -p "${RELEASE_DIR}"
 
-# Create .love file
+# Create .love file directly in releases folder
 echo -e "${YELLOW}Creating .love file...${NC}"
-zip -r "${BUILD_DIR}/${GAME_NAME}.love" . \
+zip -r "${RELEASE_DIR}/${GAME_NAME}.love" . \
     -x "*.git/*" \
     -x "*.git*" \
     -x "*.tiled-session" \
     -x "maps/*.tiled-session" \
-    -x "build/*" \
     -x "releases/*" \
     -x ".DS_Store" \
     -x "*.love" \
     -x "build.sh" \
     -x ".luarc.json"
 
-echo -e "${GREEN}✓ Created ${BUILD_DIR}/${GAME_NAME}.love${NC}"
+echo -e "${GREEN}✓ Created ${RELEASE_DIR}/${GAME_NAME}.love${NC}"
 
 # Check if love-release is available
 # Try to find it in common locations
@@ -98,9 +94,6 @@ case "$PLATFORM" in
         "$LOVE_RELEASE" -a "${AUTHOR}" -v "${VERSION}" --uti "${MACOS_UTI}" -M -W -D "${RELEASE_DIR}" .
         ;;
 esac
-
-# Move .love file to releases directory
-mv "${BUILD_DIR}/${GAME_NAME}.love" "${RELEASE_DIR}/"
 
 echo -e "${GREEN}✓ Build complete!${NC}"
 echo -e "${GREEN}Release files are in: ${RELEASE_DIR}/${NC}"

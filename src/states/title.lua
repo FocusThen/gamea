@@ -1,17 +1,16 @@
 local titleScene = Object:extend()
 
+local inputConfig = require("src.systems.inputConfig")
+
 function titleScene:new()
-	self.bindings = baton.new({
-		controls = {
-			quit = { "key:escape", "button:b" }, -- Back/Start buttons
-			continue = {
-				"key:space",
-				"key:return",
-				"key:z",
-				"button:a", -- A button (Xbox), Cross (PS)
-			},
+	self.bindings = inputConfig.createSimpleBindings({
+		quit = { "key:escape", "button:b" },
+		continue = {
+			"key:space",
+			"key:return",
+			"key:z",
+			"button:a",
 		},
-		joystick = love.joystick.getJoysticks()[1],
 	})
 end
 

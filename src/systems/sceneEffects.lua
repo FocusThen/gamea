@@ -1,6 +1,6 @@
 local sceneEffects = Object:extend()
 
-local Constants = require("src.constants")
+local Constants = require("src.core.constants")
 
 function sceneEffects:new(canvas)
 	self.canvas = canvas

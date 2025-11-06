@@ -1,5 +1,8 @@
 local introScene = Object:extend()
 
+local Colors = require("src.core.colors")
+local uiUtils = require("src.ui.utils")
+
 function introScene:new()
 	self.timer = 0
 	self.displayDuration = 2.0 -- Show for 2 seconds
@@ -26,19 +29,12 @@ function introScene:update(dt)
 end
 
 function introScene:draw()
-	-- Draw background (dark blue)
-	love.graphics.setColor(20 / 255, 24 / 255, 46 / 255, 1)
-	love.graphics.rectangle("fill", 0, 0, gameSettings.gameWidth, gameSettings.gameHeight)
+	-- Draw background
+	uiUtils.drawBackground()
 	
 	-- Draw "Game 1" text
-	local text = "Game 1"
-	local fontSize = fonts.default:getHeight()
-	local textWidth = fonts.default:getWidth(text)
-	local centerX = gameSettings.gameWidth / 2 - textWidth / 2
-	local centerY = gameSettings.gameHeight / 2 - fontSize / 2
-	
-	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.print(text, fonts.default, centerX, centerY)
+	local centerY = gameSettings.gameHeight / 2 - fonts.default:getHeight() / 2
+	uiUtils.drawCenteredText("Game 1", fonts.default, centerY)
 end
 
 function introScene:keypressed(key)

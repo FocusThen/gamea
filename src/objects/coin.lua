@@ -1,4 +1,4 @@
-local Constants = require("src.constants")
+local Constants = require("src.core.constants")
 local coin = Object:extend()
 
 function coin:new(x, y)

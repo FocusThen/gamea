@@ -1,6 +1,6 @@
 local gameScene = Object:extend()
-local Camera = require("src.camera")
-local Constants = require("src.constants")
+local Camera = require("src.core.camera")
+local Constants = require("src.core.constants")
 
 function gameScene:enter(enterparams)
 	self.map = enterparams.map

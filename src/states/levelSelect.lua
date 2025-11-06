@@ -1,24 +1,13 @@
 local levelSelectScene = Object:extend()
 
+local inputConfig = require("src.systems.inputConfig")
+local Colors = require("src.core.colors")
+local uiUtils = require("src.ui.utils")
+
 _G.numOfLevels = 2
 
 function levelSelectScene:new()
-	self.bindings = baton.new({
-		controls = {
-			back = { "key:escape", "button:b" },
-			select = {
-				"key:space",
-				"key:return",
-				"key:z",
-				"button:a",
-			},
-			left = { "key:left", "key:a", "axis:leftx-", "button:dpleft" },
-			right = { "key:right", "key:d", "axis:leftx+", "button:dpright" },
-			up = { "key:up", "key:w", "axis:lefty-", "button:dpup" },
-			down = { "key:down", "key:s", "axis:lefty+", "button:dpdown" },
-		},
-		joystick = love.joystick.getJoysticks()[1],
-	})
+	self.bindings = inputConfig.createMenuBindings()
 
 	self.selected = 1
 end
@@ -65,42 +54,27 @@ function levelSelectScene:draw()
 	love.graphics.setColor(1, 1, 1, 1)
 	-- love.graphics.draw(sprites.ui.levelSelect, 0, 0)
 
-	love.graphics.setColor(43 / 255, 43 / 255, 69 / 255, 1)
-	love.graphics.print(
-		"Level Select",
-		fonts.default,
-		worldCanvas:getWidth() / 2 - math.floor(fonts.default:getWidth("Level Select") / 2),
-		8
-	)
+	-- Draw title
+	uiUtils.drawCenteredText("Level Select", fonts.default, 8, Colors.TEXT_DARK)
 
-	love.graphics.setColor(146 / 255, 232 / 255, 192 / 255, 1)
-	love.graphics.print(
-		"Arrow keys to select a level,",
-		fonts.default,
-		worldCanvas:getWidth() / 2 - math.floor(fonts.default:getWidth("Arrow keys to select a level,") / 2),
-		worldCanvas:getHeight() - 32
-	)
-	love.graphics.print(
-		"Enter to start.",
-		fonts.default,
-		worldCanvas:getWidth() / 2 - math.floor(fonts.default:getWidth("Enter to start") / 2),
-		worldCanvas:getHeight() - 16
-	)
+	-- Draw instructions
+	uiUtils.drawCenteredText("Arrow keys to select a level,", fonts.default, worldCanvas:getHeight() - 32, Colors.TEXT_PRIMARY)
+	uiUtils.drawCenteredText("Enter to start.", fonts.default, worldCanvas:getHeight() - 16, Colors.TEXT_PRIMARY)
 
 	for i = 1, numOfLevels do
 		local x = 16 + (i - 1) % 6 * 32
 		local y = 32 + math.floor((i - 1) / 6) * 32
 
 		if savedGame.levelReached < i then
-			love.graphics.setColor(0.5, 0.5, 0.5, 1)
+			love.graphics.setColor(Colors.GREY)
 		else
-			love.graphics.setColor(1, 1, 1, 1)
+			love.graphics.setColor(Colors.WHITE)
 		end
 
 		love.graphics.draw(sprites.ui.levelIcon, x, y)
 
 		if i == self.selected then
-			love.graphics.setColor(0, 1, 1, 1)
+			love.graphics.setColor(Colors.SELECTION)
 			love.graphics.rectangle("fill", x + 1, y - 1, 16, 16) -- TODO: Player
 		else
 			love.graphics.setColor(0, 0, 0, 1)
@@ -113,8 +87,7 @@ function levelSelectScene:draw()
 		end
 	end
 
-	-- test level select
-	-- love.graphics.draw(sprites.ui.levelIcon, x, y)
+	love.graphics.setColor(1, 1, 1, 1)
 end
 
 return levelSelectScene

@@ -1,4 +1,4 @@
-local Constants = require("src.constants")
+local Constants = require("src.core.constants")
 local saw = Object:extend()
 
 function saw:new(x, y, props)
