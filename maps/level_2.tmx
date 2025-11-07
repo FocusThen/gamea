@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="20" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="17">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="20" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="20">
  <editorsettings>
   <export target="level_2.lua" format="lua"/>
  </editorsettings>
@@ -30,7 +30,20 @@
   <object id="8" name="door" type="door" x="288" y="112">
    <point/>
   </object>
-  <object id="16" name="trigger" type="trigger" x="224" y="112" width="16" height="16">
+  <object id="16" name="trigger" type="trigger" x="151.451" y="79.8479" width="16" height="48">
+   <properties>
+    <property name="action" value="move"/>
+    <property name="delay" type="float" value="0"/>
+    <property name="duration" type="float" value="0"/>
+    <property name="moveX" type="int" value="50"/>
+    <property name="moveY" type="int" value="0"/>
+    <property name="once" type="bool" value="true"/>
+    <property name="speed" type="int" value="100"/>
+    <property name="targetId" type="object" value="14"/>
+    <property name="timerDelay" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="19" name="trigger" type="trigger" x="231.603" y="80.1521" width="16" height="48">
    <properties>
     <property name="action" value="move"/>
     <property name="delay" type="float" value="0"/>
@@ -38,8 +51,8 @@
     <property name="moveX" type="int" value="100"/>
     <property name="moveY" type="int" value="0"/>
     <property name="once" type="bool" value="true"/>
-    <property name="speed" type="int" value="50"/>
-    <property name="targetId" type="object" value="14"/>
+    <property name="speed" type="int" value="100"/>
+    <property name="targetId" type="object" value="15"/>
     <property name="timerDelay" type="float" value="0"/>
    </properties>
   </object>
@@ -48,9 +61,11 @@
   <object id="2" x="0" y="0" width="16" height="192"/>
   <object id="3" x="304" y="0" width="16" height="192"/>
   <object id="4" x="16" y="0" width="288" height="79.7789"/>
-  <object id="12" x="16" y="128" width="224" height="64"/>
-  <object id="14" x="240" y="128" width="32" height="64"/>
-  <object id="15" x="272" y="128" width="32" height="64"/>
+  <object id="12" x="16" y="128" width="144" height="64"/>
+  <object id="14" x="160" y="128" width="32" height="64"/>
+  <object id="15" x="240" y="128" width="32" height="64"/>
+  <object id="17" x="192" y="128" width="48" height="64"/>
+  <object id="18" x="272" y="128" width="32" height="64"/>
  </objectgroup>
  <objectgroup id="5" name="Dangers" locked="1"/>
 </map>

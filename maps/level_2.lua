@@ -10,7 +10,7 @@ return {
   tilewidth = 16,
   tileheight = 16,
   nextlayerid = 6,
-  nextobjectid = 17,
+  nextobjectid = 20,
   properties = {
     ["BgColor"] = "#fff5e24c",
     ["MapColor"] = "#ff916429"
@@ -94,10 +94,33 @@ return {
           name = "trigger",
           type = "trigger",
           shape = "rectangle",
-          x = 224,
-          y = 112,
+          x = 151.451,
+          y = 79.8479,
           width = 16,
-          height = 16,
+          height = 48,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["action"] = "move",
+            ["delay"] = 0,
+            ["duration"] = 0,
+            ["moveX"] = 50,
+            ["moveY"] = 0,
+            ["once"] = true,
+            ["speed"] = 100,
+            ["targetId"] = { id = 14 },
+            ["timerDelay"] = 0
+          }
+        },
+        {
+          id = 19,
+          name = "trigger",
+          type = "trigger",
+          shape = "rectangle",
+          x = 231.603,
+          y = 80.1521,
+          width = 16,
+          height = 48,
           rotation = 0,
           visible = true,
           properties = {
@@ -107,8 +130,8 @@ return {
             ["moveX"] = 100,
             ["moveY"] = 0,
             ["once"] = true,
-            ["speed"] = 50,
-            ["targetId"] = { id = 14 },
+            ["speed"] = 100,
+            ["targetId"] = { id = 15 },
             ["timerDelay"] = 0
           }
         }
@@ -174,7 +197,7 @@ return {
           shape = "rectangle",
           x = 16,
           y = 128,
-          width = 224,
+          width = 144,
           height = 64,
           rotation = 0,
           visible = true,
@@ -182,6 +205,19 @@ return {
         },
         {
           id = 14,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 160,
+          y = 128,
+          width = 32,
+          height = 64,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 15,
           name = "",
           type = "",
           shape = "rectangle",
@@ -194,7 +230,20 @@ return {
           properties = {}
         },
         {
-          id = 15,
+          id = 17,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 192,
+          y = 128,
+          width = 48,
+          height = 64,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 18,
           name = "",
           type = "",
           shape = "rectangle",

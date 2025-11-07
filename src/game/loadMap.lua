@@ -144,7 +144,7 @@ function loadLevel(path)
 				if triggerProp.targetId and type(triggerProp.targetId) == "table" and triggerProp.targetId.id then
 					triggerProp.targetId = triggerProp.targetId.id
 				end
-				local triggerObj = trigger(obj.x, obj.y, triggerProp)
+				local triggerObj = trigger(obj.x, obj.y, obj.width, obj.height, triggerProp)
 				triggerObj._id = obj.id
 				triggerObj.map = { entitiesById = entitiesById } -- Store reference for sequences
 				table.insert(entities.triggers, triggerObj)
@@ -152,7 +152,11 @@ function loadLevel(path)
 			elseif obj.name == "teleporter" then
 				local teleporterProp = obj.properties or {}
 				-- Handle targetId from Tiled (can be object reference {id = X})
-				if teleporterProp.targetId and type(teleporterProp.targetId) == "table" and teleporterProp.targetId.id then
+				if
+					teleporterProp.targetId
+					and type(teleporterProp.targetId) == "table"
+					and teleporterProp.targetId.id
+				then
 					teleporterProp.targetId = teleporterProp.targetId.id
 				end
 				local teleporterObj = teleporter(obj.x, obj.y, teleporterProp)
@@ -195,7 +199,7 @@ function loadLevel(path)
 	local mapWidth = tiled.width * tiled.tilewidth
 	local mapHeight = tiled.height * tiled.tileheight
 	local killZoneSize = 1000 -- Large enough to catch any player going out of bounds
-	
+
 	-- Bottom kill zone
 	local bottomKillZone = {
 		x = 0,
@@ -216,7 +220,7 @@ function loadLevel(path)
 	-- Extract map color properties from Tiled
 	local bgColor = nil
 	local mapColor = nil
-	
+
 	if tiled.properties then
 		-- Parse BgColor (format: "#rrggbbaa" or "#rrggbb")
 		if tiled.properties.BgColor then
@@ -243,7 +247,7 @@ function loadLevel(path)
 				end
 			end
 		end
-		
+
 		-- Parse MapColor (format: "#rrggbbaa" or "#rrggbb")
 		if tiled.properties.MapColor then
 			local hex = tiled.properties.MapColor

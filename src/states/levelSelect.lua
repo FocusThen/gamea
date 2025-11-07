@@ -4,7 +4,9 @@ local inputConfig = require("src.systems.inputConfig")
 local Colors = require("src.core.colors")
 local uiUtils = require("src.ui.utils")
 
-_G.numOfLevels = 2
+
+local detectedLevels = countAvailableLevels()
+_G.numOfLevels = math.max(detectedLevels, 1)
 
 function levelSelectScene:new()
 	self.bindings = inputConfig.createMenuBindings()

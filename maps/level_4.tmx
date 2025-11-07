@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="20" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="21">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="20" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="23">
  <editorsettings>
-  <export target="level_1.lua" format="lua"/>
+  <export target="level_4.lua" format="lua"/>
  </editorsettings>
  <properties>
   <property name="BgColor" type="color" value="#fff5e24c"/>
@@ -24,22 +24,35 @@
 </data>
  </layer>
  <objectgroup id="3" name="Spawns">
-  <object id="6" name="player" type="player" x="65.3317" y="110.964">
+  <object id="6" name="player" type="player" x="48" y="112">
    <point/>
   </object>
   <object id="8" name="door" type="door" x="288" y="112">
    <point/>
   </object>
-  <object id="19" name="trigger" type="trigger" x="231.937" y="80" width="16" height="47.7354">
+  <object id="16" name="trigger" type="trigger" x="184.45" y="80.2696" width="16" height="48">
    <properties>
     <property name="action" value="move"/>
     <property name="delay" type="float" value="0"/>
     <property name="duration" type="float" value="0"/>
-    <property name="moveX" type="int" value="100"/>
+    <property name="moveX" type="int" value="500"/>
     <property name="moveY" type="int" value="0"/>
     <property name="once" type="bool" value="true"/>
     <property name="speed" type="int" value="50"/>
-    <property name="targetId" type="object" value="15"/>
+    <property name="targetId" type="object" value="12"/>
+    <property name="timerDelay" type="float" value="0"/>
+   </properties>
+  </object>
+  <object id="20" name="trigger" type="trigger" x="71.6411" y="80" width="16" height="47.7304">
+   <properties>
+    <property name="action" value="move"/>
+    <property name="delay" type="float" value="0"/>
+    <property name="duration" type="float" value="0"/>
+    <property name="moveX" type="int" value="30"/>
+    <property name="moveY" type="int" value="0"/>
+    <property name="once" type="bool" value="true"/>
+    <property name="speed" type="int" value="100"/>
+    <property name="targetId" type="object" value="12"/>
     <property name="timerDelay" type="float" value="0"/>
    </properties>
   </object>
@@ -48,11 +61,9 @@
   <object id="2" x="0" y="0" width="16" height="192"/>
   <object id="3" x="304" y="0" width="16" height="192"/>
   <object id="4" x="16" y="0" width="288" height="79.7789"/>
-  <object id="12" x="16" y="128" width="144" height="64"/>
-  <object id="14" x="160" y="128" width="32" height="64"/>
-  <object id="15" x="240" y="128" width="32" height="64"/>
-  <object id="17" x="192" y="128" width="48" height="64"/>
-  <object id="18" x="272" y="128" width="32" height="64"/>
+  <object id="12" x="80" y="128" width="192" height="64"/>
+  <object id="21" x="0" y="128" width="80" height="64"/>
+  <object id="22" x="272" y="128" width="32" height="64"/>
  </objectgroup>
  <objectgroup id="5" name="Dangers" locked="1"/>
 </map>
