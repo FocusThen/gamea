@@ -4,6 +4,27 @@ local inputConfig = require("src.systems.inputConfig")
 local Colors = require("src.core.colors")
 local uiUtils = require("src.ui.utils")
 local SettingsScreen = require("src.ui.settingsScreen")
+local LevelLoader = require("src.game.level.loader")
+
+function mainMenuScene:playSelect()
+	if resourceManager and resourceManager.play then
+		resourceManager:play("select")
+	else
+		playSound(sounds.select)
+	end
+end
+
+function mainMenuScene:transition(callback)
+	self:playSelect()
+	sceneEffects:transitionToWithWipe(callback)
+end
+
+function mainMenuScene:addMenuButton(buttons, name, action)
+	table.insert(buttons, {
+		name = name,
+		action = action,
+	})
+end
 
 function mainMenuScene:new()
 	self.bindings = inputConfig.createMenuBindings()
@@ -23,51 +44,36 @@ function mainMenuScene:buildMenu()
 
 	-- Add Continue option if save exists
 	if self.hasSave then
-		table.insert(buttons, {
-			name = "Continue",
-			action = function()
-				playSound(sounds.select)
-				sceneEffects:transitionToWithWipe(function()
-					saveSystem:loadGame()
-					local levelPath = "level_" .. savedGame.levelReached
-					stateMachine:setState("game", { map = loadLevel(levelPath) })
-				end)
-			end,
-		})
+		self:addMenuButton(buttons, "Continue", function()
+			self:transition(function()
+				saveSystem:loadGame()
+				local levelPath = "level_" .. savedGame.levelReached
+				stateMachine:setState("game", { map = LevelLoader.load(levelPath) })
+			end)
+		end)
 	end
 
 	-- Always show New Game
-	table.insert(buttons, {
-		name = "New Game",
-		action = function()
-			playSound(sounds.select)
-			sceneEffects:transitionToWithWipe(function()
-				-- Reset save
-				savedGame.levelReached = 1
-				saveSystem:deleteSave()
-				stateMachine:setState("levelSelect")
-			end)
-		end,
-	})
+	self:addMenuButton(buttons, "New Game", function()
+		self:transition(function()
+			savedGame.levelReached = 1
+			saveSystem:deleteSave()
+			stateMachine:setState("levelSelect")
+		end)
+	end)
 
 	-- Settings
-	table.insert(buttons, {
-		name = "Settings",
-		action = function()
-			playSound(sounds.select)
-			self.currentScreen = "settings"
-			self.settingsScreen.selected = 1
-		end,
-	})
+	self:addMenuButton(buttons, "Settings", function()
+		self:playSelect()
+		self.currentScreen = "settings"
+		self.settingsScreen.selected = 1
+	end)
 
 	-- Quit
-	table.insert(buttons, {
-		name = "Quit",
-		action = function()
-			playSound(sounds.select)
-			love.event.quit()
-		end,
-	})
+	self:addMenuButton(buttons, "Quit", function()
+		self:playSelect()
+		love.event.quit()
+	end)
 
 	-- Menu screen
 	if not self.screens then
@@ -106,13 +112,13 @@ function mainMenuScene:update(dt)
 			if screen.selected < 1 then
 				screen.selected = #screen.buttons
 			end
-			playSound(sounds.select)
+			self:playSelect()
 		elseif self.bindings:pressed("down") then
 			screen.selected = screen.selected + 1
 			if screen.selected > #screen.buttons then
 				screen.selected = 1
 			end
-			playSound(sounds.select)
+			self:playSelect()
 		end
 
 		if self.bindings:pressed("select") then
@@ -131,7 +137,7 @@ function mainMenuScene:update(dt)
 		if self.bindings:pressed("quit") then
 			self.currentScreen = "menu"
 			self:saveSettings()
-			playSound(sounds.select)
+			self:playSelect()
 		end
 	end
 end

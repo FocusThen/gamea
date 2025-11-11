@@ -5,22 +5,57 @@ local Colors = require("src.core.colors")
 local uiUtils = require("src.ui.utils")
 local SettingsScreen = require("src.ui.settingsScreen")
 
+function pauseScene:playSelect()
+	if resourceManager and resourceManager.play then
+		resourceManager:play("select")
+	else
+		playSound(sounds.select)
+	end
+end
+
+function pauseScene:transition(callback)
+	self:playSelect()
+	sceneEffects:transitionToWithWipe(callback)
+end
+
+function pauseScene:buildMenuButtons()
+	return {
+		{
+			name = "Resume",
+			action = function()
+				self:resume()
+			end,
+		},
+		{
+			name = "Settings",
+			action = function()
+				self.currentScreen = "settings"
+				self.settingsScreen.selected = 1
+				self:playSelect()
+			end,
+		},
+		{
+			name = "Level Select",
+			action = function()
+				self:goToLevelSelect()
+			end,
+		},
+		{
+			name = "Main Menu",
+			action = function()
+				self:goToMainMenu()
+			end,
+		},
+	}
+end
+
 function pauseScene:new()
 	self.bindings = inputConfig.createMenuBindings()
 	
 	-- Menu screens
 	self.screens = {
 		menu = {
-			buttons = {
-				{ name = "Resume", action = function() self:resume() end },
-				{ name = "Settings", action = function() 
-					self.currentScreen = "settings"
-					self.settingsScreen.selected = 1
-					playSound(sounds.select)
-				end },
-				{ name = "Level Select", action = function() self:goToLevelSelect() end },
-				{ name = "Main Menu", action = function() self:goToMainMenu() end },
-			},
+			buttons = self:buildMenuButtons(),
 			selected = 1,
 		},
 	}
@@ -29,7 +64,7 @@ function pauseScene:new()
 	self.settingsScreen.onBack = function()
 		self.currentScreen = "menu"
 		self:saveGame()
-		playSound(sounds.select)
+		self:playSelect()
 	end
 	
 	self.currentScreen = "menu"
@@ -63,10 +98,10 @@ function pauseScene:update(dt)
 		-- Menu screen: simple up/down navigation
 		if self.bindings:pressed("up") then
 			currentScreen.selected = currentScreen.selected - 1
-			playSound(sounds.select)
+			self:playSelect()
 		elseif self.bindings:pressed("down") then
 			currentScreen.selected = currentScreen.selected + 1
-			playSound(sounds.select)
+			self:playSelect()
 		end
 		
 		-- Clamp selection for menu
@@ -87,31 +122,26 @@ function pauseScene:update(dt)
 			self:resume()
 		else
 			self.currentScreen = "menu"
-			playSound(sounds.select)
+			self:playSelect()
 		end
 	end
 end
 
 function pauseScene:resume()
-	playSound(sounds.select)
+	self:playSelect()
 	-- Instant resume, no transition
 	stateMachine:setState("game", { map = self.gameStateRef.map })
 end
 
 function pauseScene:goToLevelSelect()
-	playSound(sounds.select)
-	-- Use transition for going to level select
-	sceneEffects:transitionToWithWipe(function()
+	self:transition(function()
 		stateMachine:setState("levelSelect")
 	end)
 end
 
 function pauseScene:goToMainMenu()
-	playSound(sounds.select)
-	-- Save game before going to main menu
 	self:saveGame()
-	-- Use transition for going to main menu
-	sceneEffects:transitionToWithWipe(function()
+	self:transition(function()
 		stateMachine:setState("main_menu")
 	end)
 end

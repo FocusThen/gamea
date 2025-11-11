@@ -16,7 +16,8 @@ function teleporter:new(x, y, props)
 	self.transitionDuration = props and props.transitionDuration or Constants.TELEPORTER.TRANSITION_DURATION
 	
 	-- Target object (will be linked by loadLevel)
-	self.targetTeleporter = nil
+	self.target = nil
+	self.activeTeleport = nil
 	
 	-- State
 	self.lastTeleportTime = 0
@@ -44,40 +45,141 @@ function teleporter:interact(player)
 	
 	-- Determine destination
 	local destX, destY
-	if self.targetTeleporter then
-		destX = self.targetTeleporter.x + self.targetTeleporter.width / 2 - player.width / 2
-		destY = self.targetTeleporter.y - player.height
+	local destinationObject = nil
+	if self.target then
+		destinationObject = self.target
+		local targetX = destinationObject.x or self.targetX
+		local targetY = destinationObject.y or self.targetY
+
+		if not targetX or not targetY then
+			return
+		end
+
+		destX = targetX + ((destinationObject.width or 0) / 2) - player.width / 2
+
+		if destinationObject.type == "teleporter" then
+			destY = targetY - player.height
+		elseif destinationObject.height then
+			destY = targetY + destinationObject.height - player.height
+		else
+			destY = targetY - player.height
+		end
 	elseif self.targetX and self.targetY then
 		destX = self.targetX - player.width / 2
 		destY = self.targetY - player.height
 	else
 		return -- No valid destination
 	end
-	
-	-- Mark as teleporting
+
+	-- Set teleporting state
 	self.teleporting = true
 	self.lastTeleportTime = currentTime
-	
-	-- Use fade transition for teleportation effect
-	sceneEffects:transitionToWithFade(function()
-		-- Teleport player
-		player.x = destX
-		player.y = destY
-		
-		-- Update physics world
-		if World:hasItem(player) then
-			World:update(player, player.x, player.y)
+	if destinationObject and destinationObject.type == "teleporter" then
+		destinationObject.teleporting = true
+	end
+
+	-- Prepare player for teleport
+	player.controlLocked = true
+	player.visible = false
+	player.xVel = 0
+	player.yVel = 0
+	player.teleporting = true
+
+	if World:hasItem(player) then
+		World:remove(player)
+	end
+
+	local startCenterX = player.x + player.width / 2
+	local startCenterY = player.y + player.height / 2
+	local destCenterX = destX + player.width / 2
+	local destCenterY = destY + player.height / 2
+
+	local columns = 4
+	local rows = 5
+	local pieceWidth = player.width / columns
+	local pieceHeight = player.height / rows
+	local totalPieces = columns * rows
+	local scatterRadius = math.max(player.width, player.height) * 1.5
+	local scatterDuration = 0.18
+
+	local dx = destCenterX - startCenterX
+	local dy = destCenterY - startCenterY
+	local travelDistance = math.sqrt(dx * dx + dy * dy)
+	local baseTravel = self.transitionDuration or 0.3
+	local travelDuration = math.max(baseTravel, travelDistance / 250)
+
+	local teleportData = {
+		player = player,
+		destX = destX,
+		destY = destY,
+		totalPieces = totalPieces,
+		completedPieces = 0,
+		pieces = {},
+		targetTeleporter = (destinationObject and destinationObject.type == "teleporter") and destinationObject or nil,
+	}
+
+	self.activeTeleport = teleportData
+
+	local function onPieceArrived()
+		teleportData.completedPieces = teleportData.completedPieces + 1
+		if teleportData.completedPieces >= teleportData.totalPieces then
+			self:_completeTeleport(teleportData)
 		end
-		
-		-- Reset teleporting flag after a short delay
-		local delay = 0.1
-		flux.to({}, delay, {}):oncomplete(function()
-			self.teleporting = false
-			if self.targetTeleporter then
-				self.targetTeleporter.teleporting = false
-			end
-		end)
-	end)
+	end
+
+	for row = 0, rows - 1 do
+		for col = 0, columns - 1 do
+			local piece = {
+				cx = startCenterX,
+				cy = startCenterY,
+				width = pieceWidth,
+				height = pieceHeight,
+			}
+
+			piece.finalCx = destX + (col + 0.5) * pieceWidth
+			piece.finalCy = destY + (row + 0.5) * pieceHeight
+
+			local angle = love.math.random() * math.pi * 2
+			local radius = (love.math.random() * 0.6 + 0.4) * scatterRadius
+			piece.midCx = startCenterX + math.cos(angle) * radius
+			piece.midCy = startCenterY + math.sin(angle) * radius
+
+			table.insert(teleportData.pieces, piece)
+
+			flux.to(piece, scatterDuration, { cx = piece.midCx, cy = piece.midCy }):ease("quadout"):oncomplete(function()
+				flux.to(piece, travelDuration, { cx = piece.finalCx, cy = piece.finalCy })
+					:ease("quadout")
+					:oncomplete(onPieceArrived)
+			end)
+		end
+	end
+end
+
+function teleporter:_completeTeleport(teleportData)
+	local player = teleportData.player
+
+	player.x = teleportData.destX
+	player.y = teleportData.destY
+	player.xVel = 0
+	player.yVel = 0
+	player.visible = true
+	player.controlLocked = false
+	player.teleporting = false
+
+	if not World:hasItem(player) then
+		World:add(player, player.x, player.y, player.width, player.height)
+	else
+		World:update(player, player.x, player.y)
+	end
+
+	self.teleporting = false
+
+	if teleportData.targetTeleporter then
+		teleportData.targetTeleporter.teleporting = false
+	end
+
+	teleportData.pieces = nil
+	self.activeTeleport = nil
 end
 
 function teleporter:draw()
@@ -92,6 +194,20 @@ function teleporter:draw()
 	local centerY = self.y + self.height / 2
 	love.graphics.setColor(1, 1, 1, 0.9)
 	love.graphics.circle("fill", centerX, centerY, 2)
+
+	if self.activeTeleport and self.activeTeleport.pieces then
+		love.graphics.setColor(0, 0, 0, 1)
+		for _, piece in ipairs(self.activeTeleport.pieces) do
+			love.graphics.rectangle(
+				"fill",
+				piece.cx - piece.width / 2,
+				piece.cy - piece.height / 2,
+				piece.width,
+				piece.height
+			)
+		end
+	end
+
 	love.graphics.setColor(1, 1, 1, 1)
 end
 

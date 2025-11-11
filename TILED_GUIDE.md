@@ -100,6 +100,44 @@ The game expects the following layers in your Tiled map:
 - `cutscene`: Trigger a cutscene (requires cutscene property)
 - `timer`: Automatically activate after timerDelay seconds
 
+**Trigger Action Examples:**
+
+- `move`
+
+  - `targetId`: 12
+  - `moveX`: 64
+  - `moveY`: -32
+  - `speed`: 80
+  - Use case: slide a platform right and slightly upward when the player overlaps the trigger.
+
+- `wait`
+
+  - `duration`: 1.5
+  - Use case: pause a moving platform mid-sequence for dramatic timing.
+
+- `activate`
+
+  - `targetId`: 27
+  - `once`: false
+  - Use case: toggle another trigger repeatedly (e.g., start and stop a saw).
+
+- `sequence`
+
+  - `sequence`: `[ { action = "move", targetId = 40, moveX = 96, speed = 60 }, { action = "wait", duration = 0.75 }, { action = "move", targetId = 40, moveX = -96, speed = 60 } ]`
+  - Use case: move a platform out and back with a brief pause.
+
+- `cutscene`
+
+  - `cutscene`: `"intro_bridge"`
+  - `delay`: 0.5
+  - Use case: start a scripted camera pan shortly after the trigger fires.
+
+- `timer`
+  - `timerDelay`: 3
+  - `targetId`: 55
+  - `action`: `"activate"`
+  - Use case: launch a delayed chain reaction without player interaction.
+
 **Example:**
 
 - Create a rectangle object in "Spawns" layer
@@ -122,8 +160,9 @@ The game expects the following layers in your Tiled map:
 
 **Notes:**
 
-- Teleporters work in pairs - link them using `targetId`
-- Player teleports to the center of the target teleporter
+- `targetId` can reference any object; the teleporter will drop the player at that object's position
+- Teleporters can still work in pairs by pointing to another teleporter object
+- Player teleports to the center of the target object (or the top of a teleporter)
 - Has a cooldown to prevent rapid teleportation
 
 ### Spike

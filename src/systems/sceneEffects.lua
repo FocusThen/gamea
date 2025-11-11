@@ -2,6 +2,9 @@ local sceneEffects = Object:extend()
 
 local Constants = require("src.core.constants")
 
+local WIPE_COLOR = { 20 / 255, 24 / 255, 46 / 255, 1 }
+local FADE_COLOR = { WIPE_COLOR[1], WIPE_COLOR[2], WIPE_COLOR[3] }
+
 function sceneEffects:new(canvas)
 	self.canvas = canvas
 	self.wipeEffectDuration = Constants.EFFECTS.WIPE_DURATION
@@ -35,15 +38,17 @@ function sceneEffects:setWipeOut()
 end
 
 function sceneEffects:transitionToWithWipe(cb)
-	if not self.wipeTween then
-		self:setWipeOut()
-		self.wipeTween:oncomplete(function()
-			if cb then
-				cb()
-			end
-			self:setWipeIn()
-		end)
+	if self.wipeTween then
+		return
 	end
+
+	self:setWipeOut()
+	self.wipeTween:oncomplete(function()
+		if cb then
+			cb()
+		end
+		self:setWipeIn()
+	end)
 end
 
 function sceneEffects:setFadeIn()
@@ -61,15 +66,17 @@ function sceneEffects:setFadeOut()
 end
 
 function sceneEffects:transitionToWithFade(cb)
-	if not self.fadeTween then
-		self:setFadeOut()
-		self.fadeTween:oncomplete(function()
-			if cb then
-				cb()
-			end
-			self:setFadeIn()
-		end)
+	if self.fadeTween then
+		return
 	end
+
+	self:setFadeOut()
+	self.fadeTween:oncomplete(function()
+		if cb then
+			cb()
+		end
+		self:setFadeIn()
+	end)
 end
 
 function sceneEffects:drawWipePattern()
@@ -99,14 +106,13 @@ end
 
 function sceneEffects:draw()
 	if self.wipeTween then
-		-- Set color for wipe pattern (dark blue/purple to match fade color)
-		love.graphics.setColor(20 / 255, 24 / 255, 46 / 255, 1)
+		love.graphics.setColor(WIPE_COLOR[1], WIPE_COLOR[2], WIPE_COLOR[3], WIPE_COLOR[4])
 		self:drawWipePattern()
 		love.graphics.setColor(1, 1, 1, 1)
 	end
 
 	if self.fadeTween then
-		love.graphics.setColor(20 / 255, 24 / 255, 46 / 255, self.fadeAlpha.alpha)
+		love.graphics.setColor(FADE_COLOR[1], FADE_COLOR[2], FADE_COLOR[3], self.fadeAlpha.alpha)
 		love.graphics.rectangle("fill", 0, 0, self.canvas:getWidth(), self.canvas:getHeight())
 		love.graphics.setColor(1, 1, 1, 1)
 	end

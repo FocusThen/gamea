@@ -3,10 +3,45 @@ local levelSelectScene = Object:extend()
 local inputConfig = require("src.systems.inputConfig")
 local Colors = require("src.core.colors")
 local uiUtils = require("src.ui.utils")
+local Utils = require("src.core.utils")
+local LevelLoader = require("src.game.level.loader")
 
-
-local detectedLevels = countAvailableLevels()
+local detectedLevels = Utils.countLevels()
 _G.numOfLevels = math.max(detectedLevels, 1)
+
+local GRID_COLUMNS = 6
+local NAVIGATION_OFFSETS = {
+	left = -1,
+	right = 1,
+	up = -GRID_COLUMNS,
+	down = GRID_COLUMNS,
+}
+
+function levelSelectScene:playSelect()
+	if resourceManager and resourceManager.play then
+		resourceManager:play("select")
+	else
+		playSound(sounds.select)
+	end
+end
+
+function levelSelectScene:clampSelection()
+	if self.selected > numOfLevels then
+		self.selected = numOfLevels
+	end
+	if self.selected > savedGame.levelReached and not isDev then
+		self.selected = savedGame.levelReached
+	end
+	if self.selected < 1 then
+		self.selected = 1
+	end
+end
+
+function levelSelectScene:adjustSelection(offset)
+	self.selected = self.selected + offset
+	self:playSelect()
+	self:clampSelection()
+end
 
 function levelSelectScene:new()
 	self.bindings = inputConfig.createMenuBindings()
@@ -22,34 +57,21 @@ function levelSelectScene:update(dt)
 			stateMachine:setState("main_menu")
 		end)
 	elseif self.bindings:pressed("select") then
-		sceneEffects:transitionToWithWipe(function()
-			stateMachine:setState("game", {
-				map = loadLevel("level_" .. self.selected),
-			})
-		end)
-	elseif self.bindings:pressed("left") then
-		self.selected = self.selected - 1
-		playSound(sounds.select)
-	elseif self.bindings:pressed("right") then
-		self.selected = self.selected + 1
-		playSound(sounds.select)
-	elseif self.bindings:pressed("up") then
-		self.selected = self.selected - 6
-		playSound(sounds.select)
-	elseif self.bindings:pressed("down") then
-		self.selected = self.selected + 6
-		playSound(sounds.select)
+			sceneEffects:transitionToWithWipe(function()
+				stateMachine:setState("game", {
+					map = LevelLoader.load("level_" .. self.selected),
+				})
+			end)
+	else
+		for action, offset in pairs(NAVIGATION_OFFSETS) do
+			if self.bindings:pressed(action) then
+				self:adjustSelection(offset)
+				break
+			end
+		end
 	end
 
-	if self.selected > numOfLevels then
-		self.selected = numOfLevels
-	end
-	if self.selected > savedGame.levelReached and not isDev then
-		self.selected = savedGame.levelReached
-	end
-	if self.selected < 1 then
-		self.selected = 1
-	end
+	self:clampSelection()
 end
 
 function levelSelectScene:draw()

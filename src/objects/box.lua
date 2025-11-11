@@ -1,6 +1,14 @@
 local Constants = require("src.core.constants")
 local box = Object:extend()
 
+local function playEffect(entry)
+	if resourceManager and resourceManager.playEntry then
+		resourceManager:playEntry(entry)
+	else
+		playSound(entry)
+	end
+end
+
 function box:new(x, y)
 	self.x = x
 	self.y = y
@@ -77,7 +85,7 @@ function box:update(dt)
 					self.yVel = self.lastBounce
 				end
 				springHit = true
-				playSound(sounds.spring)
+				playEffect(sounds.spring)
 				col.other.currentAnim = col.other.anims.anim
 				col.other.currentAnim:gotoFrame(1)
 				col.other.currentAnim.status = "playing"
@@ -102,7 +110,7 @@ function box:update(dt)
 	-- Reset velocity if we hit something
 	if self.y ~= actualY and not springHit then
 		if self.yVel > Constants.VELOCITY.LANDING_SOUND_THRESHOLD then
-			playSound(sounds.ground2)
+			playEffect(sounds.ground2)
 			particleEffects:createEffect("boxLanding", self.x + self.width / 2 - 14, actualY + self.height - 4)
 		end
 		if self.yVel > 0 then
@@ -112,7 +120,7 @@ function box:update(dt)
 
 	if self.x ~= actualX then
 		if math.abs(self.xVel) > Constants.VELOCITY.BOX_X_VEL_MIN then
-			playSound(sounds.ground2)
+			playEffect(sounds.ground2)
 		end
 		self.xVel = 0
 	end

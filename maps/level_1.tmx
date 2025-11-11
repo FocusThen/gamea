@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="20" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="21">
+<map version="1.11" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="20" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="21">
  <editorsettings>
   <export target="level_1.lua" format="lua"/>
  </editorsettings>
  <properties>
-  <property name="BgColor" type="color" value="#fff5e24c"/>
-  <property name="MapColor" type="color" value="#ff916429"/>
+  <property name="BgColor" type="color" value="#ff75e758"/>
+  <property name="MapColor" type="color" value="#ff56b43a"/>
  </properties>
  <layer id="1" name="Bg" width="20" height="12">
   <data encoding="csv">

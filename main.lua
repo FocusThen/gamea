@@ -11,8 +11,7 @@ lume = require("lib.lume.lume")
 local Constants = require("src.core.constants")
 
 --- Load all files
-require("src.core.utils")
-require("src.game.resources")
+local ResourceManager = require("src.game.resources")
 require("src.game.loadMap")
 ---
 
@@ -45,7 +44,17 @@ _G.savedGame = {
 function love.load()
 	worldCanvas = love.graphics.newCanvas(gameSettings.gameWidth, gameSettings.gameHeight)
 	worldCanvas:setFilter("nearest", "nearest")
-	
+
+	resourceManager = ResourceManager.new()
+	_G.resourceManager = resourceManager
+	_G.sprites = resourceManager.sprites
+	_G.fonts = resourceManager.fonts
+	_G.sounds = resourceManager.sounds
+	_G.music = resourceManager.music
+	function playSound(entry)
+		resourceManager:playEntry(entry)
+	end
+
 	-- Initialize physics world
 	World = bump.newWorld(Constants.PHYSICS.CELL_SIZE)
 

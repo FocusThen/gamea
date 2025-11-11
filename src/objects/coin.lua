@@ -34,7 +34,11 @@ function coin:draw()
 end
 
 function coin:onPickup()
-	playSound(sounds.coin)
+	if resourceManager and resourceManager.playEntry then
+		resourceManager:playEntry(sounds.coin)
+	else
+		playSound(sounds.coin)
+	end
 end
 
 return coin

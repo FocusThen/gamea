@@ -79,28 +79,28 @@
         },
         "level_1.tmx": {
             "expandedObjectLayers": [
-                3,
                 5,
-                2
+                2,
+                3
             ],
-            "scale": 3.7797,
+            "scale": 1.6912,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 191.2850226208429,
-                "y": 134.00534433949787
+                "x": 173.24976348155158,
+                "y": 147.52838221381268
             }
         },
         "level_2.tmx": {
             "expandedObjectLayers": [
-                3,
                 5,
+                3,
                 2
             ],
-            "scale": 6.5767,
+            "scale": 3.83,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 198.27573098970612,
-                "y": 133.27352623656242
+                "x": 126.89295039164489,
+                "y": 117.1018276762402
             }
         },
         "level_3.tmx": {
@@ -145,11 +145,10 @@
     "map.tileWidth": 16,
     "map.width": 20,
     "openFiles": [
-        "level_1.tmx",
-        "level_2.tmx"
+        "level_1.tmx"
     ],
     "project": "game1.tiled-project",
-    "property.type": "float",
+    "property.type": "file",
     "recentFiles": [
         "level_1.tmx",
         "level_2.tmx",

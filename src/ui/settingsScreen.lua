@@ -3,6 +3,14 @@ local SettingsScreen = Object:extend()
 local Constants = require("src.core.constants")
 local Colors = require("src.core.colors")
 
+local function playSelectSound()
+	if resourceManager and resourceManager.play then
+		resourceManager:play("select")
+	else
+		playSound(sounds.select)
+	end
+end
+
 function SettingsScreen:new()
 	self.selected = 1
 	self.buttons = self:buildButtons()
@@ -17,9 +25,9 @@ function SettingsScreen:buildButtons()
 		{ name = "Music Vol -", action = function() self:adjustVolume("music", -1) end },
 		{ name = "SFX Vol +", action = function() self:adjustVolume("sfx", 1) end },
 		{ name = "SFX Vol -", action = function() self:adjustVolume("sfx", -1) end },
-		{ name = "CRT Shader", action = function() 
+		{ name = "CRT Shader", action = function()
 			shaderSystem:toggle("crt")
-			playSound(sounds.select)
+			playSelectSound()
 		end },
 		{ name = "Back", action = function() 
 			if self.onBack then 
@@ -36,16 +44,16 @@ function SettingsScreen:adjustVolume(type, direction)
 	if direction > 0 then
 		if currentVol < 1 then
 			gameSettings[volKey] = math.min(1, math.floor(currentVol * 10 + 1) / 10)
-			playSound(sounds.select)
+			playSelectSound()
 		else
-			playSound(sounds.select)
+			playSelectSound()
 		end
 	else
 		if currentVol > 0 then
 			gameSettings[volKey] = math.max(0, math.floor(currentVol * 10 - 1) / 10)
-			playSound(sounds.select)
+			playSelectSound()
 		else
-			playSound(sounds.select)
+			playSelectSound()
 		end
 	end
 end
@@ -58,24 +66,24 @@ function SettingsScreen:updateNavigation(bindings)
 		if self.selected < 1 then
 			self.selected = maxSelection
 		end
-		playSound(sounds.select)
+		playSelectSound()
 	elseif bindings:pressed("down") then
 		self.selected = self.selected + 1
 		if self.selected > maxSelection then
 			self.selected = 1
 		end
-		playSound(sounds.select)
+		playSelectSound()
 	elseif bindings:pressed("left") then
 		-- Navigate between volume controls (paired +/- buttons)
 		if self.selected <= 6 and self.selected % 2 == 0 then
 			self.selected = self.selected - 1
-			playSound(sounds.select)
+			playSelectSound()
 		end
 	elseif bindings:pressed("right") then
 		-- Navigate between volume controls (paired +/- buttons)
 		if self.selected <= 6 and self.selected % 2 == 1 then
 			self.selected = self.selected + 1
-			playSound(sounds.select)
+			playSelectSound()
 		end
 	end
 	

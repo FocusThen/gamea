@@ -1,5 +1,5 @@
 return {
-  version = "1.10",
+  version = "1.11",
   luaversion = "5.1",
   tiledversion = "1.11.2",
   class = "",
@@ -12,8 +12,8 @@ return {
   nextlayerid = 6,
   nextobjectid = 21,
   properties = {
-    ["BgColor"] = "#fff5e24c",
-    ["MapColor"] = "#ff916429"
+    ["BgColor"] = "#ff75e758",
+    ["MapColor"] = "#ff56b43a"
   },
   tilesets = {},
   layers = {

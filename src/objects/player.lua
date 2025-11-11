@@ -9,6 +9,9 @@ function player:new(x, y, props)
 	self.width = Constants.PLAYER.WIDTH
 	self.height = Constants.PLAYER.HEIGHT
 	self.type = "player"
+	self.controlLocked = false
+	self.visible = true
+	self.teleporting = false
 
 	self.drawOffXRight = Constants.PLAYER.DRAW_OFFSET_X_RIGHT
 	self.drawOffXLeft = Constants.PLAYER.DRAW_OFFSET_X_LEFT
@@ -56,6 +59,12 @@ end
 function player:update(dt)
 	if not self.dead then
 		self.input:update()
+
+		if self.controlLocked then
+			self.xVel = 0
+			self.yVel = 0
+			return
+		end
 
 		-- Horizontal movement
 		if self.input:down("right") and not self.input:down("left") then
@@ -299,6 +308,9 @@ function player:update(dt)
 end
 
 function player:draw()
+	if not self.visible then
+		return
+	end
 	love.graphics.setColor(0, 0, 0, 1)
 	love.graphics.rectangle("fill", math.floor(self.x), math.floor(self.y), self.width, self.height)
 end

@@ -1,39 +1,41 @@
 local shaders = Object:extend()
 
+local function clamp01(value)
+	return math.max(0, math.min(1, value))
+end
+
+local function loadShader(path)
+	local ok, code = pcall(love.filesystem.read, path)
+	if not ok or not code then
+		return nil
+	end
+
+	local shaderOk, shader = pcall(love.graphics.newShader, code)
+	if shaderOk then
+		return shader
+	end
+
+	return nil
+end
+
 function shaders:new()
 	self.enabled = {
-		crt = true, -- Enabled by default
+		crt = true,
 	}
-	
+
 	self.intensity = {
 		crt = 1.0,
 	}
-	
-	-- Load shaders
+
 	self.crtShader = nil
 	self.colorTintShader = nil
-	
+
 	self:loadShaders()
 end
 
 function shaders:loadShaders()
-	-- Load CRT shader
-	local success, crtShaderCode = pcall(function() return love.filesystem.read("src/shaders/crt.glsl") end)
-	if success and crtShaderCode then
-		local shaderSuccess, shader = pcall(function() return love.graphics.newShader(crtShaderCode) end)
-		if shaderSuccess then
-			self.crtShader = shader
-		end
-	end
-	
-	-- Load color tint shader
-	local success, colorTintShaderCode = pcall(function() return love.filesystem.read("src/shaders/colorTint.glsl") end)
-	if success and colorTintShaderCode then
-		local shaderSuccess, shader = pcall(function() return love.graphics.newShader(colorTintShaderCode) end)
-		if shaderSuccess then
-			self.colorTintShader = shader
-		end
-	end
+	self.crtShader = loadShader("src/shaders/crt.glsl")
+	self.colorTintShader = loadShader("src/shaders/colorTint.glsl")
 end
 
 function shaders:toggle(name)
@@ -50,7 +52,7 @@ end
 
 function shaders:setIntensity(name, intensity)
 	if self.intensity[name] ~= nil then
-		self.intensity[name] = math.max(0, math.min(1, intensity))
+		self.intensity[name] = clamp01(intensity)
 	end
 end
 

@@ -1,6 +1,7 @@
 local gameScene = Object:extend()
 local Camera = require("src.core.camera")
 local Constants = require("src.core.constants")
+local LevelLoader = require("src.game.level.loader")
 
 function gameScene:enter(enterparams)
 	self.map = enterparams.map
@@ -87,7 +88,7 @@ function gameScene:update(dt)
 		if self.deathTimer >= 1.0 then -- 1 second delay
 			self.restarting = true
 			sceneEffects:transitionToWithWipe(function()
-				self.map = loadLevel(self.map.path)
+				self.map = LevelLoader.load(self.map.path)
 				self.player = self.map.entities.player
 				self.deathTimer = 0
 				self.restarting = false
@@ -104,7 +105,7 @@ function gameScene:update(dt)
 	self.bindings:update()
 	if self.bindings:pressed("reset") then
 		sceneEffects:transitionToWithWipe(function()
-			self.map = loadLevel(self.map.path)
+			self.map = LevelLoader.load(self.map.path)
 			self.player = self.map.entities.player
 			self.deathTimer = 0
 			self.restarting = false
