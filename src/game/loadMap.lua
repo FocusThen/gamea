@@ -222,57 +222,8 @@ function loadLevel(path)
 	local mapColor = nil
 
 	if tiled.properties then
-		-- Parse BgColor (format: "#rrggbbaa" or "#rrggbb")
-		if tiled.properties.BgColor then
-			local hex = tiled.properties.BgColor
-			-- Handle 8-digit hex with alpha
-			local r, g, b, a = hex:match("#(%x%x)(%x%x)(%x%x)(%x%x)")
-			if r then
-				bgColor = {
-					r = tonumber(r, 16) / 255,
-					g = tonumber(g, 16) / 255,
-					b = tonumber(b, 16) / 255,
-					a = tonumber(a, 16) / 255,
-				}
-			else
-				-- Fallback to 6-digit hex (no alpha, assume 1.0)
-				r, g, b = hex:match("#(%x%x)(%x%x)(%x%x)")
-				if r then
-					bgColor = {
-						r = tonumber(r, 16) / 255,
-						g = tonumber(g, 16) / 255,
-						b = tonumber(b, 16) / 255,
-						a = 1.0,
-					}
-				end
-			end
-		end
-
-		-- Parse MapColor (format: "#rrggbbaa" or "#rrggbb")
-		if tiled.properties.MapColor then
-			local hex = tiled.properties.MapColor
-			-- Handle 8-digit hex with alpha
-			local r, g, b, a = hex:match("#(%x%x)(%x%x)(%x%x)(%x%x)")
-			if r then
-				mapColor = {
-					r = tonumber(r, 16) / 255,
-					g = tonumber(g, 16) / 255,
-					b = tonumber(b, 16) / 255,
-					a = tonumber(a, 16) / 255,
-				}
-			else
-				-- Fallback to 6-digit hex (no alpha, assume 1.0)
-				r, g, b = hex:match("#(%x%x)(%x%x)(%x%x)")
-				if r then
-					mapColor = {
-						r = tonumber(r, 16) / 255,
-						g = tonumber(g, 16) / 255,
-						b = tonumber(b, 16) / 255,
-						a = 1.0,
-					}
-				end
-			end
-		end
+		bgColor = parseColorProperty(tiled.properties.BgColor)
+		mapColor = parseColorProperty(tiled.properties.MapColor)
 	end
 
 	return {
