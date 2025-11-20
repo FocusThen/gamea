@@ -7,7 +7,7 @@ set -e  # Exit on error
 
 # Configuration
 GAME_NAME="game1"
-VERSION="1.0.0"
+VERSION="0.0.1"
 AUTHOR="M. Mucahit Tezcan - FocusThen"
 RELEASE_DIR="releases"
 # macOS identifier (reverse domain format, e.g., com.yourname.gamename)

@@ -42,10 +42,14 @@ _G.savedGame = {
 	levelReached = 1,
 } -- TODO: savegame
 
+-- Fixed timestep for 60 FPS
+local FIXED_DT = 1 / 60
+local accumulator = 0.0
+
 function love.load()
 	worldCanvas = love.graphics.newCanvas(gameSettings.gameWidth, gameSettings.gameHeight)
 	worldCanvas:setFilter("nearest", "nearest")
-	
+
 	-- Initialize physics world
 	World = bump.newWorld(Constants.PHYSICS.CELL_SIZE)
 
@@ -55,7 +59,7 @@ function love.load()
 	particleEffects = particleEffects()
 	shaderSystem = shaderSystem()
 	saveSystem = saveSystem()
-	
+
 	-- Load saved game if exists
 	saveSystem:loadGame()
 
@@ -70,8 +74,21 @@ function love.load()
 end
 
 function love.update(dt)
-	flux.update(dt)
-	stateMachine:update(dt)
+	-- Accumulate real dt
+	accumulator = accumulator + dt
+	
+	-- Cap accumulator to prevent spiral of death
+	if accumulator > 0.25 then
+		accumulator = 0.25
+	end
+	
+	-- Run fixed timestep updates
+	while accumulator >= FIXED_DT do
+		flux.update(FIXED_DT)
+		stateMachine:update(FIXED_DT)
+		
+		accumulator = accumulator - FIXED_DT
+	end
 
 	--
 	if isDev then
@@ -107,10 +124,10 @@ function love.draw()
 	---
 	love.graphics.setCanvas()
 	love.graphics.setColor(1, 1, 1, 1)
-	
+
 	-- Apply shaders to canvas
 	local processedCanvas = shaderSystem:apply(worldCanvas, gameSettings.gameWidth, gameSettings.gameHeight)
-	
+
 	-- Draw with shaders applied
 	love.graphics.setBlendMode("alpha", "premultiplied")
 	shaderSystem:draw(processedCanvas, offsetX, offsetY, screen_scale, screen_scale)

@@ -6,7 +6,7 @@ function love.conf(t)
 	t.identity = "game1"
 	t.window.title = "Game 1"
 	t.window.icon = nil
-  t.window.vsync = -1
+  t.window.vsync = 1
   t.window.highdpi = true
   t.window.width = 624
   t.window.height = 672
