@@ -8,6 +8,10 @@ The repository includes a GitHub Actions workflow that automatically deploys doc
 
 ### Setup Steps
 
+**Option 1: Automatic (Recommended)**
+The workflow will automatically enable GitHub Pages when it runs. Just push to main!
+
+**Option 2: Manual Setup**
 1. **Enable GitHub Pages in Repository Settings:**
    - Go to your repository on GitHub
    - Click **Settings** → **Pages**
@@ -48,17 +52,26 @@ To use a custom domain:
 
 ## Troubleshooting
 
+### Workflow Fails with "Get Pages site failed"
+
+**Solution:** The workflow now automatically enables Pages. If you still see this error:
+1. Go to repository **Settings** → **Pages**
+2. Manually select **Source: GitHub Actions**
+3. Save and re-run the workflow
+
 ### Documentation Not Loading
 
 - Check that GitHub Pages is enabled in repository settings
 - Verify the workflow ran successfully in the Actions tab
 - Ensure paths are correct (should be `/repository-name/docs-viewer/`)
+- Wait a few minutes after deployment for DNS propagation
 
 ### 404 Errors
 
 - Make sure you're accessing the correct URL with `/docs-viewer/` at the end
 - Check that the `docs/` folder is in the repository root
 - Verify the base path detection is working (check browser console)
+- Clear browser cache and try again
 
 ## Workflow Details
 

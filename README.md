@@ -81,11 +81,11 @@ Then open **http://localhost:8000/docs-viewer/** in your browser.
 
 The documentation can be automatically deployed to GitHub Pages!
 
-1. **Enable GitHub Pages:**
-   - Go to repository **Settings** → **Pages**
-   - Select **Source: GitHub Actions**
+1. **Push to main branch:**
+   - The workflow will automatically enable GitHub Pages (if not already enabled)
+   - Or manually enable: **Settings** → **Pages** → **Source: GitHub Actions**
 
-2. **Push to main branch:**
+2. **Wait for deployment:**
    - The workflow automatically deploys when `docs/` or `docs-viewer/` files change
    - Check the **Actions** tab for deployment status
 

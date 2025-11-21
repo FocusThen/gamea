@@ -1,124 +1,280 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Game Documentation</title>
-    <base href="./">
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/syntax.css">
-</head>
-<body>
+    <base href="./" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/syntax.css" />
+  </head>
+  <body>
     <div class="container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h1>Documentation</h1>
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
-            </div>
-            
-            <!-- Search -->
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Search documentation..." class="search-input">
-                <div id="searchResults" class="search-results"></div>
-            </div>
-            
-            <!-- Navigation Tree -->
-            <nav class="nav-tree" id="navTree">
-                <ul class="nav-list">
-                    <li><a href="#getting-started" data-path="guides/getting-started">Getting Started</a></li>
-                    <li class="nav-section">
-                        <span class="nav-section-title">API Reference</span>
-                        <ul>
-                            <li class="nav-subsection">
-                                <span>Core</span>
-                                <ul>
-                                    <li><a href="#api/core/camera" data-path="api/core/camera">Camera</a></li>
-                                    <li><a href="#api/core/constants" data-path="api/core/constants">Constants</a></li>
-                                    <li><a href="#api/core/colors" data-path="api/core/colors">Colors</a></li>
-                                    <li><a href="#api/core/utils" data-path="api/core/utils">Utils</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-subsection">
-                                <span>Objects</span>
-                                <ul>
-                                    <li><a href="#api/objects/trigger" data-path="api/objects/trigger">Trigger</a></li>
-                                    <li><a href="#api/objects/player" data-path="api/objects/player">Player</a></li>
-                                    <li><a href="#api/objects/box" data-path="api/objects/box">Box</a></li>
-                                    <li><a href="#api/objects/coin" data-path="api/objects/coin">Coin</a></li>
-                                    <li><a href="#api/objects/door" data-path="api/objects/door">Door</a></li>
-                                    <li><a href="#api/objects/teleporter" data-path="api/objects/teleporter">Teleporter</a></li>
-                                    <li><a href="#api/objects/saw" data-path="api/objects/saw">Saw</a></li>
-                                    <li><a href="#api/objects/cutscene" data-path="api/objects/cutscene">Cutscene</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-subsection">
-                                <span>States</span>
-                                <ul>
-                                    <li><a href="#api/states/stateMachine" data-path="api/states/stateMachine">State Machine</a></li>
-                                    <li><a href="#api/states/game" data-path="api/states/game">Game State</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-subsection">
-                                <span>Systems</span>
-                                <ul>
-                                    <li><a href="#api/systems/particles" data-path="api/systems/particles">Particles</a></li>
-                                    <li><a href="#api/systems/shaders" data-path="api/systems/shaders">Shaders</a></li>
-                                    <li><a href="#api/systems/sceneEffects" data-path="api/systems/sceneEffects">Scene Effects</a></li>
-                                    <li><a href="#api/systems/saveSystem" data-path="api/systems/saveSystem">Save System</a></li>
-                                    <li><a href="#api/systems/inputConfig" data-path="api/systems/inputConfig">Input Config</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-subsection">
-                                <span>Game</span>
-                                <ul>
-                                    <li><a href="#api/game/loadMap" data-path="api/game/loadMap">Load Map</a></li>
-                                    <li><a href="#api/game/resources" data-path="api/game/resources">Resources</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="#api/main" data-path="api/main">Main</a></li>
-                            <li><a href="#api/conf" data-path="api/conf">Config</a></li>
-                        </ul>
+      <!-- Sidebar Navigation -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <h1>Documentation</h1>
+          <button
+            class="theme-toggle"
+            id="themeToggle"
+            aria-label="Toggle theme"
+          >
+            🌙
+          </button>
+        </div>
+
+        <!-- Search -->
+        <div class="search-container">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search documentation..."
+            class="search-input"
+          />
+          <div id="searchResults" class="search-results"></div>
+        </div>
+
+        <!-- Navigation Tree -->
+        <nav class="nav-tree" id="navTree">
+          <ul class="nav-list">
+            <li>
+              <a href="#getting-started" data-path="guides/getting-started"
+                >Getting Started</a
+              >
+            </li>
+            <li class="nav-section">
+              <span class="nav-section-title">API Reference</span>
+              <ul>
+                <li class="nav-subsection">
+                  <span>Core</span>
+                  <ul>
+                    <li>
+                      <a href="#api/core/camera" data-path="api/core/camera"
+                        >Camera</a
+                      >
                     </li>
-                    <li class="nav-section">
-                        <span class="nav-section-title">Guides</span>
-                        <ul>
-                            <li><a href="#guides/getting-started" data-path="guides/getting-started">Getting Started</a></li>
-                            <li><a href="#guides/trigger-system" data-path="guides/trigger-system">Trigger System</a></li>
-                            <li><a href="#guides/camera-guide" data-path="guides/camera-guide">Camera Guide</a></li>
-                            <li><a href="#guides/tiled-integration" data-path="guides/tiled-integration">Tiled Integration</a></li>
-                        </ul>
+                    <li>
+                      <a
+                        href="#api/core/constants"
+                        data-path="api/core/constants"
+                        >Constants</a
+                      >
                     </li>
-                    <li class="nav-section">
-                        <span class="nav-section-title">Architecture</span>
-                        <ul>
-                            <li><a href="#architecture/project-structure" data-path="architecture/project-structure">Project Structure</a></li>
-                        </ul>
+                    <li>
+                      <a href="#api/core/colors" data-path="api/core/colors"
+                        >Colors</a
+                      >
                     </li>
-                </ul>
-            </nav>
-        </aside>
-        
-        <!-- Main Content -->
-        <main class="main-content" id="mainContent">
-            <div class="content-header">
-                <nav class="breadcrumbs" id="breadcrumbs"></nav>
-                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
-            </div>
-            
-            <article class="documentation-content" id="documentationContent">
-                <div class="loading">Loading documentation...</div>
-            </article>
-            
-            <div class="table-of-contents" id="tableOfContents"></div>
-        </main>
+                    <li>
+                      <a href="#api/core/utils" data-path="api/core/utils"
+                        >Utils</a
+                      >
+                    </li>
+                  </ul>
+                </li>
+                <li class="nav-subsection">
+                  <span>Objects</span>
+                  <ul>
+                    <li>
+                      <a
+                        href="#api/objects/trigger"
+                        data-path="api/objects/trigger"
+                        >Trigger</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#api/objects/player"
+                        data-path="api/objects/player"
+                        >Player</a
+                      >
+                    </li>
+                    <li>
+                      <a href="#api/objects/box" data-path="api/objects/box"
+                        >Box</a
+                      >
+                    </li>
+                    <li>
+                      <a href="#api/objects/coin" data-path="api/objects/coin"
+                        >Coin</a
+                      >
+                    </li>
+                    <li>
+                      <a href="#api/objects/door" data-path="api/objects/door"
+                        >Door</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#api/objects/teleporter"
+                        data-path="api/objects/teleporter"
+                        >Teleporter</a
+                      >
+                    </li>
+                    <li>
+                      <a href="#api/objects/saw" data-path="api/objects/saw"
+                        >Saw</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#api/objects/cutscene"
+                        data-path="api/objects/cutscene"
+                        >Cutscene</a
+                      >
+                    </li>
+                  </ul>
+                </li>
+                <li class="nav-subsection">
+                  <span>States</span>
+                  <ul>
+                    <li>
+                      <a
+                        href="#api/states/stateMachine"
+                        data-path="api/states/stateMachine"
+                        >State Machine</a
+                      >
+                    </li>
+                    <li>
+                      <a href="#api/states/game" data-path="api/states/game"
+                        >Game State</a
+                      >
+                    </li>
+                  </ul>
+                </li>
+                <li class="nav-subsection">
+                  <span>Systems</span>
+                  <ul>
+                    <li>
+                      <a
+                        href="#api/systems/particles"
+                        data-path="api/systems/particles"
+                        >Particles</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#api/systems/shaders"
+                        data-path="api/systems/shaders"
+                        >Shaders</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#api/systems/sceneEffects"
+                        data-path="api/systems/sceneEffects"
+                        >Scene Effects</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#api/systems/saveSystem"
+                        data-path="api/systems/saveSystem"
+                        >Save System</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#api/systems/inputConfig"
+                        data-path="api/systems/inputConfig"
+                        >Input Config</a
+                      >
+                    </li>
+                  </ul>
+                </li>
+                <li class="nav-subsection">
+                  <span>Game</span>
+                  <ul>
+                    <li>
+                      <a href="#api/game/loadMap" data-path="api/game/loadMap"
+                        >Load Map</a
+                      >
+                    </li>
+                    <li>
+                      <a
+                        href="#api/game/resources"
+                        data-path="api/game/resources"
+                        >Resources</a
+                      >
+                    </li>
+                  </ul>
+                </li>
+                <li><a href="#api/main" data-path="api/main">Main</a></li>
+                <li><a href="#api/conf" data-path="api/conf">Config</a></li>
+              </ul>
+            </li>
+            <li class="nav-section">
+              <span class="nav-section-title">Guides</span>
+              <ul>
+                <li>
+                  <a
+                    href="#guides/getting-started"
+                    data-path="guides/getting-started"
+                    >Getting Started</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="#guides/trigger-system"
+                    data-path="guides/trigger-system"
+                    >Trigger System</a
+                  >
+                </li>
+                <li>
+                  <a href="#guides/camera-guide" data-path="guides/camera-guide"
+                    >Camera Guide</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="#guides/tiled-integration"
+                    data-path="guides/tiled-integration"
+                    >Tiled Integration</a
+                  >
+                </li>
+              </ul>
+            </li>
+            <li class="nav-section">
+              <span class="nav-section-title">Architecture</span>
+              <ul>
+                <li>
+                  <a
+                    href="#architecture/project-structure"
+                    data-path="architecture/project-structure"
+                    >Project Structure</a
+                  >
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content" id="mainContent">
+        <div class="content-header">
+          <nav class="breadcrumbs" id="breadcrumbs"></nav>
+          <button
+            class="sidebar-toggle"
+            id="sidebarToggle"
+            aria-label="Toggle sidebar"
+          >
+            ☰
+          </button>
+        </div>
+
+        <article class="documentation-content" id="documentationContent">
+          <div class="loading">Loading documentation...</div>
+        </article>
+
+        <div class="table-of-contents" id="tableOfContents"></div>
+      </main>
     </div>
-    
+
     <script src="js/markdown-parser.js"></script>
     <script src="js/code-highlight.js"></script>
     <script src="js/navigation.js"></script>
     <script src="js/search.js"></script>
     <script src="js/app.js"></script>
-</body>
+  </body>
 </html>
-

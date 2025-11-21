@@ -14,6 +14,7 @@ Interactive web-based documentation viewer for the game project.
 ```
 
 Or from docs-viewer directory:
+
 ```bash
 cd docs-viewer
 ./serve.sh
@@ -58,12 +59,14 @@ The documentation can be automatically deployed to GitHub Pages!
 ### Setup Steps
 
 1. **Enable GitHub Pages:**
+
    - Go to your repository on GitHub
    - Click **Settings** → **Pages**
    - Under **Source**, select **GitHub Actions**
    - Save
 
 2. **Push to Main Branch:**
+
    - The workflow automatically runs when you push to `main`
    - It deploys when files in `docs/` or `docs-viewer/` change
    - Check the **Actions** tab to see deployment status
@@ -87,6 +90,7 @@ See [GitHub Pages Setup Guide](GITHUB_PAGES.md) for detailed instructions.
 ## File Structure
 
 The viewer expects markdown files in `../docs/` relative to the viewer directory:
+
 - `docs-viewer/` - Viewer files (HTML, CSS, JS)
 - `docs/` - Documentation markdown files
 
@@ -98,11 +102,12 @@ If you see CORS errors, make sure you're running a web server (not opening the f
 
 ### Files Not Loading
 
-**Important:** The server must be run from the **project root directory**, not from `docs-viewer/`. 
+**Important:** The server must be run from the **project root directory**, not from `docs-viewer/`.
 
 The viewer looks for files at `/docs/[path].md` (relative to project root).
 
 If you see 404 errors:
+
 1. Make sure you're running the server from the project root
 2. Access the viewer at `http://localhost:8000/docs-viewer/`
 3. The `docs/` folder should be at the project root level
@@ -117,6 +122,7 @@ If you see 404 errors:
 ## Development
 
 To modify the viewer:
+
 - `index.html` - Main HTML structure
 - `css/main.css` - Main styles
 - `css/syntax.css` - Code highlighting styles
