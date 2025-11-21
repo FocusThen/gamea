@@ -12,16 +12,27 @@ class DocumentationApp {
         // Check if we're on GitHub Pages
         // GitHub Pages uses /repository-name/ as base path for project pages
         const pathname = window.location.pathname;
+        const hostname = window.location.hostname;
         
-        // Match pattern: /repository-name/docs-viewer/...
-        const match = pathname.match(/^\/([^\/]+)\/docs-viewer/);
-        if (match) {
-            return '/' + match[1];
-        }
-        
-        // Check if docs-viewer is at root level (user/organization pages)
-        if (pathname.startsWith('/docs-viewer/')) {
-            return '';
+        // If we're on github.io, we're on GitHub Pages
+        if (hostname.includes('github.io')) {
+            // Match pattern: /repository-name/docs-viewer/...
+            const match = pathname.match(/^\/([^\/]+)\/docs-viewer/);
+            if (match) {
+                return '/' + match[1];
+            }
+            
+            // Check if docs-viewer is at root level (user/organization pages)
+            if (pathname.startsWith('/docs-viewer/')) {
+                return '';
+            }
+            
+            // If we're at root of github.io site, try to detect repo name from pathname
+            // For project pages: /repo-name/ or /repo-name/docs-viewer/
+            const rootMatch = pathname.match(/^\/([^\/]+)\/?/);
+            if (rootMatch && rootMatch[1] !== '') {
+                return '/' + rootMatch[1];
+            }
         }
         
         // Default: no base path (local development)
@@ -30,6 +41,9 @@ class DocumentationApp {
     
     init() {
         this.setupTheme();
+        // Log base path for debugging
+        console.log('Base path detected:', this.basePath);
+        console.log('Current pathname:', window.location.pathname);
         this.loadInitialDoc();
         this.setupEventListeners();
     }
@@ -108,8 +122,12 @@ class DocumentationApp {
         
         try {
             // Use base path for GitHub Pages compatibility
-            const response = await fetch(`${this.basePath}/docs/${path}.md`);
-            if (!response.ok) throw new Error('Document not found');
+            const url = `${this.basePath}/docs/${path}.md`;
+            console.log('Loading documentation from:', url); // Debug log
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Document not found: ${url} (${response.status})`);
+            }
             
             const markdown = await response.text();
             this.docsCache.set(path, markdown);

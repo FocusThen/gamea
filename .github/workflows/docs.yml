@@ -31,8 +31,8 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
-        with:
-          enablement: true  # Automatically enable GitHub Pages if not already enabled
+        # Note: enablement parameter may require repository admin permissions
+        # If this step fails, manually enable Pages in Settings → Pages
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

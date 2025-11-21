@@ -52,6 +52,30 @@ To use a custom domain:
 
 ## Troubleshooting
 
+### 404 Error on GitHub Pages URL
+
+If you see a 404 at `https://[username].github.io/[repository-name]/docs-viewer/`:
+
+1. **Check GitHub Pages is enabled:**
+   - Go to repository **Settings** → **Pages**
+   - Ensure **Source: GitHub Actions** is selected
+   - If not, select it and **Save**
+
+2. **Check workflow status:**
+   - Go to **Actions** tab
+   - Verify "Deploy Documentation to GitHub Pages" workflow has run
+   - If it failed, click on it to see the error
+
+3. **Manually trigger deployment:**
+   - In **Actions** tab, click "Deploy Documentation to GitHub Pages"
+   - Click **Run workflow** → Select **main** → **Run workflow**
+
+4. **Wait for deployment:**
+   - GitHub Pages can take 1-5 minutes to deploy
+   - Wait a few minutes after workflow completes
+
+See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for detailed troubleshooting steps.
+
 ### Workflow Fails with "Get Pages site failed"
 
 **Solution:** The workflow now automatically enables Pages. If you still see this error:
