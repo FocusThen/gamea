@@ -23,9 +23,12 @@ window.search = {
             'architecture/project-structure'
         ];
         
+        // Get base path from app
+        const basePath = window.app ? window.app.basePath : '';
+        
         for (const doc of docs) {
             try {
-                const response = await fetch(`/docs/${doc}.md`);
+                const response = await fetch(`${basePath}/docs/${doc}.md`);
                 if (response.ok) {
                     const text = await response.text();
                     const title = this.extractTitle(text);

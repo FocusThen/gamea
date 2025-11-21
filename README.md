@@ -58,7 +58,9 @@ This project includes comprehensive documentation for developers and level desig
 
 ### 📚 Interactive Web Documentation
 
-**Run the documentation viewer:**
+#### Local Development
+
+**Run the documentation viewer locally:**
 
 From the project root:
 ```bash
@@ -74,6 +76,24 @@ python3 -m http.server 8000
 Then open **http://localhost:8000/docs-viewer/** in your browser.
 
 **Note:** The server must run from the project root, not from `docs-viewer/`.
+
+#### GitHub Pages Deployment
+
+The documentation can be automatically deployed to GitHub Pages!
+
+1. **Enable GitHub Pages:**
+   - Go to repository **Settings** → **Pages**
+   - Select **Source: GitHub Actions**
+
+2. **Push to main branch:**
+   - The workflow automatically deploys when `docs/` or `docs-viewer/` files change
+   - Check the **Actions** tab for deployment status
+
+3. **Access your docs:**
+   - Available at: `https://[username].github.io/[repository-name]/docs-viewer/`
+   - Or visit: `https://[username].github.io/[repository-name]/` (redirects to docs)
+
+See [GitHub Pages Setup Guide](docs-viewer/GITHUB_PAGES.md) for detailed instructions.
 
 The interactive viewer includes:
 - Search functionality

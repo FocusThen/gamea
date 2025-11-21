@@ -3,7 +3,29 @@ class DocumentationApp {
     constructor() {
         this.currentPath = null;
         this.docsCache = new Map();
+        // Detect GitHub Pages base path
+        this.basePath = this.detectBasePath();
         this.init();
+    }
+    
+    detectBasePath() {
+        // Check if we're on GitHub Pages
+        // GitHub Pages uses /repository-name/ as base path for project pages
+        const pathname = window.location.pathname;
+        
+        // Match pattern: /repository-name/docs-viewer/...
+        const match = pathname.match(/^\/([^\/]+)\/docs-viewer/);
+        if (match) {
+            return '/' + match[1];
+        }
+        
+        // Check if docs-viewer is at root level (user/organization pages)
+        if (pathname.startsWith('/docs-viewer/')) {
+            return '';
+        }
+        
+        // Default: no base path (local development)
+        return '';
     }
     
     init() {
@@ -85,8 +107,8 @@ class DocumentationApp {
         }
         
         try {
-            // Path is relative to project root when server runs from root
-            const response = await fetch(`/docs/${path}.md`);
+            // Use base path for GitHub Pages compatibility
+            const response = await fetch(`${this.basePath}/docs/${path}.md`);
             if (!response.ok) throw new Error('Document not found');
             
             const markdown = await response.text();

@@ -1,6 +1,24 @@
-.DS_Store
-
-# Build artifacts
-build/
-releases/
+# Love2D
 *.love
+
+# Build outputs
+releases/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.log
+
+# Don't ignore docs or docs-viewer (needed for GitHub Pages)
+# !docs/
+# !docs-viewer/
