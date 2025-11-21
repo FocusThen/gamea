@@ -26,16 +26,9 @@ local function loadSound(path, type)
 end
 
 -- Load sprites
-sprites = {
-	wipeImage1 = loadImage("assets/sprites/wipe.png"),
-	wipeImage2 = loadImage("assets/sprites/wipe2.png"),
-}
+sprites = {}
 
 sprites.ui = {}
-sprites.ui.title = loadImage("assets/sprites/title.png")
--- These may not exist, so we'll check for them
-local success, levelSelect = pcall(love.graphics.newImage, "assets/sprites/levelSelectBG.png")
-sprites.ui.levelSelect = success and levelSelect or nil
 
 local success2, levelIcon = pcall(love.graphics.newImage, "assets/sprites/levelIcon.png")
 sprites.ui.levelIcon = success2 and levelIcon or nil
