@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "level_4.tmx",
+    "activeFile": "level_5.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -128,6 +128,19 @@
                 "y": 148.06021550262204
             }
         },
+        "level_5.tmx": {
+            "expandedObjectLayers": [
+                5,
+                3,
+                2
+            ],
+            "scale": 3.717,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 169.76055959106804,
+                "y": 124.15926822706483
+            }
+        },
         "test_level.tmx": {
             "scale": 3.349,
             "selectedLayer": 2,
@@ -148,7 +161,7 @@
         "level_1.tmx",
         "level_2.tmx",
         "level_3.tmx",
-        "level_4.tmx"
+        "level_5.tmx"
     ],
     "project": "game1.tiled-project",
     "property.type": "float",
@@ -156,6 +169,7 @@
         "level_1.tmx",
         "level_2.tmx",
         "level_3.tmx",
+        "level_5.tmx",
         "level_4.tmx",
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/1.tmx",
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/level_2.tmx",

@@ -174,8 +174,11 @@ function particles:createTeleportParticles(startX, startY, destX, destY, width, 
 	return particleGroup
 end
 
--- Create death explosion particles (particles explode outward from player)
-function particles:createDeathExplosion(x, y, width, height, duration, onComplete)
+-- Unified function for particle explosion/combination effects
+-- direction: "outward" for explosion (death), "inward" for combination (spawn)
+function particles:createParticleExplosion(x, y, width, height, duration, onComplete, direction)
+	direction = direction or "outward" -- Default to explosion
+	
 	local particleGroup = {
 		particles = {},
 		complete = false,
@@ -188,105 +191,37 @@ function particles:createDeathExplosion(x, y, width, height, duration, onComplet
 	local pieceWidth = width / 2
 	local pieceHeight = height / 3
 	
-	-- Random directions for explosion
+	-- Directions for particle movement
 	local directions = {
 		{ x = -1, y = -1 }, { x = 1, y = -1 },
 		{ x = -1, y = 0 }, { x = 1, y = 0 },
 		{ x = -1, y = 1 }, { x = 1, y = 1 }
 	}
 	
-	-- Create particles in a 2x3 grid that explode outward
+	local isOutward = direction == "outward"
+	
+	-- Create particles in a 2x3 grid
 	for row = 0, 2 do
 		for col = 0, 1 do
-			local pieceX = x + col * pieceWidth
-			local pieceY = y + row * pieceHeight
+			local centerX = x + col * pieceWidth
+			local centerY = y + row * pieceHeight
 			local dir = directions[row * 2 + col + 1]
-			local distance = 30 + (row * 5) + (col * 3) -- Vary explosion distance
-			local destX = pieceX + dir.x * distance
-			local destY = pieceY + dir.y * distance
+			local distance = 30 + (row * 5) + (col * 3)
 			
-			local particle = {
-				x = pieceX,
-				y = pieceY,
-				width = pieceWidth,
-				height = pieceHeight,
-				startX = pieceX,
-				startY = pieceY,
-				destX = destX,
-				destY = destY,
-				progress = 0,
-				duration = duration + (row * 0.05) + (col * 0.03), -- Slight stagger
-				elapsed = 0,
-				complete = false
-			}
-			
-			particle.update = function(self, dt)
-				self.elapsed = self.elapsed + dt
-				self.progress = math.min(self.elapsed / self.duration, 1)
-				
-				-- Ease out for explosion
-				local eased = 1 - (1 - self.progress) ^ 2
-				
-				self.x = self.startX + (self.destX - self.startX) * eased
-				self.y = self.startY + (self.destY - self.startY) * eased
-				
-				-- Fade out as particles move
-				self.alpha = math.max(0, 1 - self.progress * 1.5)
-				
-				if self.progress >= 1 then
-					self.complete = true
-					particleGroup.completedCount = particleGroup.completedCount + 1
-					if particleGroup.completedCount >= particleGroup.totalParticles then
-						particleGroup.complete = true
-					end
-				end
+			local startX, startY, destX, destY
+			if isOutward then
+				-- Explosion: start at center, move outward
+				startX = centerX
+				startY = centerY
+				destX = centerX + dir.x * distance
+				destY = centerY + dir.y * distance
+			else
+				-- Combination: start scattered, move to center
+				startX = centerX + dir.x * distance
+				startY = centerY + dir.y * distance
+				destX = centerX
+				destY = centerY
 			end
-			
-			particle.draw = function(self)
-				love.graphics.setColor(0, 0, 0, self.alpha or 1)
-				love.graphics.rectangle("fill", math.floor(self.x), math.floor(self.y), self.width, self.height)
-			end
-			
-			particle.alpha = 1
-			table.insert(particleGroup.particles, particle)
-			particleGroup.totalParticles = particleGroup.totalParticles + 1
-		end
-	end
-	
-	table.insert(self.customParticles, particleGroup)
-	return particleGroup
-end
-
--- Create spawn combination particles (particles come together from scattered positions)
-function particles:createSpawnCombination(x, y, width, height, duration, onComplete)
-	local particleGroup = {
-		particles = {},
-		complete = false,
-		onComplete = onComplete,
-		completedCount = 0,
-		totalParticles = 0
-	}
-	
-	-- Create rectangular pieces (split player into 6 pieces)
-	local pieceWidth = width / 2
-	local pieceHeight = height / 3
-	
-	-- Random starting positions for combination
-	local directions = {
-		{ x = -1, y = -1 }, { x = 1, y = -1 },
-		{ x = -1, y = 0 }, { x = 1, y = 0 },
-		{ x = -1, y = 1 }, { x = 1, y = 1 }
-	}
-	
-	-- Create particles in a 2x3 grid that come together
-	for row = 0, 2 do
-		for col = 0, 1 do
-			local destX = x + col * pieceWidth
-			local destY = y + row * pieceHeight
-			local dir = directions[row * 2 + col + 1]
-			local distance = 30 + (row * 5) + (col * 3) -- Vary starting distance
-			local startX = destX + dir.x * distance
-			local startY = destY + dir.y * distance
 			
 			local particle = {
 				x = startX,
@@ -307,14 +242,18 @@ function particles:createSpawnCombination(x, y, width, height, duration, onCompl
 				self.elapsed = self.elapsed + dt
 				self.progress = math.min(self.elapsed / self.duration, 1)
 				
-				-- Ease in for combination
-				local eased = self.progress ^ 2
+				-- Easing: ease out for explosion, ease in for combination
+				local eased = isOutward and (1 - (1 - self.progress) ^ 2) or (self.progress ^ 2)
 				
 				self.x = self.startX + (self.destX - self.startX) * eased
 				self.y = self.startY + (self.destY - self.startY) * eased
 				
-				-- Fade in as particles come together
-				self.alpha = math.min(1, self.progress * 1.5)
+				-- Alpha: fade out for explosion, fade in for combination
+				if isOutward then
+					self.alpha = math.max(0, 1 - self.progress * 1.5)
+				else
+					self.alpha = math.min(1, self.progress * 1.5)
+				end
 				
 				if self.progress >= 1 then
 					self.complete = true
@@ -326,11 +265,12 @@ function particles:createSpawnCombination(x, y, width, height, duration, onCompl
 			end
 			
 			particle.draw = function(self)
-				love.graphics.setColor(0, 0, 0, self.alpha or 0)
+				local defaultAlpha = isOutward and 1 or 0
+				love.graphics.setColor(0, 0, 0, self.alpha or defaultAlpha)
 				love.graphics.rectangle("fill", math.floor(self.x), math.floor(self.y), self.width, self.height)
 			end
 			
-			particle.alpha = 0
+			particle.alpha = isOutward and 1 or 0
 			table.insert(particleGroup.particles, particle)
 			particleGroup.totalParticles = particleGroup.totalParticles + 1
 		end
@@ -338,6 +278,16 @@ function particles:createSpawnCombination(x, y, width, height, duration, onCompl
 	
 	table.insert(self.customParticles, particleGroup)
 	return particleGroup
+end
+
+-- Create death explosion particles (particles explode outward from player)
+function particles:createDeathExplosion(x, y, width, height, duration, onComplete)
+	return self:createParticleExplosion(x, y, width, height, duration, onComplete, "outward")
+end
+
+-- Create spawn combination particles (particles come together from scattered positions)
+function particles:createSpawnCombination(x, y, width, height, duration, onComplete)
+	return self:createParticleExplosion(x, y, width, height, duration, onComplete, "inward")
 end
 
 return particles

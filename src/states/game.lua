@@ -1,12 +1,15 @@
 local gameScene = Object:extend()
 local Camera = require("src.core.camera")
 local Constants = require("src.core.constants")
+local Colors = require("src.core.colors")
+local uiUtils = require("src.ui.utils")
 
 function gameScene:enter(enterparams)
 	self.map = enterparams.map
 	self.player = self.map.entities.player
 	self.deathTimer = 0
 	self.restarting = false
+	self.waitingForKeyPress = false
 	
 	-- Initialize camera
 	if not self.camera then
@@ -32,6 +35,7 @@ function gameScene:new()
 	})
 	self.deathTimer = 0
 	self.restarting = false
+	self.waitingForKeyPress = false
 	self.camera = Camera()
 end
 
@@ -77,21 +81,15 @@ function gameScene:update(dt)
 		end
 	end
 
-	-- Check if player is dead and restart level after delay
-	if self.player and self.player.dead and not self.restarting then
+	-- Check if player is dead and show "Press Any Key" after delay
+	if self.player and self.player.dead and not self.restarting and not self.waitingForKeyPress then
 		if self.deathTimer == 0 then
 			-- Trigger camera shake on death
 			self.camera:shake(Constants.CAMERA.DEATH_SHAKE_INTENSITY, Constants.CAMERA.DEATH_SHAKE_DURATION)
 		end
 		self.deathTimer = self.deathTimer + dt
 		if self.deathTimer >= 1.0 then -- 1 second delay
-			self.restarting = true
-			sceneEffects:transitionToWithWipe(function()
-				self.map = loadLevel(self.map.path)
-				self.player = self.map.entities.player
-				self.deathTimer = 0
-				self.restarting = false
-			end)
+			self.waitingForKeyPress = true
 		end
 	end
 	
@@ -201,6 +199,31 @@ function gameScene:draw()
 	-- Unapply camera shake
 	if self.camera then
 		self.camera:unapply()
+	end
+	
+	-- Draw "Press Any Key" text when waiting for key press after death
+	if self.waitingForKeyPress then
+		local textY = 16
+		uiUtils.drawCenteredText("Press Any Key", fonts.default, textY, Colors.TEXT_PRIMARY)
+	end
+end
+
+function gameScene:keypressed(key)
+	-- If waiting for key press after death, reset the level
+	if self.waitingForKeyPress then
+		-- Reset level directly without wipe transition
+		self.map = loadLevel(self.map.path)
+		self.player = self.map.entities.player
+		self.deathTimer = 0
+		self.restarting = false
+		self.waitingForKeyPress = false
+		
+		-- Store game state reference in triggers for cutscenes
+		if self.map.entities.triggers then
+			for _, trig in ipairs(self.map.entities.triggers) do
+				trig.gameState = self
+			end
+		end
 	end
 end
 
