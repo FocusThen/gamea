@@ -1,0 +1,43 @@
+/* Syntax highlighting styles */
+.keyword {
+    color: #c678dd;
+    font-weight: 600;
+}
+
+.string {
+    color: #98c379;
+}
+
+.comment {
+    color: #5c6370;
+    font-style: italic;
+}
+
+.number {
+    color: #d19a66;
+}
+
+.function {
+    color: #61afef;
+}
+
+[data-theme="dark"] .keyword {
+    color: #c678dd;
+}
+
+[data-theme="dark"] .string {
+    color: #98c379;
+}
+
+[data-theme="dark"] .comment {
+    color: #5c6370;
+}
+
+[data-theme="dark"] .number {
+    color: #d19a66;
+}
+
+[data-theme="dark"] .function {
+    color: #61afef;
+}
+

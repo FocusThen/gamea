@@ -79,34 +79,34 @@
         },
         "level_1.tmx": {
             "expandedObjectLayers": [
+                2,
                 3,
-                5,
-                2
+                5
             ],
             "scale": 3.7797,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 191.2850226208429,
+                "x": 191.54959388311244,
                 "y": 134.00534433949787
             }
         },
         "level_2.tmx": {
             "expandedObjectLayers": [
+                2,
                 3,
-                5,
-                2
+                5
             ],
-            "scale": 6.5767,
+            "scale": 2.7311,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 198.27573098970612,
-                "y": 133.27352623656242
+                "x": 150.12266119878439,
+                "y": 118.4504412141628
             }
         },
         "level_3.tmx": {
             "expandedObjectLayers": [
-                3,
-                2
+                2,
+                3
             ],
             "scale": 3.1201562499999995,
             "selectedLayer": 1,
@@ -151,8 +151,8 @@
     "project": "game1.tiled-project",
     "property.type": "float",
     "recentFiles": [
-        "level_1.tmx",
         "level_2.tmx",
+        "level_1.tmx",
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/1.tmx",
         "/Users/mtezcan/Workspace/Personal/luaboi/SkillDrop/maps/level_2.tmx",
         "/Users/mtezcan/Workspace/Personal/luaboi/Sheepolution/Geldzaken/assets/maps/lvl1.tmx",

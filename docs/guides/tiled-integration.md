@@ -81,32 +81,73 @@ The game expects the following layers in your Tiled map:
 **Name:** `trigger`  
 **Properties:**
 
-- `action` (string, optional): Action type - "move", "wait", "activate", "sequence", "cutscene", "timer" (default: "move")
+- `action` (string, optional): Action type - "move", "scale", "wait", "activate", "sequence", "cutscene", "timer" (default: "move")
 - `targetId` (number or object reference): ID of the target object to affect
 - `moveX` (number, optional): X distance to move target (pixels)
 - `moveY` (number, optional): Y distance to move target (pixels)
 - `speed` (number, optional): Movement speed in pixels per second (overrides duration)
-- `duration` (number, optional): Movement duration in seconds (default: 0.5, used if speed not set)
+- `duration` (number, optional): Movement/scale duration in seconds (default: 0.5, used if speed not set)
 - `once` (boolean, optional): Whether trigger can only activate once (default: true)
 - `delay` (number, optional): Delay before action starts (seconds, default: 0)
 - `timerDelay` (number, optional): For timer-based triggers, delay before activation (seconds)
 
+**Scaling Properties (for `action = "scale"`):**
+
+- `scale` (number, optional): Uniform scale target (e.g., 0.5 = half size, 2.0 = double size)
+- `scaleX` (number, optional): Relative X scale change (e.g., 0.5 = shrink width by 50%)
+- `scaleY` (number, optional): Relative Y scale change (e.g., 2.0 = double height)
+- `startScale` (number, optional): Starting uniform scale (defaults to current scale or 1.0)
+- `startScaleX` (number, optional): Starting X scale
+- `startScaleY` (number, optional): Starting Y scale
+- `endScale` (number, optional): Ending uniform scale (absolute value)
+- `endScaleX` (number, optional): Ending X scale (absolute value)
+- `endScaleY` (number, optional): Ending Y scale (absolute value)
+
 **Action Types:**
 
 - `move`: Move target object smoothly (requires targetId, moveX, moveY)
+- `scale`: Scale target object smoothly (requires targetId, and scale properties)
 - `wait`: Wait for a duration (used in sequences)
 - `activate`: Activate another trigger/object
 - `sequence`: Execute a sequence of actions (requires sequence property as array)
 - `cutscene`: Trigger a cutscene (requires cutscene property)
 - `timer`: Automatically activate after timerDelay seconds
 
-**Example:**
+**Trigger Examples:**
 
+**Moving a Box:**
 - Create a rectangle object in "Spawns" layer
 - Set name to `trigger`
-- Set `targetId` to the ID of another object (e.g., a coin)
+- Set `action` to `move`
+- Set `targetId` to the ID of a box
 - Set `moveX` to 100 to move target 100 pixels right
 - Set `speed` to 50 for smooth movement at 50 px/s
+
+**Shrinking a Coin:**
+- Create a rectangle object in "Spawns" layer
+- Set name to `trigger`
+- Set `action` to `scale`
+- Set `targetId` to the ID of a coin
+- Set `scale` to 0.5 to shrink to half size
+- Set `duration` to 1.0 for a 1-second animation
+
+**Growing a Box:**
+- Set `action` to `scale`
+- Set `targetId` to box ID
+- Set `scale` to 2.0 to double the size
+- Set `duration` to 1.5 for a 1.5-second animation
+
+**Stretching Horizontally:**
+- Set `action` to `scale`
+- Set `targetId` to target object ID
+- Set `scaleX` to 2.0 to double width (height stays same)
+- Set `duration` to 1.0
+
+**Scaling from Specific Values:**
+- Set `action` to `scale`
+- Set `startScale` to 1.0
+- Set `endScale` to 0.3
+- Set `duration` to 2.0
 
 ### Teleporter
 
@@ -226,4 +267,5 @@ When setting `targetId` in Tiled:
 - **Trigger not activating**: Check that `targetId` matches an object ID in the map
 - **Object not appearing**: Verify layer name and object name are correct
 - **Movement not working**: Ensure `moveX` or `moveY` is set, and `targetId` is correct
+- **Scaling not working**: Ensure `scale`, `scaleX`, `scaleY`, or `endScale` properties are set, and `targetId` is correct
 - **Teleporter not working**: Verify both teleporters have correct `targetId` references

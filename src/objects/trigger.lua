@@ -1,3 +1,21 @@
+--[[
+	Trigger System
+	
+	Handles interactive triggers that can move, scale, activate, and sequence actions
+	on target entities when activated by player collision or timers.
+	
+	Action Types:
+	- "move": Smoothly move target entity (requires moveX, moveY)
+	- "scale": Smoothly scale target entity (requires scale properties)
+	- "activate": Activate another trigger/object
+	- "sequence": Execute multiple actions in sequence
+	- "cutscene": Trigger a cutscene
+	- "timer": Auto-activate after delay
+	
+	See TRIGGER_SYSTEM.md for detailed developer documentation.
+	See TILED_GUIDE.md for level designer usage guide.
+]]
+
 local trigger = Object:extend()
 
 function trigger:new(x, y, width, height, props)
@@ -9,7 +27,7 @@ function trigger:new(x, y, width, height, props)
 	self.activated = false
 
 	-- Properties from Tiled
-	self.action = props and (props.action or "move") or "move" -- "move", "wait", "activate", "sequence", "cutscene", "timer"
+	self.action = props and (props.action or "move") or "move" -- "move", "scale", "wait", "activate", "sequence", "cutscene", "timer"
 	self.moveX = props and (props.moveX or 0) or 0
 	self.moveY = props and (props.moveY or 0) or 0
 	self.once = props and (props.once ~= false) or true -- Default to true
@@ -18,6 +36,17 @@ function trigger:new(x, y, width, height, props)
 	self.duration = props and props.duration or nil -- Movement duration in seconds (used if speed is not set)
 	self.delay = props and (props.delay or 0) or 0 -- Delay before action starts
 	self.timerDelay = props and (props.timerDelay or 0) or 0 -- For timer-based triggers (activate after X seconds)
+	
+	-- Scaling properties
+	self.scale = props and props.scale or nil -- Uniform scale target (e.g., 0.5 to shrink to half size, 2.0 to double)
+	self.scaleX = props and props.scaleX or nil -- X scale target (non-uniform scaling)
+	self.scaleY = props and props.scaleY or nil -- Y scale target (non-uniform scaling)
+	self.startScale = props and props.startScale or nil -- Starting scale (if not provided, uses current scale of 1.0)
+	self.startScaleX = props and props.startScaleX or nil -- Starting X scale
+	self.startScaleY = props and props.startScaleY or nil -- Starting Y scale
+	self.endScale = props and props.endScale or nil -- Ending scale (if not provided, uses scale property)
+	self.endScaleX = props and props.endScaleX or nil -- Ending X scale
+	self.endScaleY = props and props.endScaleY or nil -- Ending Y scale
 
 	-- For sequences
 	self.sequence = props and props.sequence or nil -- Array of actions
@@ -32,10 +61,21 @@ function trigger:new(x, y, width, height, props)
 
 	-- Tweening
 	self.isMoving = false
+	self.isScaling = false
 	self.startX = nil
 	self.startY = nil
 	self.endX = nil
 	self.endY = nil
+	
+	-- Scaling state
+	self.scaleProgress = 0
+	self.scaleTween = nil
+	self.originalWidth = nil
+	self.originalHeight = nil
+	self.currentScaleX = 1.0
+	self.currentScaleY = 1.0
+	self.targetScaleX = 1.0
+	self.targetScaleY = 1.0
 
 	-- Timer state
 	self.timer = 0
@@ -77,6 +117,8 @@ function trigger:activate()
 	-- Execute action based on type
 	if self.action == "move" then
 		self:doMove()
+	elseif self.action == "scale" then
+		self:doScale()
 	elseif self.action == "wait" then
 		-- Wait is handled in sequence
 	elseif self.action == "activate" then
@@ -120,6 +162,102 @@ function trigger:doMove()
 		self.lastTargetY = self.startY
 		self:updateMovingTarget(true)
 	end
+end
+
+function trigger:doScale()
+	-- Scale target object smoothly if it exists
+	if not self.target then
+		return
+	end
+	
+	-- Store original dimensions (base size, before any scaling)
+	-- If target has been scaled before, we need to find the base size
+	-- For now, we'll use current dimensions divided by current scale, or just store current if first time
+	if not self.originalWidth or not self.originalHeight then
+		local currentScaleX = self.target.scaleX or 1.0
+		local currentScaleY = self.target.scaleY or 1.0
+		-- If already scaled, try to get base size
+		if currentScaleX ~= 1.0 or currentScaleY ~= 1.0 then
+			self.originalWidth = (self.target.width or 16) / currentScaleX
+			self.originalHeight = (self.target.height or 16) / currentScaleY
+		else
+			self.originalWidth = self.target.width or 16
+			self.originalHeight = self.target.height or 16
+		end
+	end
+	
+	-- Get current scale from target, or default to 1.0
+	local currentTargetScaleX = self.target.scaleX or 1.0
+	local currentTargetScaleY = self.target.scaleY or 1.0
+	
+	-- Determine start scales (use explicit start, or current scale, or default to 1.0)
+	local startSX = self.startScaleX or self.startScale or currentTargetScaleX
+	local startSY = self.startScaleY or self.startScale or currentTargetScaleY
+	
+	-- Determine end scales
+	-- Priority: endScaleX/Y > scaleX/Y (relative) > endScale (uniform) > scale (uniform)
+	local endSX, endSY
+	
+	if self.endScaleX then
+		-- Absolute target X scale
+		endSX = self.endScaleX
+	elseif self.scaleX then
+		-- Relative change in X scale
+		endSX = startSX + self.scaleX
+	elseif self.endScale then
+		-- Absolute uniform target scale
+		endSX = self.endScale
+	elseif self.scale then
+		-- Relative uniform scale change
+		endSX = startSX + (self.scale - 1.0)
+	else
+		-- No scale specified, keep current
+		endSX = startSX
+	end
+	
+	if self.endScaleY then
+		-- Absolute target Y scale
+		endSY = self.endScaleY
+	elseif self.scaleY then
+		-- Relative change in Y scale
+		endSY = startSY + self.scaleY
+	elseif self.endScale then
+		-- Absolute uniform target scale
+		endSY = self.endScale
+	elseif self.scale then
+		-- Relative uniform scale change
+		endSY = startSY + (self.scale - 1.0)
+	else
+		-- No scale specified, keep current
+		endSY = startSY
+	end
+	
+	-- If only uniform scale is provided, apply to both axes
+	if self.scale and not self.scaleX and not self.scaleY and not self.endScaleX and not self.endScaleY and not self.endScale then
+		endSX = self.scale
+		endSY = self.scale
+	end
+	
+	self.currentScaleX = startSX
+	self.currentScaleY = startSY
+	self.targetScaleX = endSX
+	self.targetScaleY = endSY
+	
+	-- Calculate duration (use same logic as movement)
+	local scaleDuration = self.duration or 0.5
+	
+	self.isScaling = true
+	self.scaleProgress = 0
+	if self.scaleTween then
+		self.scaleTween:stop()
+	end
+	self.scaleTween = flux.to(self, scaleDuration, { scaleProgress = 1 }):oncomplete(function()
+		self.isScaling = false
+		self.scaleTween = nil
+		self.scaleProgress = 1
+		self:updateScalingTarget(true)
+	end)
+	self:updateScalingTarget(true)
 end
 
 function trigger:doActivate()
@@ -180,6 +318,52 @@ function trigger:executeSequenceStep()
 		self.duration = origDuration
 
 		-- Wait for movement to complete plus delay
+		local totalDelay = (step.duration or 0.5) + stepDelay
+		flux.to({}, totalDelay, {}):oncomplete(function()
+			self.sequenceIndex = self.sequenceIndex + 1
+			self:executeSequenceStep()
+		end)
+	elseif stepAction == "scale" then
+		-- Store original scale values temporarily
+		local origScale = self.scale
+		local origScaleX = self.scaleX
+		local origScaleY = self.scaleY
+		local origStartScale = self.startScale
+		local origStartScaleX = self.startScaleX
+		local origStartScaleY = self.startScaleY
+		local origEndScale = self.endScale
+		local origEndScaleX = self.endScaleX
+		local origEndScaleY = self.endScaleY
+		local origDuration = self.duration
+
+		-- Apply step values
+		self.scale = step.scale or self.scale
+		self.scaleX = step.scaleX or self.scaleX
+		self.scaleY = step.scaleY or self.scaleY
+		self.startScale = step.startScale or self.startScale
+		self.startScaleX = step.startScaleX or self.startScaleX
+		self.startScaleY = step.startScaleY or self.startScaleY
+		self.endScale = step.endScale or self.endScale
+		self.endScaleX = step.endScaleX or self.endScaleX
+		self.endScaleY = step.endScaleY or self.endScaleY
+		self.duration = step.duration or self.duration
+
+		-- Execute scale
+		self:doScale()
+
+		-- Restore original values
+		self.scale = origScale
+		self.scaleX = origScaleX
+		self.scaleY = origScaleY
+		self.startScale = origStartScale
+		self.startScaleX = origStartScaleX
+		self.startScaleY = origStartScaleY
+		self.endScale = origEndScale
+		self.endScaleX = origEndScaleX
+		self.endScaleY = origEndScaleY
+		self.duration = origDuration
+
+		-- Wait for scaling to complete plus delay
 		local totalDelay = (step.duration or 0.5) + stepDelay
 		flux.to({}, totalDelay, {}):oncomplete(function()
 			self.sequenceIndex = self.sequenceIndex + 1
@@ -308,6 +492,60 @@ function trigger:updateMovingTarget(force)
 	self.lastTargetY = goalY
 end
 
+function trigger:updateScalingTarget(force)
+	if not self.target then
+		return
+	end
+	
+	-- Calculate current scale based on progress
+	local currentSX = self.currentScaleX + (self.targetScaleX - self.currentScaleX) * self.scaleProgress
+	local currentSY = self.currentScaleY + (self.targetScaleY - self.currentScaleY) * self.scaleProgress
+	
+	-- Calculate new dimensions
+	local newWidth = (self.originalWidth or (self.target.width or 16)) * currentSX
+	local newHeight = (self.originalHeight or (self.target.height or 16)) * currentSY
+	
+	-- Store scale on target for reference
+	self.target.scaleX = currentSX
+	self.target.scaleY = currentSY
+	self.target.scale = currentSX -- For uniform scaling reference
+	
+	-- Update target dimensions
+	local oldWidth = self.target.width or 16
+	local oldHeight = self.target.height or 16
+	
+	-- Only update if dimensions changed significantly
+	if not force and math.abs(newWidth - oldWidth) < 0.01 and math.abs(newHeight - oldHeight) < 0.01 then
+		return
+	end
+	
+	-- Calculate center point to maintain position during scaling
+	local centerX = self.target.x + oldWidth / 2
+	local centerY = self.target.y + oldHeight / 2
+	
+	-- Update dimensions
+	self.target.width = newWidth
+	self.target.height = newHeight
+	
+	-- Adjust position to keep center point fixed
+	local newX = centerX - newWidth / 2
+	local newY = centerY - newHeight / 2
+	
+	-- Update physics world
+	local inWorld = World:hasItem(self.target)
+	if inWorld then
+		World:update(self.target, newX, newY, newWidth, newHeight)
+	end
+	
+	-- Update position
+	if self.target.x then
+		self.target.x = newX
+	end
+	if self.target.y then
+		self.target.y = newY
+	end
+end
+
 function trigger:doCutscene()
 	-- Cutscene handling
 	if self.cutscene then
@@ -346,6 +584,11 @@ function trigger:update(dt)
 	if self.isMoving then
 		self:updateMovingTarget()
 	end
+	
+	-- Update physics world during smooth scaling
+	if self.isScaling then
+		self:updateScalingTarget()
+	end
 
 	-- Handle delay
 	if self.delayActive then
@@ -356,6 +599,8 @@ function trigger:update(dt)
 			-- Execute action after delay
 			if self.action == "move" then
 				self:doMove()
+			elseif self.action == "scale" then
+				self:doScale()
 			elseif self.action == "activate" then
 				self:doActivate()
 			elseif self.action == "sequence" then
