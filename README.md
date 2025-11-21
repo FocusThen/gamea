@@ -1,6 +1,6 @@
 # Game 1
 
-A platformer game built with LÖVE (Love2D).
+A platformer game built with LÖVE (Love2D) featuring spectacular particle effects, smooth teleportation, and dynamic visual feedback.
 
 ## Building and Distribution
 

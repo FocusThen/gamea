@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Particles system manages visual effects like jump smoke, landing effects, dash effects, and walking particles. It uses anim8 for sprite animations and provides a simple interface for creating effects.
+The Particles system manages visual effects like jump smoke, landing effects, dash effects, and walking particles. It uses anim8 for sprite animations and provides a simple interface for creating effects. Additionally, it supports custom rectangular particle effects for teleportation, death explosions, and spawn animations.
 
 ## Class: `particles`
 
@@ -21,7 +21,8 @@ particleEffects = Particles()
 ### Properties
 
 - `effects` (table): Dictionary of effect templates
-- `activeEffects` (table): Array of currently active effects
+- `activeEffects` (table): Array of currently active sprite-based effects
+- `customParticles` (table): Array of custom rectangular particle groups
 
 ### Methods
 
@@ -73,12 +74,91 @@ particleEffects:createEffect("walk", player.x, player.y, true)
 
 Loads all effect definitions. Called automatically during initialization.
 
-**Available Effects:**
+**Available Sprite Effects:**
 - `jump` - Jump smoke effect (7 frames, 0.075s per frame)
 - `dash` - Dash smoke effect (6 frames, 0.1s per frame)
 - `landing` - Landing smoke effect (4 frames, 0.075s per frame)
 - `boxLanding` - Box landing effect (4 frames, 0.075s per frame)
 - `walk` - Walking effect (6 frames, 0.1s per frame)
+
+#### `particles:createTeleportParticles(startX, startY, destX, destY, width, height, duration, onComplete)`
+
+Creates a teleport particle effect where rectangular pieces move from source to destination.
+
+**Parameters:**
+- `startX`, `startY` (number): Starting position
+- `destX`, `destY` (number): Destination position
+- `width`, `height` (number): Size of the object being teleported
+- `duration` (number): Animation duration in seconds
+- `onComplete` (function, optional): Callback when animation completes
+
+**Returns:**
+- `particleGroup` (table): Particle group object
+
+**Example:**
+```lua
+particleEffects:createTeleportParticles(
+    player.x, player.y,
+    destX, destY,
+    player.width, player.height,
+    0.4,
+    function()
+        -- Teleport complete
+        player.visible = true
+    end
+)
+```
+
+#### `particles:createDeathExplosion(x, y, width, height, duration, onComplete)`
+
+Creates a death explosion effect where rectangular pieces explode outward.
+
+**Parameters:**
+- `x`, `y` (number): Position of explosion
+- `width`, `height` (number): Size of the object exploding
+- `duration` (number): Animation duration in seconds
+- `onComplete` (function, optional): Callback when animation completes
+
+**Returns:**
+- `particleGroup` (table): Particle group object
+
+**Example:**
+```lua
+particleEffects:createDeathExplosion(
+    player.x, player.y,
+    player.width, player.height,
+    0.5,
+    function()
+        -- Explosion complete
+    end
+)
+```
+
+#### `particles:createSpawnCombination(x, y, width, height, duration, onComplete)`
+
+Creates a spawn combination effect where rectangular pieces come together from scattered positions.
+
+**Parameters:**
+- `x`, `y` (number): Final position where pieces combine
+- `width`, `height` (number): Size of the object being formed
+- `duration` (number): Animation duration in seconds
+- `onComplete` (function, optional): Callback when animation completes
+
+**Returns:**
+- `particleGroup` (table): Particle group object
+
+**Example:**
+```lua
+particleEffects:createSpawnCombination(
+    player.x, player.y,
+    player.width, player.height,
+    0.4,
+    function()
+        -- Spawn complete
+        player.visible = true
+    end
+)
+```
 
 ## Effect Details
 
@@ -165,9 +245,32 @@ if player:isMoving() then
 end
 ```
 
-## Adding Custom Effects
+## Custom Particle Effects
 
-To add a new effect:
+### Teleport Particles
+
+Teleport particles split an object into 6 rectangular pieces (2x3 grid) that travel from source to destination:
+- Uses cubic ease-out for smooth movement
+- Slight stagger for dynamic effect
+- Duration: 0.4 seconds (default)
+
+### Death Explosion
+
+Death explosion splits an object into 6 pieces that explode outward:
+- Pieces move in different directions
+- Fade out as they move
+- Duration: 0.5 seconds (default)
+
+### Spawn Combination
+
+Spawn combination creates 6 pieces that come together from scattered positions:
+- Pieces start scattered around the destination
+- Fade in as they combine
+- Duration: 0.4 seconds (default)
+
+## Adding Custom Sprite Effects
+
+To add a new sprite-based effect:
 
 1. Add sprite to `assets/sprites/`
 2. Add effect definition in `loadEffects()`:

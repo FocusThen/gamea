@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Teleporter object creates a teleportation system where players can move between two linked teleporters. Teleporters work in pairs and include cooldown and fade transition effects.
+The Teleporter object creates a teleportation system where players can move between two linked teleporters. Teleporters work in pairs and include cooldown and instant teleportation with spectacular particle effects. When a player enters a teleporter, they explode into rectangular particles that travel to the destination and reform the player.
 
 ## Class: `teleporter`
 
@@ -59,10 +59,11 @@ Handles player interaction with the teleporter.
 1. Checks cooldown (prevents rapid teleportation)
 2. Verifies not already teleporting
 3. Determines destination (target teleporter or coordinates)
-4. Starts fade transition
-5. Teleports player to destination
-6. Updates physics world
-7. Resets teleporting flag after delay
+4. Hides player and creates particle explosion effect
+5. Player explodes into 6 rectangular pieces
+6. Particles travel from source to destination (0.4s duration)
+7. When particles arrive, player reforms at destination
+8. Player becomes visible and can move again
 
 **Example:**
 ```lua
@@ -101,12 +102,15 @@ Prevents rapid teleportation:
 - Uses `love.timer.getTime()` for timing
 - Both teleporters share cooldown state
 
-## Transition Effects
+## Particle Effects
 
-Uses fade transition for smooth teleportation:
-- Default duration: 0.3 seconds
-- Fades out → teleports → fades in
-- Provides visual feedback
+Uses spectacular particle explosion for teleportation:
+- Player explodes into 6 rectangular pieces (2x3 grid)
+- Particles travel from source to destination
+- Duration: 0.4 seconds with slight stagger for dynamic effect
+- Player is hidden during animation
+- Player reforms at destination when particles arrive
+- Provides smooth, visually appealing teleportation
 
 ## Usage Example
 
@@ -123,9 +127,17 @@ teleporter1.targetTeleporter = teleporter2
 teleporter2.targetTeleporter = teleporter1
 ```
 
+## Visual Effects
+
+The teleporter creates a stunning visual effect:
+- **Source Explosion**: Player breaks into 6 rectangular pieces at the teleporter
+- **Particle Travel**: Each piece moves independently toward the destination
+- **Destination Recombination**: Pieces reform into the player at the target location
+- **Smooth Animation**: Uses cubic ease-out for natural movement
+
 ## Related Documentation
 
 - [Load Map API](../game/loadMap.md)
-- [Scene Effects](../systems/sceneEffects.md)
+- [Particles System](../systems/particles.md)
 - [Constants API](../core/constants.md)
 

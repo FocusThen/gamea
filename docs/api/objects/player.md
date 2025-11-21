@@ -10,7 +10,7 @@ The Player object represents the main controllable character in the game. It han
 
 #### `player:new(x, y, props)`
 
-Creates a new player instance.
+Creates a new player instance with spawn combination animation.
 
 **Parameters:**
 
@@ -19,6 +19,13 @@ Creates a new player instance.
 - `props` (table, optional): Properties from Tiled map
   - `doubleJump` (boolean): Enable double jump ability
   - `dash` (boolean): Enable dash ability
+
+**Behavior:**
+1. Initializes player at spawn position
+2. Player starts invisible (`visible = false`)
+3. Player starts in spawning state (`spawning = true`)
+4. Creates spawn combination effect (6 rectangular pieces come together)
+5. When particles combine, player becomes visible and can move
 
 **Example:**
 
@@ -57,6 +64,9 @@ local player = Player(100, 200, { doubleJump = true, dash = true })
 - `coyote` (number): Coyote time remaining
 - `jumpWhenAble` (number): Delayed jump timer
 - `jumpEffectQueued` (boolean): Queue jump particle effect
+- `visible` (boolean): Whether player is visible (used for teleport/spawn effects)
+- `teleporting` (boolean): Whether player is currently teleporting
+- `spawning` (boolean): Whether player is currently spawning
 
 **Drawing:**
 
@@ -73,6 +83,11 @@ Updates player state, handles input, physics, and collisions. Called every frame
 
 - `dt` (number): Delta time
 
+**Behavior:**
+- Returns early if player is teleporting or spawning (prevents movement during animations)
+- Handles input, movement, physics, and collisions when active
+- Processes teleportation if `teleportedX` and `teleportedY` are set
+
 **Example:**
 
 ```lua
@@ -83,7 +98,11 @@ end
 
 #### `player:draw()`
 
-Draws the player. Currently draws a simple black rectangle.
+Draws the player. Currently draws a simple black rectangle. Only draws if player is visible.
+
+**Behavior:**
+- Returns early if `visible` is `false` (used during teleport/spawn/death animations)
+- Draws black rectangle at player position
 
 **Example:**
 
@@ -111,7 +130,14 @@ end
 
 #### `player:kill()`
 
-Kills the player, triggering death sound and state.
+Kills the player, triggering death sound, death explosion particles, and death state.
+
+**Behavior:**
+1. Sets `dead` flag to `true`
+2. Plays death sound
+3. Hides player
+4. Creates death explosion effect (6 rectangular pieces explode outward)
+5. Player stays hidden after explosion
 
 **Example:**
 
@@ -200,6 +226,33 @@ The player's filter function handles different collision types:
 
 - Slip detection for smooth platforming
 - Handles vertical and horizontal collisions
+
+## Visual Effects
+
+### Spawn Combination
+
+When a player spawns (level start or restart):
+- Player starts invisible
+- 6 rectangular pieces come together from scattered positions
+- Pieces fade in as they combine
+- Duration: 0.4 seconds
+- Player becomes visible and can move when complete
+
+### Death Explosion
+
+When a player dies:
+- Player becomes invisible
+- 6 rectangular pieces explode outward in different directions
+- Pieces fade out as they move
+- Duration: 0.5 seconds
+- Player stays hidden after explosion
+
+### Teleportation
+
+When teleporting (see [Teleporter API](./teleporter.md)):
+- Player becomes invisible
+- 6 rectangular pieces travel from source to destination
+- Player reforms at destination when particles arrive
 
 ## Abilities
 

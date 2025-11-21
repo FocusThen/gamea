@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="20" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="24">
+ <editorsettings>
+  <export target="level_5.lua" format="lua"/>
+ </editorsettings>
+ <properties>
+  <property name="BgColor" type="color" value="#fff5e24c"/>
+  <property name="MapColor" type="color" value="#ff916429"/>
+ </properties>
+ <layer id="1" name="Bg" width="20" height="12">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="3" name="Spawns">
+  <object id="6" name="player" type="player" x="48" y="112">
+   <point/>
+  </object>
+  <object id="8" name="door" type="door" x="288" y="112">
+   <point/>
+  </object>
+  <object id="20" name="teleporter" type="teleporter" x="96" y="80" width="16" height="15.4463">
+   <properties>
+    <property name="targetId" type="object" value="23"/>
+   </properties>
+  </object>
+  <object id="23" name="teleporter" type="teleporter" x="192" y="96" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="2" name="Platforms">
+  <object id="2" x="0" y="0" width="16" height="192"/>
+  <object id="3" x="304" y="0" width="16" height="192"/>
+  <object id="4" x="16" y="0" width="288" height="79.7789"/>
+  <object id="12" x="80" y="128" width="192" height="64"/>
+  <object id="21" x="0" y="128" width="80" height="64"/>
+  <object id="22" x="272" y="128" width="32" height="64"/>
+ </objectgroup>
+ <objectgroup id="5" name="Dangers" locked="1"/>
+</map>

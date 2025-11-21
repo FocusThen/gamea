@@ -58,26 +58,39 @@ function teleporter:interact(player)
 	self.teleporting = true
 	self.lastTeleportTime = currentTime
 	
-	-- Use fade transition for teleportation effect
-	sceneEffects:transitionToWithFade(function()
-		-- Teleport player
-		player.x = destX
-		player.y = destY
-		
-		-- Update physics world
-		if World:hasItem(player) then
-			World:update(player, player.x, player.y)
-		end
-		
-		-- Reset teleporting flag after a short delay
-		local delay = 0.1
-		flux.to({}, delay, {}):oncomplete(function()
+	-- Hide player and disable movement during teleport
+	player.visible = false
+	player.teleporting = true
+	
+	-- Create rectangular particle explosion that moves to destination
+	local startX = player.x
+	local startY = player.y
+	local destCenterX = destX + player.width / 2
+	local destCenterY = destY + player.height / 2
+	local startCenterX = startX + player.width / 2
+	local startCenterY = startY + player.height / 2
+	
+	-- Create particles that explode from player and move to destination
+	particleEffects:createTeleportParticles(
+		startX, startY,
+		destX, destY,
+		player.width, player.height,
+		0.4, -- duration
+		function()
+			-- When particles arrive, teleport player directly and make visible
+			local teleX, teleY = World:move(player, destX, destY, player.filter)
+			player.x = teleX
+			player.y = teleY
+			player.visible = true
+			player.teleporting = false
+			
+			-- Reset teleporting flag
 			self.teleporting = false
 			if self.targetTeleporter then
 				self.targetTeleporter.teleporting = false
 			end
-		end)
-	end)
+		end
+	)
 end
 
 function teleporter:draw()

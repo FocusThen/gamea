@@ -48,12 +48,31 @@ function player:new(x, y, props)
 	self.lastFoot = 2
 	self.footTimer = 0
 	self.lastBounce = nil
+	self.visible = false -- Start invisible for spawn animation
+	self.spawning = true -- Flag to prevent movement during spawn
 
 	World:add(self, self.x, self.y, self.width, self.height)
 	self.input = self:controls()
+	
+	-- Create spawn combination particles
+	particleEffects:createSpawnCombination(
+		self.x, self.y,
+		self.width, self.height,
+		0.4, -- duration
+		function()
+			-- When particles combine, make player visible and allow movement
+			self.visible = true
+			self.spawning = false
+		end
+	)
 end
 
 function player:update(dt)
+	-- Don't update if teleporting or spawning (particles are animating)
+	if self.teleporting or self.spawning then
+		return
+	end
+	
 	if not self.dead then
 		self.input:update()
 
@@ -264,8 +283,19 @@ function player:update(dt)
 		end
 	end
 
-	self.x = actualX
-	self.y = actualY
+	-- Check if player was teleported
+	if self.teleporting and self.teleportedX and self.teleportedY then
+		-- Use teleported position and update physics world
+		local teleX, teleY = World:move(self, self.teleportedX, self.teleportedY, self.filter)
+		self.x = teleX
+		self.y = teleY
+		self.teleporting = false
+		self.teleportedX = nil
+		self.teleportedY = nil
+	else
+		self.x = actualX
+		self.y = actualY
+	end
 
 	-- Handle jump and dash input
 	if self.input:pressed("jump") then
@@ -299,6 +329,11 @@ function player:update(dt)
 end
 
 function player:draw()
+	-- Don't draw if not visible (during teleport)
+	if not self.visible then
+		return
+	end
+	
 	love.graphics.setColor(0, 0, 0, 1)
 	love.graphics.rectangle("fill", math.floor(self.x), math.floor(self.y), self.width, self.height)
 end
@@ -312,6 +347,17 @@ function player:kill()
 	if not self.dead then
 		self.dead = true
 		playSound(sounds.dead)
+		
+		-- Create death explosion particles
+		self.visible = false
+		particleEffects:createDeathExplosion(
+			self.x, self.y,
+			self.width, self.height,
+			0.5, -- duration
+			function()
+				-- Explosion complete, player stays dead
+			end
+		)
 		-- Camera shake is handled in game state
 	end
 end
